@@ -41,7 +41,7 @@ export function Experience() {
   const illustrative = collage.some((img) => img.illustrative);
 
   return (
-    <section aria-labelledby="esperienza-title" className="surface-dark bg-obsidian">
+    <section id="salone" aria-labelledby="esperienza-title" className="surface-dark bg-obsidian">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-32 lg:px-12 lg:py-40">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-7">

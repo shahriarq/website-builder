@@ -129,7 +129,7 @@ export function Header() {
 
           <div className="menu-item grid gap-4 pt-8" style={{ "--i": navItems.length } as React.CSSProperties}>
             <a href={bookingAnchor} onClick={(e) => navigateFromMenu(e, bookingAnchor)} className="btn btn-brass w-full">
-              Prenota un appuntamento
+              Prenota il tuo appuntamento
             </a>
             <a href={telHref()} className="btn btn-outline-light w-full">
               <PhoneIcon size={18} weight="regular" aria-hidden="true" />

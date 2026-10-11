@@ -47,7 +47,7 @@ export function MobileBookingBar() {
     >
       <div className="mx-auto flex max-w-lg gap-3">
         <a href={bookingAnchor} className="btn btn-brass min-h-12 flex-1">
-          Prenota un appuntamento
+          Prenota il tuo appuntamento
         </a>
         <a href={telHref()} className="btn btn-outline-light min-h-12 w-12 shrink-0 px-0" aria-label={`Chiama ${site.contact.phoneDisplay}`}>
           <PhoneIcon size={20} aria-hidden="true" />

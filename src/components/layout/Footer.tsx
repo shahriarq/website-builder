@@ -10,11 +10,11 @@ export function Footer() {
       <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
         <div className="grid gap-10 border-b border-ivory/10 py-20 md:py-28 lg:grid-cols-12 lg:items-end">
           <p className="display max-w-[16ch] text-[clamp(2.5rem,6.5vw,5.5rem)] lg:col-span-8 lg:max-w-none" data-reveal>
-            Il tuo prossimo appuntamento <em className="font-light italic text-brass">inizia qui</em>.
+            Ti aspettiamo in <em className="font-light italic text-brass">Via Ornato</em>.
           </p>
           <div className="lg:col-span-4 lg:justify-self-end" data-reveal>
             <a href={bookingAnchor} className="btn btn-brass">
-              Prenota un appuntamento
+              Prenota il tuo appuntamento
               <ArrowRightIcon size={18} className="btn-icon" aria-hidden="true" />
             </a>
           </div>

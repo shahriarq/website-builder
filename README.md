@@ -3,9 +3,9 @@
 Website for Style86, a hair and beauty salon at Via Luigi Ornato 59, 20162 Milano.
 Italian-language, single-page site with a working booking-request flow.
 
-**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, native CSS motion
-(scroll-driven animations plus one IntersectionObserver), Phosphor icons, self-hosted
-Cormorant Garamond and Manrope via `next/font`. No animation library, no analytics.
+**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger for
+the scroll-driven story (via `@gsap/react`), native CSS for small reveals, Phosphor icons,
+self-hosted Cormorant Garamond and Manrope via `next/font`. No analytics.
 
 ## Quick start
 
@@ -171,6 +171,33 @@ src/
 scripts/               placeholder plate generator
 tests/                 node:test unit tests
 ```
+
+## Scroll story: "STYLE86. L'arte del taglio."
+
+The homepage is a five-scene, scroll-driven story built with GSAP ScrollTrigger
+(`src/components/scenes/`). The barber tools are layered SVGs with independently animated
+parts (`src/components/tools/`).
+
+| Scene | Component | What moves with scroll |
+| --- | --- | --- |
+| 1 Precision | `HeroScene` | Scissors open, rotate and snip; a brass cut line crosses the frame |
+| 2 The craft | `CraftScene` | Comb sweeps across and reveals "Ogni dettaglio conta."; dark-to-ivory shift |
+| 3 Transformation | `TransformationScene` | Portrait opens from a slit to full bleed; "Il tuo stile. La tua firma." |
+| 4 Signature | `SignatureScene` | Razor unfolds and wipes in "Il prossimo look inizia qui." and the booking CTA |
+| 5 Supporting content | existing sections | Booking form, gallery, reviews, salon, contact (light reveals only) |
+
+Behaviour per device (`gsap.matchMedia`, see `src/lib/gsap.ts`):
+
+- **Desktop (1024 px and up):** scenes 1 to 4 pin briefly (0.7 to 1.1 viewports each) with a
+  scrubbed timeline; scenes 2 and 4 start their motion while entering, so there are no empty
+  frames.
+- **Touch and tablet:** no pinning. Each scene plays over its natural scroll position.
+- **Reduced motion:** no pins and no timelines. Every scene shows its final composition.
+- **No JavaScript:** all hidden states are applied by JavaScript, so the page renders complete.
+
+Navigation anchors (`#servizi`, `#prenota`, `#galleria`, and so on) skip past the animations,
+and booking never depends on an animation finishing. If keyboard focus reaches the scene 4
+CTA mid-animation, the page jumps to the scene's final state.
 
 ## Accessibility and motion
 
