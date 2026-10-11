@@ -1,17 +1,14 @@
+import { scrollToElement } from "./motion";
+
 /**
  * Porta il focus e la vista su un'ancora interna, rispettando le preferenze
- * di movimento. Usato quando un dialogo si chiude prima della navigazione.
+ * di movimento. Usato dai link interni (tramite SmoothScroll) e dal menu.
  */
 export function goToAnchor(hash: string) {
   const id = hash.replace(/^#/, "");
-  const target = id === "top" ? document.body : document.getElementById(id);
+  const target = id === "top" ? document.getElementById("top") : document.getElementById(id);
   if (!target) return;
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (id === "top") {
-    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-  } else {
-    target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-  }
+  scrollToElement(target);
   history.replaceState(null, "", `#${id}`);
   const focusTarget = id === "top" ? document.getElementById("contenuto") : target;
   if (focusTarget) {

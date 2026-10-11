@@ -5,6 +5,7 @@ import { ArrowRightIcon } from "@phosphor-icons/react";
 import { serviceOptions } from "@/lib/booking/context";
 import { requestService } from "@/lib/booking/events";
 import { bookingAnchor } from "@/config/navigation";
+import { scrollToElement } from "@/lib/motion";
 
 /**
  * Avvio rapido della prenotazione nell'hero: scegli il servizio e vai al
@@ -20,8 +21,7 @@ export function QuickBook() {
     event.preventDefault();
     requestService(service, true);
     const target = document.getElementById("prenota");
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    if (target) scrollToElement(target);
     history.replaceState(null, "", bookingAnchor);
   }
 

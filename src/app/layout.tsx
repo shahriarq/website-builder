@@ -3,6 +3,7 @@ import { Archivo } from "next/font/google";
 import { site } from "@/config/site";
 import { hairSalonJsonLd, seo } from "@/lib/seo";
 import { RevealController } from "@/components/motion/RevealController";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
 // Un solo carattere: Archivo variabile, con l'asse della larghezza (wdth)
@@ -37,11 +38,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f1f0ed" },
-    { media: "(prefers-color-scheme: dark)", color: "#131312" },
-  ],
-  colorScheme: "light dark",
+  themeColor: "#0e0e0d",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
@@ -63,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         {children}
         <RevealController />
+        <SmoothScroll />
       </body>
     </html>
   );

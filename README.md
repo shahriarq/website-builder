@@ -3,9 +3,10 @@
 Website for Style86, a hair and beauty salon at Via Luigi Ornato 59, 20162 Milano.
 Italian-language, single-page site with a working booking-request flow.
 
-**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, native CSS motion,
-Phosphor icons, Archivo (variable, with width axis) self-hosted via `next/font`. No
-analytics, no animation library.
+**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger for
+scroll scenes, Lenis for smooth inertial scrolling, three.js for the 3D barber tools
+(loaded only when the scene approaches), Phosphor icons, Archivo (variable, with width
+axis) self-hosted via `next/font`. No analytics.
 
 ## Quick start
 
@@ -161,11 +162,12 @@ src/
   app/                 layout, page, privacy, API route, sitemap, robots, OG image
   components/
     layout/            Header (mobile menu), Footer, cookie preferences, mobile booking bar
-    brand/             BrandMark ("STYLE" + red "86" tile)
+    brand/             BrandMark ("STYLE" + red "86" tile), BarberPole, PoleBand
+    scenes/            ToolsScene (3D barber tools, three.js renderer)
+    motion/            SmoothScroll (Lenis), Marquee, CountUp, RevealController
     sections/          Hero, QuickBook, Facts, Services, Gallery (Ispirazioni, lightbox),
                        Reviews, Booking, Contact, MapEmbed
     booking/           BookingForm
-    motion/            RevealController
   config/              site.ts (all business data), navigation.ts
   content/             services.ts, images.ts
   lib/booking/         validation, message formatting, rate limiter (pure, tested)
@@ -176,32 +178,44 @@ tests/                 node:test unit tests
 
 ## Design system
 
-Milanese graphic modernism: one grotesk typeface, ink on paper, a single barber-pole red.
-All tokens live in `src/app/globals.css` (`@theme`), with dark-mode values under
-`prefers-color-scheme: dark`.
+A night-time barbershop: one dark theme, one grotesk typeface, one barber-pole red,
+chrome in the 3D tools. Tokens live in `src/app/globals.css` (`@theme`), with computed
+contrast ratios at the top of the file.
 
-| Token | Light | Dark | Use |
-| --- | --- | --- | --- |
-| `paper` / `raised` | `#f1f0ed` / `#fafaf8` | `#131312` / `#1c1c1a` | Page and booking-panel backgrounds |
-| `ink` / `muted` | `#171716` / `#5b5a55` | `#edece8` / `#a6a59f` | Text |
-| `line` / `line-strong` | ink at 14% / 90% | ink at 16% / 85% | Rules, borders |
-| `red` | `#c92a1c` | `#e5432f` | Red text and marks |
-| `red-fill` | `#c92a1c` | `#c92a1c` | Primary button, "86" tile (light text on it: 5.2:1) |
-| `error` | `#b3230f` | `#ff8f80` | Form errors |
+| Token | Value | Use |
+| --- | --- | --- |
+| `paper` / `raised` | `#0e0e0d` / `#171715` | Page and booking-panel backgrounds |
+| `ink` / `muted` | `#efede8` / `#a3a29b` | Text |
+| `line` / `line-strong` | ink at 14% / 80% | Rules, borders |
+| `red` | `#ef4a36` | Red text and marks |
+| `red-fill` | `#c92a1c` | Primary button, "86" tile, pole stripes (light text on it: 5.2:1) |
+| `error` | `#ff8f80` | Form errors |
 
-Rules: one accent (red) reserved for the booking action and a few marks; square corners
-everywhere; one CTA label per intent ("Prenota" for booking, "Continua su WhatsApp" for
-the form submit); type hierarchy through Archivo's width axis (`type-display`, `type-h2`,
-`type-h3`, `type-label`, `type-figure`). Contrast ratios for every pairing are noted at the
-top of `globals.css`.
+Rules: square corners; one CTA label per intent ("Prenota" for booking, "Continua su
+WhatsApp" for the form submit); type hierarchy through Archivo's width axis; photos in
+black and white.
 
-Page order follows the customer's questions: who and where (hero with service chips,
-address, phone, hours, Google rating), what (services, inspiration photos), trust
-(reviews), action (booking form), how to get there (contacts and map).
+## Scroll story
 
-Booking entry points: the hero chips and each service's "Prenota" link preselect the
-service in the form (`src/lib/booking/events.ts`); on devices with a precise pointer the
-focus moves to the next empty field.
+| Scene | Component | What happens |
+| --- | --- | --- |
+| Hero | `sections/Hero.tsx` | Barber pole (`brand/BarberPole.tsx`) spins faster as you scroll; portrait and pole move at different speeds. Service chips + Prenota work immediately. |
+| Il mestiere | `scenes/ToolsScene.tsx`, `scenes/toolsRenderer.ts` | Pinned stage. 3D scissors snip, a straight razor unfolds, a comb sweeps; each tool is tied to a bookable service. |
+| Word band | `motion/Marquee.tsx` | "Taglio, Barba, Piega, Estetica" slide sideways with scroll. |
+| Servizi | `sections/Services.tsx` | From 768 px: pinned horizontal track with photo parallax. Phones: vertical list. |
+| Rest | Gallery, Reviews (count-up rating), Booking, Contact | Normal scrolling; booking never depends on an animation. |
+
+Behaviour:
+
+- **Smooth scroll:** Lenis on wheel and trackpad (`motion/SmoothScroll.tsx`); touch keeps
+  native scrolling. In-page links scroll with the same inertia and move focus.
+- **Reduced motion:** no Lenis, no pins, no scrubbing; the tools scene becomes a static
+  list with the three tools side by side.
+- **No JavaScript or no WebGL:** every section renders complete; the tools scene shows
+  its text without the 3D canvas.
+- **Keyboard:** focusing a link inside a pinned scene scrolls to where it is visible.
+- The 3D models are procedural (no downloaded model files); the render loop runs only
+  while the scene is on screen.
 
 ## Accessibility and motion
 
@@ -210,5 +224,5 @@ focus moves to the next empty field.
 - Skip link, visible focus rings, native `<dialog>` for the menu, lightbox and cookie
   preferences (focus trap, Escape, focus restore), labelled form controls and a
   focusable error summary.
-- Motion is limited to short entrances, state transitions and dialog fades, all gated by
-  `prefers-reduced-motion`. Content stays visible if JavaScript fails.
+- All scroll motion is gated by `prefers-reduced-motion`. Content stays visible if
+  JavaScript or WebGL fails.

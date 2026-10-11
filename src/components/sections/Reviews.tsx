@@ -1,5 +1,6 @@
 import { ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { site, type ReviewSource } from "@/config/site";
+import { CountUp } from "@/components/motion/CountUp";
 
 /**
  * "Dicono di noi". Nessuna testimonianza inventata:
@@ -8,7 +9,6 @@ import { site, type ReviewSource } from "@/config/site";
  * - ogni blocco rimanda alle recensioni originali.
  */
 
-const formatRating = (n: number) => n.toLocaleString("it-IT", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 function formatDate(iso: string) {
   const d = new Date(`${iso}T12:00:00Z`);
@@ -23,7 +23,7 @@ function SourceBlock({ source, delay }: { source: ReviewSource; delay: number })
       {hasRating ? (
         <>
           <p className="mt-5 flex items-baseline gap-3">
-            <span className="type-figure text-[clamp(4.5rem,10vw,7.5rem)] text-red">{formatRating(source.rating!)}</span>
+            <CountUp value={source.rating!} className="type-figure text-[clamp(4.5rem,10vw,7.5rem)] text-red" />
             <span className="text-lg font-medium">su 5</span>
           </p>
           <p className="mt-4 max-w-[24rem] text-muted">

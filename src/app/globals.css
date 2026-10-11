@@ -3,34 +3,33 @@
 /*
  * STYLE86 DESIGN SYSTEM
  * --------------------------------------------------------------------------
- * Direzione: modernismo grafico milanese (griglia, un solo carattere grotesk,
- * inchiostro su carta, un unico accento rosso "palo da barbiere").
+ * Direzione: bottega da barbiere notturna. Tema unico scuro, un solo
+ * carattere grotesk (Archivo, asse della larghezza), un unico accento rosso
+ * "palo da barbiere", acciaio cromato negli strumenti 3D.
  *
- * Contrasti calcolati (WCAG 2.2, su carta / su fondo rialzato):
- *   chiaro: inchiostro 15.7 / 17.2, secondario 6.1 / 6.6, rosso 4.8 / 5.2,
- *           errore 5.8 / 6.4, testo chiaro su rosso pieno 5.2
- *   scuro:  inchiostro 15.7 / 14.4, secondario 7.5 / 6.9, rosso 4.6 / 4.2
- *           (su fondo rialzato solo testo grande), errore 8.4 / 7.7,
- *           testo chiaro su rosso pieno 5.2
+ * Contrasti calcolati (WCAG 2.2, su fondo / su fondo rialzato):
+ *   testo 16.5 / 15.3, secondario 7.5 / 7.0, rosso testo 5.3 / 4.9,
+ *   errore 8.7 / 8.1, testo chiaro su rosso pieno 5.2.
  *
  * Regole fisse:
- *   - un solo accento (rosso), usato per l'azione principale e pochi segni;
+ *   - un solo accento (rosso), per l'azione principale, il palo e pochi segni;
  *   - angoli vivi ovunque (raggio 0): bottoni, campi, chip, immagini;
  *   - foto in bianco e nero, per unificare immagini di provenienza diversa;
- *   - tema unico per pagina, chiaro o scuro secondo il sistema.
+ *   - movimento legato allo scorrimento, mai necessario per prenotare.
  */
 @theme {
-  --color-paper: #f1f0ed;
-  --color-raised: #fafaf8;
-  --color-ink: #171716;
-  --color-muted: #5b5a55;
-  --color-line: rgb(23 23 22 / 0.14);
-  --color-line-strong: rgb(23 23 22 / 0.9);
-  --color-red: #c92a1c; /* rosso per testo e segni */
+  --color-paper: #0e0e0d;
+  --color-raised: #171715;
+  --color-ink: #efede8;
+  --color-muted: #a3a29b;
+  --color-line: rgb(239 237 232 / 0.14);
+  --color-line-strong: rgb(239 237 232 / 0.8);
+  --color-red: #ef4a36; /* rosso per testo e segni */
   --color-red-fill: #c92a1c; /* rosso pieno dietro testo chiaro: bottoni, tessera "86" */
   --color-red-press: #a8220f;
   --color-on-red: #fafaf8;
-  --color-error: #b3230f;
+  --color-error: #ff8f80;
+  --color-chrome: #d9d8d3;
 
   --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
 
@@ -40,27 +39,12 @@
   --breakpoint-xs: 25rem;
 }
 
-/* Tema scuro: stessi ruoli, valori invertiti. Il rosso pieno resta identico (testo chiaro 5.3:1);
-   il rosso usato come testo si schiarisce per restare leggibile sul fondo scuro. */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-paper: #131312;
-    --color-raised: #1c1c1a;
-    --color-ink: #edece8;
-    --color-muted: #a6a59f;
-    --color-line: rgb(237 236 232 / 0.16);
-    --color-line-strong: rgb(237 236 232 / 0.85);
-    --color-red: #e5432f;
-    --color-error: #ff8f80;
-  }
-}
-
 /* Livelli z: header 40, barra mobile 30, dialoghi nel top layer nativo. */
 
 @layer base {
   html {
     background-color: var(--color-paper);
-    color-scheme: light dark;
+    color-scheme: dark;
     scroll-padding-top: 5rem;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
@@ -69,9 +53,21 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    html {
+    html:not(.has-lenis) {
       scroll-behavior: smooth;
     }
+  }
+
+  /* Lenis: lo scorrimento nativo non deve aggiungere un secondo smorzamento. */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: clip;
   }
 
   body {
@@ -336,21 +332,290 @@
   }
   input[type="date"].field::-webkit-calendar-picker-indicator {
     cursor: pointer;
-  }
-  @media (prefers-color-scheme: dark) {
-    input[type="date"].field::-webkit-calendar-picker-indicator {
-      filter: invert(0.9);
-    }
+    filter: invert(0.9);
   }
 
   /* Fotografia: bianco e nero per tutte le immagini, reali o di repertorio. */
   .photo {
-    filter: grayscale(1) contrast(1.06);
+    filter: grayscale(1) contrast(1.08) brightness(0.88);
   }
-  @media (prefers-color-scheme: dark) {
-    .photo {
-      filter: grayscale(1) contrast(1.06) brightness(0.9);
+
+  /*
+   * Palo da barbiere. Le strisce sono una piastrella diagonale che scorre in
+   * verticale: l'animazione continua (--pole-idle) e lo scorrimento della
+   * pagina (--sy, pubblicato da SmoothScroll) si sommano.
+   */
+  .pole {
+    --pole-tile: 3.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: var(--pole-width, 3.5rem);
+    height: 100%;
+  }
+  .pole-finial {
+    width: 46%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff 0 8%, #c9c8c2 30%, #5d5c57 70%, #2a2a28 100%);
+  }
+  .pole-cap {
+    width: 100%;
+    height: 1.4rem;
+    flex: none;
+    margin-top: -2px;
+    border-radius: 40% 40% 0 0 / 70% 70% 0 0;
+    background: linear-gradient(90deg, #3b3b38 0%, #8d8c86 18%, #f5f4f0 38%, #b8b7b1 55%, #5b5a56 78%, #2b2b29 100%);
+  }
+  .pole-cap-bottom {
+    margin-top: 0;
+    border-radius: 0 0 40% 40% / 0 0 70% 70%;
+  }
+  .pole-glass {
+    position: relative;
+    flex: 1;
+    width: 84%;
+    overflow: hidden;
+    background: #efede8;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08);
+  }
+  .pole-stripes {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      135deg,
+      var(--color-red-fill) 0 25%,
+      #efede8 25% 50%,
+      var(--color-red-fill) 50% 75%,
+      #efede8 75% 100%
+    );
+    background-size: var(--pole-tile) var(--pole-tile);
+    background-position: 0 calc(var(--pole-idle) + var(--sy, 0) * 0.45px);
+  }
+  .pole-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgb(0 0 0 / 0.62) 0%,
+      rgb(0 0 0 / 0.12) 26%,
+      rgb(255 255 255 / 0.34) 40%,
+      rgb(255 255 255 / 0) 54%,
+      rgb(0 0 0 / 0.28) 78%,
+      rgb(0 0 0 / 0.7) 100%
+    );
+  }
+
+  .pole-band {
+    height: 0.625rem;
+    background-image: linear-gradient(
+      135deg,
+      var(--color-red-fill) 0 25%,
+      #efede8 25% 50%,
+      var(--color-red-fill) 50% 75%,
+      #efede8 75% 100%
+    );
+    background-size: 1.25rem 1.25rem;
+    background-position: calc(var(--sy, 0) * -0.35px) 0;
+  }
+
+  /*
+   * Scena "Il mestiere". Senza scorrimento animato (movimento ridotto, niente
+   * JavaScript) e' un elenco statico; con .is-scrub diventa un palco fissato
+   * a tutto schermo in cui i passaggi si alternano.
+   */
+  .tools {
+    position: relative;
+    padding-block: 5rem;
+  }
+  .tools-stage {
+    position: relative;
+  }
+  .tools-canvas {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    margin-block: 2rem;
+  }
+  @media (min-width: 768px) {
+    .tools-canvas {
+      aspect-ratio: 16 / 7;
     }
+  }
+  .tools:not(.has-webgl) .tools-canvas {
+    display: none;
+  }
+  /* Elenco statico: prima il testo, poi i tre strumenti affiancati. */
+  .tools:not(.is-scrub) .tools-stage {
+    display: flex;
+    flex-direction: column;
+  }
+  .tools:not(.is-scrub) .tools-canvas {
+    order: 1;
+    margin-bottom: 0;
+  }
+
+  .tools-steps {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+  }
+  @media (min-width: 768px) {
+    .tools-steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .tools-step {
+    border-top: 1px solid var(--color-line-strong);
+    padding-top: 1.25rem;
+  }
+  .tools-progress {
+    display: none;
+  }
+
+  .tools.is-scrub {
+    padding-block: 0;
+  }
+  .tools.is-scrub .tools-stage {
+    height: 100svh;
+    overflow: hidden;
+  }
+  .tools.is-scrub .tools-canvas {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    margin: 0;
+    aspect-ratio: auto;
+  }
+  .tools.is-scrub .tools-copy {
+    position: relative;
+    display: grid;
+    height: 100%;
+    grid-template-rows: auto 1fr auto;
+    padding-top: 6rem;
+    padding-bottom: 1.75rem;
+    pointer-events: none;
+  }
+  .tools.is-scrub .tools-steps {
+    grid-template-columns: none;
+    align-content: end;
+    margin-top: 0;
+    gap: 0;
+  }
+  .tools.is-scrub .tools-step {
+    grid-area: 1 / 1;
+    border-top: 0;
+    padding-top: 0;
+    opacity: 0;
+    transform: translate3d(0, 1.25rem, 0);
+    transition:
+      opacity 0.45s var(--ease-out-quart),
+      transform 0.6s var(--ease-out-expo);
+  }
+  .tools.is-scrub .tools-step[data-active] {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+  .tools.is-scrub .tools-progress {
+    display: block;
+    height: 0.625rem;
+    margin-top: 1.5rem;
+    background: var(--color-line);
+  }
+  .tools-progress-bar {
+    display: block;
+    height: 100%;
+    clip-path: inset(0 100% 0 0);
+  }
+  /* Telefono: strumenti in alto, testo in basso su fondo pieno sfumato. */
+  @media (max-width: 639.98px) {
+    /* Spazio per la barra di prenotazione fissa in basso sui telefoni. */
+    .tools.is-scrub .tools-copy {
+      padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+    }
+  }
+  @media (max-width: 767.98px) {
+    .tools.is-scrub .tools-steps {
+      margin-inline: -1.25rem;
+      padding: 3rem 1.25rem 0;
+      background: linear-gradient(to top, var(--color-paper) 70%, transparent);
+    }
+  }
+  @media (min-width: 768px) {
+    .tools.is-scrub .tools-steps {
+      align-content: center;
+      max-width: 42%;
+    }
+    .tools.is-scrub .tools-copy {
+      padding-top: 7rem;
+      padding-bottom: 2.5rem;
+    }
+  }
+
+  /*
+   * Servizi: elenco (telefono, movimento ridotto) oppure binario orizzontale
+   * fissato (.is-track, da 768 px) che scorre con lo scorrimento verticale.
+   */
+  .services {
+    padding-block: 5rem;
+  }
+  .services-track {
+    display: grid;
+    gap: 3.5rem;
+    max-width: 1360px;
+    margin: 2.5rem auto 0;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .services-track {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 3rem 2rem;
+      padding-inline: 2rem;
+    }
+  }
+  .services-note {
+    align-self: start;
+    border-top: 1px solid var(--color-line-strong);
+    padding-top: 1.5rem;
+  }
+
+  .services.is-track {
+    padding-block: 0;
+  }
+  .services.is-track .services-inner {
+    display: flex;
+    height: 100svh;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 4.5rem;
+    overflow: hidden;
+  }
+  .services.is-track .services-track {
+    display: flex;
+    width: max-content;
+    max-width: none;
+    gap: 2.5rem;
+    margin: 2rem 0 0;
+    padding-inline: max(2.5rem, calc((100vw - 1360px) / 2 + 2.5rem));
+    will-change: transform;
+  }
+  .services.is-track .services-panel {
+    width: clamp(18rem, 27vw, 25rem);
+    flex: none;
+  }
+  .services.is-track .services-photo {
+    aspect-ratio: auto;
+    height: min(46svh, 27rem);
+  }
+  .services.is-track .services-note {
+    align-self: center;
+    width: clamp(16rem, 22vw, 20rem);
+  }
+
+  .marquee-outline {
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--color-ink);
   }
 
   /* Riga della griglia: filetto pieno sopra a un blocco di contenuto. */
@@ -364,7 +629,22 @@
  * Le comparse si attivano dopo l'idratazione (RevealController): senza
  * JavaScript, o con movimento ridotto, tutto e' visibile da subito.
  */
+@property --pole-idle {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
+  .pole-stripes {
+    animation: pole-idle 2.4s linear infinite;
+  }
+  @keyframes pole-idle {
+    to {
+      --pole-idle: 3.5rem;
+    }
+  }
+
   .reveal-ready [data-reveal] {
     transition:
       opacity 0.6s var(--ease-out-expo),

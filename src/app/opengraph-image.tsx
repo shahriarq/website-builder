@@ -24,9 +24,9 @@ export default async function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#f1f0ed",
+          background: "#0e0e0d",
           padding: "64px 72px",
-          color: "#171716",
+          color: "#efede8",
           fontFamily: "Archivo",
         }}
       >
@@ -34,11 +34,11 @@ export default async function OpenGraphImage() {
           <span>STYLE</span>
           <span style={{ marginLeft: 12, padding: "8px 12px 6px", background: "#c92a1c", color: "#fafaf8" }}>86</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid #171716", paddingTop: 36 }}>
+        <div style={{ display: "flex", flexDirection: "column", borderTop: "2px solid #efede8", paddingTop: 36 }}>
           <div style={{ display: "flex", fontFamily: "Archivo Expanded", fontSize: 84, lineHeight: 1, letterSpacing: -3 }}>
             Il salone di Via Ornato.
           </div>
-          <div style={{ display: "flex", marginTop: 26, fontSize: 32, color: "#5b5a55" }}>
+          <div style={{ display: "flex", marginTop: 26, fontSize: 32, color: "#a3a29b" }}>
             Parrucchieri &amp; Estetica, {site.address.full}
           </div>
         </div>
