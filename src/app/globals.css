@@ -1,0 +1,428 @@
+@import "tailwindcss";
+
+/*
+ * STYLE86 DESIGN TOKENS
+ * Palette dal brief. Contrasti verificati (WCAG 2.2):
+ *   ivory su obsidian 13.9:1 | brass su obsidian 7.9:1 | brass su charcoal 6.5:1
+ *   obsidian su ivory 13.9:1 | brass-deep su ivory 4.6:1 | olive-deep su ivory 5.3:1
+ *   mist su obsidian 7.2:1 | mist su charcoal 5.9:1
+ * Brass e olive pieni NON si usano per testo piccolo su ivory (1.8:1 e 3.5:1).
+ *
+ * Raggi: superfici e immagini a spigolo vivo; controlli (bottoni, campi) 2px.
+ */
+@theme {
+  --color-obsidian: #171715;
+  --color-charcoal: #292824;
+  --color-brass: #c8a77b;
+  --color-brass-deep: #7a5f3a;
+  --color-ivory: #e9e2d7;
+  --color-olive: #77796b;
+  --color-olive-deep: #5a5c4f;
+  --color-mist: #a9a397;
+  --color-error-light: #f0a08f;
+  --color-error-deep: #9b2c1f;
+
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-control: 2px;
+  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --breakpoint-xs: 25rem;
+}
+
+/* Livelli z documentati: header 40, barra mobile 30, dialoghi = top layer nativo. */
+
+@layer base {
+  html {
+    background-color: var(--color-obsidian);
+    color-scheme: light;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: var(--color-ivory);
+    color: var(--color-obsidian);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background-color: var(--color-brass);
+    color: var(--color-obsidian);
+  }
+
+  /* Superfici: impostano colore del testo e dell'anello di focus. */
+  .surface-dark {
+    --focus: var(--color-brass);
+    color: var(--color-ivory);
+  }
+  .surface-light {
+    --focus: var(--color-obsidian);
+    color: var(--color-obsidian);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus, currentColor);
+    outline-offset: 3px;
+  }
+
+  dialog {
+    max-width: none;
+    max-height: none;
+  }
+
+  /* Blocca lo scorrimento della pagina quando un dialogo modale e' aperto. */
+  html:has(dialog[open][data-scroll-lock]) {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.04;
+    text-wrap: balance;
+  }
+
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    transition: background-size 0.5s var(--ease-editorial);
+  }
+  @media (hover: hover) {
+    .link-underline:hover {
+      background-size: 0% 1px;
+      background-position: 100% 100%;
+    }
+  }
+
+  /* Bottoni. Unica forma: rettangolo con raggio 2px. */
+  .btn {
+    position: relative;
+    display: inline-flex;
+    min-height: 3rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    border-radius: var(--radius-control);
+    padding-inline: 1.75rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    isolation: isolate;
+    overflow: hidden;
+    transition:
+      color 0.45s var(--ease-editorial),
+      border-color 0.45s var(--ease-editorial),
+      transform 0.2s var(--ease-out-quart);
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.5s var(--ease-editorial);
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn .btn-icon {
+    transition: transform 0.45s var(--ease-editorial);
+  }
+  @media (hover: hover) {
+    .btn:hover::before {
+      transform: scaleY(1);
+    }
+    .btn:hover .btn-icon {
+      transform: translateX(4px);
+    }
+  }
+  .btn[disabled],
+  .btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  /* Primario su superficie scura: brass pieno, testo obsidian (7.9:1). */
+  .btn-brass {
+    background-color: var(--color-brass);
+    color: var(--color-obsidian);
+  }
+  .btn-brass::before {
+    background-color: var(--color-ivory);
+  }
+
+  /* Primario su superficie chiara: obsidian pieno, testo ivory (13.9:1). */
+  .btn-ink {
+    background-color: var(--color-obsidian);
+    color: var(--color-ivory);
+  }
+  .btn-ink::before {
+    background-color: var(--color-charcoal);
+  }
+
+  /* Secondario su scuro: filetto ivory, riempimento ivory al passaggio. */
+  .btn-outline-light {
+    border: 1px solid rgb(233 226 215 / 0.45);
+    color: var(--color-ivory);
+  }
+  .btn-outline-light::before {
+    background-color: var(--color-ivory);
+  }
+  @media (hover: hover) {
+    .btn-outline-light:hover {
+      color: var(--color-obsidian);
+      border-color: var(--color-ivory);
+    }
+  }
+
+  /* Secondario su chiaro. */
+  .btn-outline-dark {
+    border: 1px solid rgb(23 23 21 / 0.4);
+    color: var(--color-obsidian);
+  }
+  .btn-outline-dark::before {
+    background-color: var(--color-obsidian);
+  }
+  @media (hover: hover) {
+    .btn-outline-dark:hover {
+      color: var(--color-ivory);
+      border-color: var(--color-obsidian);
+    }
+  }
+
+  /* Campi del modulo (su superficie charcoal). */
+  .field {
+    display: block;
+    width: 100%;
+    min-height: 3.25rem;
+    border-radius: var(--radius-control);
+    border: 1px solid rgb(233 226 215 / 0.28);
+    background-color: rgb(23 23 21 / 0.55);
+    padding: 0.75rem 1rem;
+    color: var(--color-ivory);
+    font-size: 1rem;
+    line-height: 1.4;
+    transition:
+      border-color 0.3s var(--ease-editorial),
+      background-color 0.3s var(--ease-editorial);
+  }
+  .field::placeholder {
+    color: var(--color-mist);
+    opacity: 1;
+  }
+  .field:hover {
+    border-color: rgb(233 226 215 / 0.5);
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-brass);
+    outline-offset: 1px;
+    border-color: var(--color-brass);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--color-error-light);
+  }
+  select.field {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--color-brass) 50%),
+      linear-gradient(135deg, var(--color-brass) 50%, transparent 50%);
+    background-position:
+      calc(100% - 1.35rem) 55%,
+      calc(100% - 1rem) 55%;
+    background-size: 0.35rem 0.35rem;
+    background-repeat: no-repeat;
+    padding-right: 2.75rem;
+  }
+  select.field option {
+    background-color: var(--color-charcoal);
+    color: var(--color-ivory);
+  }
+  input[type="date"].field::-webkit-calendar-picker-indicator {
+    filter: invert(0.85) sepia(0.3);
+    cursor: pointer;
+  }
+}
+
+/*
+ * MOVIMENTO
+ * Tutto il movimento vive sotto prefers-reduced-motion: no-preference.
+ * Le comparse allo scorrimento si attivano solo quando RevealController
+ * aggiunge .reveal-ready a <html> dopo l'idratazione: se JavaScript manca o
+ * fallisce, il contenuto resta sempre visibile.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  /* Ingresso dell'hero al caricamento: solo transform e opacity. */
+  .hero-rise {
+    animation: hero-rise 1.1s var(--ease-editorial) both;
+    animation-delay: calc(var(--d, 0) * 1ms);
+  }
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1.75rem, 0);
+    }
+  }
+
+  /* Maschera solo da desktop: su mobile la foto e' l'elemento LCP e deve
+     comparire subito; resta solo l'assestamento (transform). */
+  @media (min-width: 1024px) {
+    .hero-reveal {
+      animation: hero-reveal 1.6s var(--ease-editorial) both;
+      animation-delay: 120ms;
+    }
+  }
+  @keyframes hero-reveal {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  .hero-reveal-img {
+    animation: hero-settle 2.2s var(--ease-editorial) both;
+    animation-delay: 120ms;
+  }
+  @keyframes hero-settle {
+    from {
+      transform: scale(1.14);
+    }
+    to {
+      transform: scale(1.06);
+    }
+  }
+
+  /* Comparsa allo scorrimento (attiva solo dopo l'idratazione, vedi RevealController). */
+  .reveal-ready [data-reveal] {
+    transition:
+      opacity 0.9s var(--ease-editorial),
+      transform 1.1s var(--ease-editorial);
+    transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+  }
+  .reveal-ready [data-reveal]:not(.is-visible) {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  .reveal-ready [data-reveal="mask"] {
+    transition: clip-path 1.3s var(--ease-editorial);
+    transition-delay: calc(var(--reveal-delay, 0) * 1ms);
+  }
+  .reveal-ready [data-reveal="mask"]:not(.is-visible) {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  /* Parallasse con animazioni guidate dallo scorrimento: zero JavaScript. */
+  @supports (animation-timeline: view()) {
+    @media (min-width: 768px) {
+      .parallax-hero {
+        animation: parallax-hero linear both;
+        animation-timeline: scroll(root block);
+        animation-range: 0 100vh;
+      }
+      @keyframes parallax-hero {
+        from {
+          transform: translate3d(0, 0, 0);
+        }
+        to {
+          transform: translate3d(0, 9%, 0);
+        }
+      }
+
+      .parallax-soft {
+        animation: parallax-soft linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+      @keyframes parallax-soft {
+        from {
+          transform: translate3d(0, -4%, 0) scale(1.08);
+        }
+        to {
+          transform: translate3d(0, 4%, 0) scale(1.08);
+        }
+      }
+    }
+  }
+}
+
+/* Dispositivi lenti o risparmio dati: niente parallasse. */
+.lite .parallax-hero,
+.lite .parallax-soft {
+  animation: none !important;
+}
+
+/* Menu mobile: dissolvenza del dialogo e ingresso sfalsato delle voci. */
+@media (prefers-reduced-motion: no-preference) {
+  .menu-dialog[open] {
+    animation: menu-in 0.5s var(--ease-editorial) both;
+  }
+  .menu-dialog[open] .menu-item {
+    animation: menu-item-in 0.7s var(--ease-editorial) both;
+    animation-delay: calc(120ms + var(--i, 0) * 55ms);
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes menu-item-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1rem, 0);
+    }
+  }
+}
+
+/* Lightbox: dissolvenza del dialogo e dell'immagine al cambio. */
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox[open] {
+    animation: menu-in 0.4s var(--ease-editorial) both;
+  }
+  .lightbox-image {
+    animation: lightbox-image-in 0.6s var(--ease-editorial) both;
+  }
+  @keyframes lightbox-image-in {
+    from {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+  }
+}
