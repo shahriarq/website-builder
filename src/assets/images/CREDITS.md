@@ -4,8 +4,8 @@ Tutte le fotografie attuali sono **immagini di repertorio illustrative**. Non ri
 Style86, il suo staff o i suoi clienti, e il sito le segnala come "Immagini a scopo illustrativo".
 Sostituiscile con foto reali del salone appena disponibili (vedi `src/content/images.ts`).
 
-Ogni foto e' stata ridimensionata e trattata con la stessa gradazione calda e leggermente
-desaturata, per coerenza con la palette del brand. Le licenze sotto consentono uso commerciale e
+Ogni foto e' stata ridimensionata; sul sito tutte le immagini sono mostrate in bianco e nero
+(filtro CSS `.photo`), cosi' anche le future foto reali avranno lo stesso trattamento. Le licenze sotto consentono uso commerciale e
 modifiche senza obbligo di attribuzione; i crediti sono riportati per trasparenza.
 
 | File | Autore | Licenza | Origine |
@@ -17,14 +17,10 @@ modifiche senza obbligo di attribuzione; i crediti sono riportati per trasparenz
 | gallery-3.jpg | Salha Frija | Unsplash License | ID dal nome file: dsQoLK2N7DQ2 |
 | gallery-5.jpg | Jessica Felicio | Unsplash License | https://unsplash.com/photos/_cvwXhGqG-o |
 | gallery-6.jpg | George Bohunicky | Unsplash License | https://unsplash.com/photos/qJKT2rMU0VU |
-| intro-detail.jpg | Nikolaos Dimou | Pexels License | (1) |
 | service-cut.jpg | Thgusstavo Santana | Pexels License | (1) |
 | service-beard.jpg | Thgusstavo Santana | Pexels License | (1) |
 | gallery-2.jpg | Thgusstavo Santana | Pexels License | (1) |
 | gallery-4.jpg | Alex Urezkov | Pexels License | (1) |
-| experience-tools.jpg | Gonzalo Guzman | Pexels License | (1) |
-| experience-mirror.jpg | Lisa Fotios | Pexels License | (1) |
-| experience-interior.jpg | Theo Rivierenlaan | Pixabay Content License | (1) |
 
 Le foto Unsplash provengono dal repository open source `jessefrench/wanderlust`, che conserva i nomi
 file originali di Unsplash (autore e ID della foto).

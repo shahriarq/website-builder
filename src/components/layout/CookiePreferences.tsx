@@ -27,37 +27,37 @@ export function CookiePreferences() {
 
   return (
     <>
-      <button type="button" onClick={open} className="link-underline text-left">
+      <button type="button" onClick={open} className="link inline-flex min-h-11 items-center text-left">
         Preferenze cookie
       </button>
       <dialog
         ref={ref}
         aria-labelledby="cookie-title"
         data-scroll-lock
-        className="surface-light m-auto w-[calc(100%-2.5rem)] max-w-lg rounded-[var(--radius-control)] bg-ivory p-0 text-obsidian backdrop:bg-obsidian/70"
+        className="m-auto w-[calc(100%-2.5rem)] max-w-lg border border-line-strong bg-paper p-0 text-ink backdrop:bg-[#171716]/60"
       >
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-4">
-            <h2 id="cookie-title" className="display text-[2rem] leading-tight">
+            <h2 id="cookie-title" className="type-h3">
               Preferenze cookie
             </h2>
             <button
               type="button"
               onClick={() => ref.current?.close()}
-              className="-mt-1 -mr-2 inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--radius-control)] hover:bg-obsidian/5"
+              className="-mt-2 -mr-2 inline-flex size-11 shrink-0 items-center justify-center hover:bg-ink hover:text-paper"
             >
-              <XIcon size={22} weight="light" aria-hidden="true" />
+              <XIcon size={22} aria-hidden="true" />
               <span className="sr-only">Chiudi</span>
             </button>
           </div>
-          <p className="mt-4 text-sm leading-relaxed text-charcoal">
+          <p className="mt-4 text-[0.9375rem] text-muted">
             Questo sito non usa cookie di profilazione né strumenti di analisi. Puoi scegliere se caricare i contenuti
             esterni qui sotto.
           </p>
-          <div className="mt-6 grid gap-4 border-t border-obsidian/15 pt-6">
+          <div className="mt-6 grid gap-4 border-t border-line pt-6">
             <div className="flex items-start gap-3">
-              <input id="pref-tecnici" type="checkbox" checked disabled className="mt-1 size-4 accent-obsidian" />
-              <label htmlFor="pref-tecnici" className="text-sm leading-relaxed">
+              <input id="pref-tecnici" type="checkbox" checked disabled className="mt-0.5 size-5 accent-ink" />
+              <label htmlFor="pref-tecnici" className="text-[0.9375rem] leading-relaxed">
                 <span className="font-semibold">Funzionamento del sito.</span> Necessario, sempre attivo. Non salva dati
                 personali.
               </label>
@@ -71,19 +71,19 @@ export function CookiePreferences() {
                   setMaps(e.target.checked);
                   setSaved(false);
                 }}
-                className="mt-1 size-4 cursor-pointer accent-obsidian"
+                className="mt-0.5 size-5 cursor-pointer accent-ink"
               />
-              <label htmlFor="pref-mappe" className="cursor-pointer text-sm leading-relaxed">
+              <label htmlFor="pref-mappe" className="cursor-pointer text-[0.9375rem] leading-relaxed">
                 <span className="font-semibold">Google Maps.</span> Carica automaticamente la mappa nella sezione
                 Contatti. Google può impostare cookie propri.
               </label>
             </div>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4">
-            <button type="button" onClick={save} className="btn btn-ink">
+            <button type="button" onClick={save} className="btn btn-secondary">
               Salva le preferenze
             </button>
-            <p className="text-sm text-olive-deep" aria-live="polite">
+            <p className="text-[0.9375rem] text-muted" aria-live="polite">
               {saved ? "Preferenze salvate." : ""}
             </p>
           </div>

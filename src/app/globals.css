@@ -1,43 +1,66 @@
 @import "tailwindcss";
 
 /*
- * STYLE86 DESIGN TOKENS
- * Palette dal brief. Contrasti verificati (WCAG 2.2):
- *   ivory su obsidian 13.9:1 | brass su obsidian 7.9:1 | brass su charcoal 6.5:1
- *   obsidian su ivory 13.9:1 | brass-deep su ivory 4.6:1 | olive-deep su ivory 5.3:1
- *   mist su obsidian 7.2:1 | mist su charcoal 5.9:1
- * Brass e olive pieni NON si usano per testo piccolo su ivory (1.8:1 e 3.5:1).
+ * STYLE86 DESIGN SYSTEM
+ * --------------------------------------------------------------------------
+ * Direzione: modernismo grafico milanese (griglia, un solo carattere grotesk,
+ * inchiostro su carta, un unico accento rosso "palo da barbiere").
  *
- * Raggi: superfici e immagini a spigolo vivo; controlli (bottoni, campi) 2px.
+ * Contrasti calcolati (WCAG 2.2, su carta / su fondo rialzato):
+ *   chiaro: inchiostro 15.7 / 17.2, secondario 6.1 / 6.6, rosso 4.8 / 5.2,
+ *           errore 5.8 / 6.4, testo chiaro su rosso pieno 5.2
+ *   scuro:  inchiostro 15.7 / 14.4, secondario 7.5 / 6.9, rosso 4.6 / 4.2
+ *           (su fondo rialzato solo testo grande), errore 8.4 / 7.7,
+ *           testo chiaro su rosso pieno 5.2
+ *
+ * Regole fisse:
+ *   - un solo accento (rosso), usato per l'azione principale e pochi segni;
+ *   - angoli vivi ovunque (raggio 0): bottoni, campi, chip, immagini;
+ *   - foto in bianco e nero, per unificare immagini di provenienza diversa;
+ *   - tema unico per pagina, chiaro o scuro secondo il sistema.
  */
 @theme {
-  --color-obsidian: #171715;
-  --color-charcoal: #292824;
-  --color-brass: #c8a77b;
-  --color-brass-deep: #7a5f3a;
-  --color-ivory: #e9e2d7;
-  --color-olive: #77796b;
-  --color-olive-deep: #5a5c4f;
-  --color-mist: #a9a397;
-  --color-error-light: #f0a08f;
-  --color-error-deep: #9b2c1f;
+  --color-paper: #f1f0ed;
+  --color-raised: #fafaf8;
+  --color-ink: #171716;
+  --color-muted: #5b5a55;
+  --color-line: rgb(23 23 22 / 0.14);
+  --color-line-strong: rgb(23 23 22 / 0.9);
+  --color-red: #c92a1c; /* rosso per testo e segni */
+  --color-red-fill: #c92a1c; /* rosso pieno dietro testo chiaro: bottoni, tessera "86" */
+  --color-red-press: #a8220f;
+  --color-on-red: #fafaf8;
+  --color-error: #b3230f;
 
-  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
-  --font-sans: var(--font-manrope), "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
 
-  --radius-control: 2px;
-  --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   --breakpoint-xs: 25rem;
 }
 
-/* Livelli z documentati: header 40, barra mobile 30, dialoghi = top layer nativo. */
+/* Tema scuro: stessi ruoli, valori invertiti. Il rosso pieno resta identico (testo chiaro 5.3:1);
+   il rosso usato come testo si schiarisce per restare leggibile sul fondo scuro. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: #131312;
+    --color-raised: #1c1c1a;
+    --color-ink: #edece8;
+    --color-muted: #a6a59f;
+    --color-line: rgb(237 236 232 / 0.16);
+    --color-line-strong: rgb(237 236 232 / 0.85);
+    --color-red: #e5432f;
+    --color-error: #ff8f80;
+  }
+}
+
+/* Livelli z: header 40, barra mobile 30, dialoghi nel top layer nativo. */
 
 @layer base {
   html {
-    background-color: var(--color-obsidian);
-    color-scheme: light;
+    background-color: var(--color-paper);
+    color-scheme: light dark;
     scroll-padding-top: 5rem;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
@@ -52,31 +75,32 @@
   }
 
   body {
-    background-color: var(--color-ivory);
-    color: var(--color-obsidian);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-variation-settings: "wdth" 100;
     overflow-x: clip;
   }
 
-  ::selection {
-    background-color: var(--color-brass);
-    color: var(--color-obsidian);
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 
-  /* Superfici: impostano colore del testo e dell'anello di focus. */
-  .surface-dark {
-    --focus: var(--color-brass);
-    color: var(--color-ivory);
+  p {
+    text-wrap: pretty;
   }
-  .surface-light {
-    --focus: var(--color-obsidian);
-    color: var(--color-obsidian);
+
+  ::selection {
+    background-color: var(--color-red-fill);
+    color: var(--color-on-red);
   }
 
   :focus-visible {
-    outline: 2px solid var(--focus, currentColor);
+    outline: 2px solid var(--color-ink);
     outline-offset: 3px;
   }
 
@@ -85,315 +109,300 @@
     max-height: none;
   }
 
-  /* Blocca lo scorrimento della pagina quando un dialogo modale e' aperto. */
   html:has(dialog[open][data-scroll-lock]) {
     overflow: hidden;
   }
 }
 
 @layer components {
-  .wordmark {
-    font-family: var(--font-display);
-    font-weight: 500;
-    letter-spacing: 0.04em;
+  /* Scala tipografica. La larghezza (asse wdth) separa i livelli, non solo il corpo. */
+  .type-display {
+    font-size: clamp(2.6rem, 6.4vw, 5.9rem);
+    font-weight: 760;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    letter-spacing: -0.035em;
+    line-height: 0.96;
+  }
+  .type-h2 {
+    font-size: clamp(2rem, 4.3vw, 3.6rem);
+    font-weight: 720;
+    font-stretch: 122%;
+    font-variation-settings: "wdth" 122;
+    letter-spacing: -0.03em;
     line-height: 1;
   }
-
-  .display {
-    font-family: var(--font-display);
-    font-weight: 400;
+  .type-h3 {
+    font-size: clamp(1.35rem, 2vw, 1.7rem);
+    font-weight: 650;
+    font-stretch: 112%;
+    font-variation-settings: "wdth" 112;
     letter-spacing: -0.015em;
-    line-height: 1.04;
-    text-wrap: balance;
+    line-height: 1.15;
   }
-
-  .eyebrow {
-    font-size: 0.75rem;
+  .type-label {
+    font-size: 0.8125rem;
     font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    letter-spacing: 0.005em;
+    color: var(--color-muted);
+  }
+  .type-figure {
+    font-weight: 780;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
-  .link-underline {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 100% 1px;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-    padding-bottom: 2px;
-    transition: background-size 0.5s var(--ease-editorial);
-  }
-  @media (hover: hover) {
-    .link-underline:hover {
-      background-size: 0% 1px;
-      background-position: 100% 100%;
-    }
-  }
-
-  /* Bottoni. Unica forma: rettangolo con raggio 2px. */
-  .btn {
-    position: relative;
+  /* Marchio: "STYLE" + tessera rossa "86". */
+  .brand-mark {
     display: inline-flex;
-    min-height: 3rem;
+    align-items: center;
+    font-weight: 780;
+    font-stretch: 125%;
+    font-variation-settings: "wdth" 125;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  /* Box ridotto all'altezza delle maiuscole: la tessera e' centrata sulle lettere. */
+  .brand-mark > span {
+    text-box: trim-both cap alphabetic;
+  }
+  .brand-mark .brand-num {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.18em;
+    padding: 0.16em 0.18em;
+    background-color: var(--color-red-fill);
+    color: var(--color-on-red);
+    letter-spacing: -0.04em;
+  }
+
+  /* Bottoni: rettangoli netti, una sola azione principale (rossa). */
+  .btn {
+    display: inline-flex;
+    min-height: 3.25rem;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    border-radius: var(--radius-control);
-    padding-inline: 1.75rem;
-    font-size: 0.9375rem;
-    font-weight: 600;
-    letter-spacing: 0.01em;
+    gap: 0.6rem;
+    padding-inline: 1.5rem;
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: 0.005em;
     white-space: nowrap;
-    isolation: isolate;
-    overflow: hidden;
+    border: 1px solid transparent;
     transition:
-      color 0.45s var(--ease-editorial),
-      border-color 0.45s var(--ease-editorial),
-      transform 0.2s var(--ease-out-quart);
-  }
-  .btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    transform: scaleY(0);
-    transform-origin: bottom;
-    transition: transform 0.5s var(--ease-editorial);
+      background-color 0.2s var(--ease-out-quart),
+      color 0.2s var(--ease-out-quart),
+      border-color 0.2s var(--ease-out-quart),
+      transform 0.12s var(--ease-out-quart);
   }
   .btn:active {
-    transform: scale(0.98);
+    transform: translateY(1px);
   }
   .btn .btn-icon {
-    transition: transform 0.45s var(--ease-editorial);
+    transition: transform 0.25s var(--ease-out-quart);
   }
   @media (hover: hover) {
-    .btn:hover::before {
-      transform: scaleY(1);
-    }
     .btn:hover .btn-icon {
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
   }
-  .btn[disabled],
-  .btn[aria-disabled="true"] {
+  .btn[disabled] {
     cursor: not-allowed;
-    opacity: 0.7;
+    opacity: 0.65;
   }
 
-  /* Primario su superficie scura: brass pieno, testo obsidian (7.9:1). */
-  .btn-brass {
-    background-color: var(--color-brass);
-    color: var(--color-obsidian);
-  }
-  .btn-brass::before {
-    background-color: var(--color-ivory);
-  }
-
-  /* Primario su superficie chiara: obsidian pieno, testo ivory (13.9:1). */
-  .btn-ink {
-    background-color: var(--color-obsidian);
-    color: var(--color-ivory);
-  }
-  .btn-ink::before {
-    background-color: var(--color-charcoal);
-  }
-
-  /* Secondario su scuro: filetto ivory, riempimento ivory al passaggio. */
-  .btn-outline-light {
-    border: 1px solid rgb(233 226 215 / 0.45);
-    color: var(--color-ivory);
-  }
-  .btn-outline-light::before {
-    background-color: var(--color-ivory);
+  .btn-primary {
+    background-color: var(--color-red-fill);
+    color: var(--color-on-red);
   }
   @media (hover: hover) {
-    .btn-outline-light:hover {
-      color: var(--color-obsidian);
-      border-color: var(--color-ivory);
+    .btn-primary:hover {
+      background-color: var(--color-red-press);
     }
   }
 
-  /* Secondario su chiaro. */
-  .btn-outline-dark {
-    border: 1px solid rgb(23 23 21 / 0.4);
-    color: var(--color-obsidian);
-  }
-  .btn-outline-dark::before {
-    background-color: var(--color-obsidian);
+  .btn-secondary {
+    border-color: var(--color-line-strong);
+    color: var(--color-ink);
   }
   @media (hover: hover) {
-    .btn-outline-dark:hover {
-      color: var(--color-ivory);
-      border-color: var(--color-obsidian);
+    .btn-secondary:hover {
+      background-color: var(--color-ink);
+      color: var(--color-paper);
     }
   }
 
-  /* Campi del modulo (su superficie charcoal). */
+  /* Link testuale con sottolineatura che si accorcia al passaggio. */
+  .link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: var(--color-line-strong);
+    transition: text-decoration-color 0.2s var(--ease-out-quart), color 0.2s var(--ease-out-quart);
+  }
+  @media (hover: hover) {
+    .link:hover {
+      color: var(--color-red);
+      text-decoration-color: var(--color-red);
+    }
+  }
+
+  /* Variante silenziosa per elenchi di link (footer): sottolineatura solo al passaggio. */
+  .link-quiet {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.2s var(--ease-out-quart);
+  }
+  @media (hover: hover) {
+    .link-quiet:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+  .link-quiet:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  /* Chip di scelta (radio): quadrati, nessuna pillola. */
+  .chip {
+    position: relative;
+    display: inline-flex;
+  }
+  .chip input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .chip span {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    padding-inline: 1rem;
+    border: 1px solid var(--color-line-strong);
+    font-size: 0.9375rem;
+    font-weight: 560;
+    transition:
+      background-color 0.18s var(--ease-out-quart),
+      color 0.18s var(--ease-out-quart);
+  }
+  @media (hover: hover) {
+    .chip:hover span {
+      background-color: rgb(from var(--color-ink) r g b / 0.06);
+    }
+  }
+  .chip input:checked + span {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .chip input:focus-visible + span {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+  [data-invalid] .chip input:not(:checked) + span {
+    border-color: var(--color-error);
+  }
+
+  /* Campi del modulo. */
   .field {
     display: block;
     width: 100%;
     min-height: 3.25rem;
-    border-radius: var(--radius-control);
-    border: 1px solid rgb(233 226 215 / 0.28);
-    background-color: rgb(23 23 21 / 0.55);
-    padding: 0.75rem 1rem;
-    color: var(--color-ivory);
+    border: 1px solid var(--color-line-strong);
+    background-color: var(--color-raised);
+    padding: 0.75rem 0.9rem;
+    color: var(--color-ink);
     font-size: 1rem;
     line-height: 1.4;
-    transition:
-      border-color 0.3s var(--ease-editorial),
-      background-color 0.3s var(--ease-editorial);
+    border-radius: 0;
+    transition: border-color 0.18s var(--ease-out-quart), box-shadow 0.18s var(--ease-out-quart);
   }
   .field::placeholder {
-    color: var(--color-mist);
+    color: var(--color-muted);
     opacity: 1;
   }
-  .field:hover {
-    border-color: rgb(233 226 215 / 0.5);
-  }
   .field:focus-visible {
-    outline: 2px solid var(--color-brass);
-    outline-offset: 1px;
-    border-color: var(--color-brass);
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--color-ink), 0 0 0 3px rgb(from var(--color-ink) r g b / 0.18);
   }
   .field[aria-invalid="true"] {
-    border-color: var(--color-error-light);
-  }
-  select.field {
-    appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, var(--color-brass) 50%),
-      linear-gradient(135deg, var(--color-brass) 50%, transparent 50%);
-    background-position:
-      calc(100% - 1.35rem) 55%,
-      calc(100% - 1rem) 55%;
-    background-size: 0.35rem 0.35rem;
-    background-repeat: no-repeat;
-    padding-right: 2.75rem;
-  }
-  select.field option {
-    background-color: var(--color-charcoal);
-    color: var(--color-ivory);
+    border-color: var(--color-error);
+    box-shadow: inset 0 0 0 1px var(--color-error);
   }
   input[type="date"].field::-webkit-calendar-picker-indicator {
-    filter: invert(0.85) sepia(0.3);
     cursor: pointer;
+  }
+  @media (prefers-color-scheme: dark) {
+    input[type="date"].field::-webkit-calendar-picker-indicator {
+      filter: invert(0.9);
+    }
+  }
+
+  /* Fotografia: bianco e nero per tutte le immagini, reali o di repertorio. */
+  .photo {
+    filter: grayscale(1) contrast(1.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    .photo {
+      filter: grayscale(1) contrast(1.06) brightness(0.9);
+    }
+  }
+
+  /* Riga della griglia: filetto pieno sopra a un blocco di contenuto. */
+  .rule-top {
+    border-top: 1px solid var(--color-line-strong);
   }
 }
 
 /*
- * MOVIMENTO
- * Tutto il movimento vive sotto prefers-reduced-motion: no-preference.
- * Le comparse allo scorrimento si attivano solo quando RevealController
- * aggiunge .reveal-ready a <html> dopo l'idratazione: se JavaScript manca o
- * fallisce, il contenuto resta sempre visibile.
+ * MOVIMENTO (intensita' 3): solo comparse brevi, stati e transizioni.
+ * Le comparse si attivano dopo l'idratazione (RevealController): senza
+ * JavaScript, o con movimento ridotto, tutto e' visibile da subito.
  */
 @media (prefers-reduced-motion: no-preference) {
-  /* Ingresso dell'hero al caricamento: solo transform e opacity. */
-  .hero-rise {
-    animation: hero-rise 1.1s var(--ease-editorial) both;
-    animation-delay: calc(var(--d, 0) * 1ms);
-  }
-  @keyframes hero-rise {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 1.75rem, 0);
-    }
-  }
-
-  /* Comparsa allo scorrimento (attiva solo dopo l'idratazione, vedi RevealController). */
   .reveal-ready [data-reveal] {
     transition:
-      opacity 0.9s var(--ease-editorial),
-      transform 1.1s var(--ease-editorial);
+      opacity 0.6s var(--ease-out-expo),
+      transform 0.7s var(--ease-out-expo);
     transition-delay: calc(var(--reveal-delay, 0) * 1ms);
   }
   .reveal-ready [data-reveal]:not(.is-visible) {
     opacity: 0;
-    transform: translate3d(0, 1.5rem, 0);
-  }
-  .reveal-ready [data-reveal="mask"] {
-    transition: clip-path 1.3s var(--ease-editorial);
-    transition-delay: calc(var(--reveal-delay, 0) * 1ms);
-  }
-  .reveal-ready [data-reveal="mask"]:not(.is-visible) {
-    opacity: 1;
-    transform: none;
-    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, 0.75rem, 0);
   }
 
-  /* Parallasse con animazioni guidate dallo scorrimento: zero JavaScript. */
-  @supports (animation-timeline: view()) {
-    @media (min-width: 768px) {
-      .parallax-soft {
-        animation: parallax-soft linear both;
-        animation-timeline: view();
-        animation-range: entry 0% exit 100%;
-      }
-      @keyframes parallax-soft {
-        from {
-          transform: translate3d(0, -4%, 0) scale(1.08);
-        }
-        to {
-          transform: translate3d(0, 4%, 0) scale(1.08);
-        }
-      }
+  .enter {
+    animation: enter 0.7s var(--ease-out-expo) both;
+    animation-delay: calc(var(--d, 0) * 1ms);
+  }
+  @keyframes enter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 0.6rem, 0);
     }
   }
-}
 
-/* Dispositivi lenti o risparmio dati: niente parallasse. */
-.lite .parallax-soft {
-  animation: none !important;
-}
-
-/* Menu mobile: dissolvenza del dialogo e ingresso sfalsato delle voci. */
-@media (prefers-reduced-motion: no-preference) {
   .menu-dialog[open] {
-    animation: menu-in 0.5s var(--ease-editorial) both;
+    animation: fade-in 0.25s var(--ease-out-quart) both;
   }
   .menu-dialog[open] .menu-item {
-    animation: menu-item-in 0.7s var(--ease-editorial) both;
-    animation-delay: calc(120ms + var(--i, 0) * 55ms);
+    animation: enter 0.45s var(--ease-out-expo) both;
+    animation-delay: calc(60ms + var(--i, 0) * 40ms);
   }
-  @keyframes menu-in {
-    from {
-      opacity: 0;
-    }
-  }
-  @keyframes menu-item-in {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 1rem, 0);
-    }
-  }
-}
-
-/* Lightbox: dissolvenza del dialogo e dell'immagine al cambio. */
-@media (prefers-reduced-motion: no-preference) {
   .lightbox[open] {
-    animation: menu-in 0.4s var(--ease-editorial) both;
+    animation: fade-in 0.25s var(--ease-out-quart) both;
   }
   .lightbox-image {
-    animation: lightbox-image-in 0.6s var(--ease-editorial) both;
+    animation: fade-in 0.35s var(--ease-out-quart) both;
   }
-  @keyframes lightbox-image-in {
+  @keyframes fade-in {
     from {
       opacity: 0;
-      transform: scale(0.985);
-    }
-  }
-}
-
-/* Ingresso dello strumento in apertura (CSS, non legato allo scorrimento). */
-@media (prefers-reduced-motion: no-preference) {
-  .tool-enter {
-    animation: tool-enter 1.8s var(--ease-editorial) both;
-    animation-delay: 150ms;
-  }
-  @keyframes tool-enter {
-    from {
-      opacity: 0;
-      translate: 8vw 2vh;
-      rotate: -10deg;
     }
   }
 }

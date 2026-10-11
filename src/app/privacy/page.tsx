@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { site, telHref } from "@/config/site";
+import { BrandMark } from "@/components/brand/BrandMark";
 
 export const metadata: Metadata = {
   title: `Informativa privacy | ${site.name}`,
@@ -21,15 +22,15 @@ export default function PrivacyPage() {
   const telegram = site.booking.delivery === "telegram";
 
   return (
-    <main id="contenuto" className="surface-light min-h-[100dvh] bg-ivory">
+    <main id="contenuto" className="min-h-[100dvh]">
       <div className="mx-auto max-w-[46rem] px-5 py-16 sm:px-8 md:py-24">
-        <Link href="/" className="wordmark text-[1.75rem]">
-          STYLE<span className="text-brass-deep">86</span>
+        <Link href="/" className="inline-flex" aria-label={`${site.shortName}, torna alla home`}>
+          <BrandMark className="text-[1.75rem]" />
         </Link>
-        <h1 className="display mt-12 text-[clamp(2.5rem,7vw,4rem)]">Informativa privacy</h1>
-        <p className="mt-4 text-sm text-olive-deep">Ultimo aggiornamento: {lastUpdated}</p>
+        <h1 className="type-h2 mt-12">Informativa privacy</h1>
+        <p className="mt-4 text-[0.9375rem] text-muted">Ultimo aggiornamento: {lastUpdated}</p>
 
-        <div className="mt-12 grid gap-10 text-[1.0625rem] leading-relaxed text-charcoal [&_h2]:font-display [&_h2]:font-normal [&_h2]:text-[1.875rem] [&_h2]:leading-tight [&_h2]:text-obsidian [&_a]:text-obsidian [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4 [&_ul]:mt-3 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-2 [&_ul]:pl-5">
+        <div className="mt-12 grid gap-10 leading-relaxed [&_h2]:text-[1.375rem] [&_h2]:font-[650] [&_h2]:leading-tight [&_h2]:tracking-[-0.01em] [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4 [&_ul]:mt-3 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-2 [&_ul]:pl-5">
           <section>
             <h2>Titolare del trattamento</h2>
             <p className="mt-3">
@@ -110,7 +111,7 @@ export default function PrivacyPage() {
           </section>
         </div>
 
-        <Link href="/" className="btn btn-ink mt-16">
+        <Link href="/" className="btn btn-secondary mt-16">
           Torna al sito
         </Link>
       </div>

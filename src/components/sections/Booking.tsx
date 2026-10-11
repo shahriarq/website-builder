@@ -1,41 +1,43 @@
-import { ArrowUpRightIcon, PhoneIcon } from "@phosphor-icons/react/dist/ssr";
+import { ArrowUpRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { site, telHref } from "@/config/site";
 import { BookingForm } from "@/components/booking/BookingForm";
 
+const steps =
+  site.booking.delivery === "telegram"
+    ? ["Scegli servizio, giorno e fascia oraria.", "Invia la richiesta: arriva direttamente al salone.", "Il salone ti richiama per confermare l'orario."]
+    : ["Scegli servizio, giorno e fascia oraria.", "Invia il messaggio già pronto su WhatsApp.", "Il salone ti risponde per confermare l'orario."];
+
 export function Booking() {
   return (
-    <section id="prenota" aria-labelledby="prenota-title" className="surface-dark bg-charcoal">
-      <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-14 px-5 py-24 sm:px-8 md:py-32 lg:grid-cols-12 lg:gap-8 lg:px-12 lg:py-40">
+    <section id="prenota" aria-labelledby="prenota-title" className="border-y border-line-strong bg-raised">
+      <div className="mx-auto grid max-w-[1360px] gap-12 px-5 py-20 sm:px-8 md:py-28 lg:grid-cols-12 lg:gap-10 lg:px-10">
         <div className="lg:col-span-4">
-          <p className="eyebrow text-brass" data-reveal>
-            Prenotazione
-          </p>
-          <h2 id="prenota-title" className="display mt-5 text-[clamp(2.5rem,6vw,4.25rem)]" data-reveal>
-            Richiedi il tuo appuntamento
+          <h2 id="prenota-title" className="type-h2" data-reveal>
+            Prenota
           </h2>
-          <p className="mt-6 max-w-[28rem] text-[1.0625rem] leading-relaxed text-ivory/85" data-reveal>
-            Indica servizio, giorno e fascia oraria che preferisci. Il salone ti risponderà per confermare
-            l&apos;appuntamento.
+          <ol className="mt-8 grid gap-0 border-t border-line-strong" data-reveal>
+            {steps.map((step, i) => (
+              <li key={step} className="grid grid-cols-[2rem_1fr] gap-3 border-b border-line py-4">
+                <span className="type-figure pt-0.5 text-[1.25rem] text-red" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 max-w-[26rem] text-[0.9375rem] text-muted" data-reveal>
+            L&apos;orario che indichi è una preferenza: l&apos;appuntamento vale solo dopo la conferma del salone.
           </p>
 
-          <div className="mt-12 grid gap-6 border-t border-ivory/10 pt-8 text-sm" data-reveal>
-            <div>
-              <p className="text-mist">Preferisci parlarci a voce?</p>
-              <a href={telHref()} className="mt-2 inline-flex min-h-11 items-center gap-2 text-lg text-ivory">
-                <PhoneIcon size={18} className="text-brass" aria-hidden="true" />
-                <span className="link-underline">{site.contact.phoneDisplay}</span>
+          <div className="mt-10 grid gap-1 text-[0.9375rem]" data-reveal>
+            <p className="text-muted">Preferisci a voce o su un&apos;altra piattaforma?</p>
+            <div className="flex flex-wrap gap-x-6">
+              <a href={telHref()} className="link inline-flex min-h-11 items-center tabular-nums">
+                Chiama {site.contact.phoneDisplay}
               </a>
-            </div>
-            <div>
-              <p className="text-mist">Prenoti già con Treatwell?</p>
-              <a
-                href={site.links.treatwell}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 inline-flex min-h-11 items-center gap-2 text-lg text-ivory"
-              >
-                <span className="link-underline">Prenota su Treatwell</span>
-                <ArrowUpRightIcon size={16} className="text-brass" aria-hidden="true" />
+              <a href={site.links.treatwell} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center gap-1.5">
+                Treatwell
+                <ArrowUpRightIcon size={15} aria-hidden="true" />
                 <span className="sr-only"> (si apre in una nuova scheda)</span>
               </a>
             </div>

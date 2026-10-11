@@ -1,13 +1,13 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/brand/BrandMark";
 
 export default function NotFound() {
   return (
-    <main id="contenuto" className="surface-dark flex min-h-[100dvh] flex-col items-start justify-center bg-obsidian px-5 sm:px-12">
-      <p className="wordmark text-[2rem] text-ivory">
-        STYLE<span className="text-brass">86</span>
-      </p>
-      <h1 className="display mt-10 max-w-[18ch] text-[clamp(2.5rem,7vw,4.5rem)] text-ivory">Questa pagina non esiste.</h1>
-      <Link href="/" className="btn btn-brass mt-10">
+    <main id="contenuto" className="mx-auto flex min-h-[100dvh] max-w-[1360px] flex-col items-start justify-center px-5 sm:px-8 lg:px-10">
+      <BrandMark className="text-[1.75rem]" />
+      <h1 className="type-display mt-12 max-w-[14ch]">Questa pagina non esiste.</h1>
+      <p className="mt-6 max-w-[30rem] text-muted">Il collegamento potrebbe essere vecchio o scritto in modo diverso.</p>
+      <Link href="/" className="btn btn-secondary mt-10">
         Torna alla home
       </Link>
     </main>

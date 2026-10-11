@@ -3,9 +3,9 @@
 Website for Style86, a hair and beauty salon at Via Luigi Ornato 59, 20162 Milano.
 Italian-language, single-page site with a working booking-request flow.
 
-**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger for
-the scroll-driven story (via `@gsap/react`), native CSS for small reveals, Phosphor icons,
-self-hosted Cormorant Garamond and Manrope via `next/font`. No analytics.
+**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, native CSS motion,
+Phosphor icons, Archivo (variable, with width axis) self-hosted via `next/font`. No
+analytics, no animation library.
 
 ## Quick start
 
@@ -100,9 +100,10 @@ Copy `.env.example` to `.env.local` for local development.
 
 ## Images
 
-All 15 photos are **illustrative stock images** (Unsplash, Pexels and Pixabay licenses).
+All 11 photos are **illustrative stock images** (Unsplash, Pexels and Pixabay licenses).
 They do not show the Style86 salon, its staff or its clients, and the page labels them
-"Immagini a scopo illustrativo". Each received the same warm grade for consistency.
+"Foto di repertorio". The site shows every photo in black and white (CSS class `.photo`)
+so that images from different sources read as one set.
 Authors, licenses and provenance are in `src/assets/images/CREDITS.md`.
 
 To use real salon photos:
@@ -160,8 +161,9 @@ src/
   app/                 layout, page, privacy, API route, sitemap, robots, OG image
   components/
     layout/            Header (mobile menu), Footer, cookie preferences, mobile booking bar
-    sections/          Hero, Intro, Services, Experience, Gallery (lightbox), Reviews,
-                       Booking, Contact, MapEmbed
+    brand/             BrandMark ("STYLE" + red "86" tile)
+    sections/          Hero, QuickBook, Facts, Services, Gallery (Ispirazioni, lightbox),
+                       Reviews, Booking, Contact, MapEmbed
     booking/           BookingForm
     motion/            RevealController
   config/              site.ts (all business data), navigation.ts
@@ -172,32 +174,34 @@ scripts/               placeholder plate generator
 tests/                 node:test unit tests
 ```
 
-## Scroll story: "STYLE86. L'arte del taglio."
+## Design system
 
-The homepage is a five-scene, scroll-driven story built with GSAP ScrollTrigger
-(`src/components/scenes/`). The barber tools are layered SVGs with independently animated
-parts (`src/components/tools/`).
+Milanese graphic modernism: one grotesk typeface, ink on paper, a single barber-pole red.
+All tokens live in `src/app/globals.css` (`@theme`), with dark-mode values under
+`prefers-color-scheme: dark`.
 
-| Scene | Component | What moves with scroll |
-| --- | --- | --- |
-| 1 Precision | `HeroScene` | Scissors open, rotate and snip; a brass cut line crosses the frame |
-| 2 The craft | `CraftScene` | Comb sweeps across and reveals "Ogni dettaglio conta."; dark-to-ivory shift |
-| 3 Transformation | `TransformationScene` | Portrait opens from a slit to full bleed; "Il tuo stile. La tua firma." |
-| 4 Signature | `SignatureScene` | Razor unfolds and wipes in "Il prossimo look inizia qui." and the booking CTA |
-| 5 Supporting content | existing sections | Booking form, gallery, reviews, salon, contact (light reveals only) |
+| Token | Light | Dark | Use |
+| --- | --- | --- | --- |
+| `paper` / `raised` | `#f1f0ed` / `#fafaf8` | `#131312` / `#1c1c1a` | Page and booking-panel backgrounds |
+| `ink` / `muted` | `#171716` / `#5b5a55` | `#edece8` / `#a6a59f` | Text |
+| `line` / `line-strong` | ink at 14% / 90% | ink at 16% / 85% | Rules, borders |
+| `red` | `#c92a1c` | `#e5432f` | Red text and marks |
+| `red-fill` | `#c92a1c` | `#c92a1c` | Primary button, "86" tile (light text on it: 5.2:1) |
+| `error` | `#b3230f` | `#ff8f80` | Form errors |
 
-Behaviour per device (`gsap.matchMedia`, see `src/lib/gsap.ts`):
+Rules: one accent (red) reserved for the booking action and a few marks; square corners
+everywhere; one CTA label per intent ("Prenota" for booking, "Continua su WhatsApp" for
+the form submit); type hierarchy through Archivo's width axis (`type-display`, `type-h2`,
+`type-h3`, `type-label`, `type-figure`). Contrast ratios for every pairing are noted at the
+top of `globals.css`.
 
-- **Desktop (1024 px and up):** scenes 1 to 4 pin briefly (0.7 to 1.1 viewports each) with a
-  scrubbed timeline; scenes 2 and 4 start their motion while entering, so there are no empty
-  frames.
-- **Touch and tablet:** no pinning. Each scene plays over its natural scroll position.
-- **Reduced motion:** no pins and no timelines. Every scene shows its final composition.
-- **No JavaScript:** all hidden states are applied by JavaScript, so the page renders complete.
+Page order follows the customer's questions: who and where (hero with service chips,
+address, phone, hours, Google rating), what (services, inspiration photos), trust
+(reviews), action (booking form), how to get there (contacts and map).
 
-Navigation anchors (`#servizi`, `#prenota`, `#galleria`, and so on) skip past the animations,
-and booking never depends on an animation finishing. If keyboard focus reaches the scene 4
-CTA mid-animation, the page jumps to the scene's final state.
+Booking entry points: the hero chips and each service's "Prenota" link preselect the
+service in the form (`src/lib/booking/events.ts`); on devices with a precise pointer the
+focus moves to the next empty field.
 
 ## Accessibility and motion
 
@@ -206,5 +210,5 @@ CTA mid-animation, the page jumps to the scene's final state.
 - Skip link, visible focus rings, native `<dialog>` for the menu, lightbox and cookie
   preferences (focus trap, Escape, focus restore), labelled form controls and a
   focusable error summary.
-- All motion respects `prefers-reduced-motion`. Content stays visible if JavaScript
-  fails. Parallax is disabled on low-power or data-saver devices.
+- Motion is limited to short entrances, state transitions and dialog fades, all gated by
+  `prefers-reduced-motion`. Content stays visible if JavaScript fails.

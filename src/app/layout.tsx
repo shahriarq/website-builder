@@ -1,21 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Manrope } from "next/font/google";
+import { Archivo } from "next/font/google";
 import { site } from "@/config/site";
 import { hairSalonJsonLd, seo } from "@/lib/seo";
 import { RevealController } from "@/components/motion/RevealController";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+// Un solo carattere: Archivo variabile, con l'asse della larghezza (wdth)
+// per distinguere titoli espansi e testo corrente.
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
-  display: "swap",
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
+  axes: ["wdth"],
+  variable: "--font-archivo",
   display: "swap",
 });
 
@@ -42,15 +37,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#171715",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f1f0ed" },
+    { media: "(prefers-color-scheme: dark)", color: "#131312" },
+  ],
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${cormorant.variable} ${manrope.variable}`}>
+    <html lang="it" className={archivo.variable}>
       <body>
         <script
           type="application/ld+json"
@@ -59,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <a
           href="#contenuto"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-ivory focus:px-4 focus:py-3 focus:text-obsidian focus:outline-2 focus:outline-obsidian"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-ink focus:px-4 focus:py-3 focus:text-paper"
         >
           Vai al contenuto
         </a>

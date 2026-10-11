@@ -10,7 +10,7 @@
  *      Style86, il suo staff o lavori realizzati nel salone (con consenso).
  *
  * Stato attuale: foto di repertorio con licenza libera (Unsplash, Pexels,
- * Pixabay), elaborate con una gradazione calda comune. NON ritraggono il
+ * Pixabay), mostrate in bianco e nero sul sito (classe .photo). NON ritraggono il
  * salone Style86, il suo staff o i suoi clienti: restano `illustrative: true`
  * e il sito le segnala come immagini illustrative. Crediti e provenienza in
  * src/assets/images/CREDITS.md.
@@ -19,14 +19,10 @@
 import type { StaticImageData } from "next/image";
 
 import heroPortrait from "@/assets/images/hero-portrait.jpg";
-import introDetail from "@/assets/images/intro-detail.jpg";
 import serviceCut from "@/assets/images/service-cut.jpg";
 import serviceStyling from "@/assets/images/service-styling.jpg";
 import serviceBeard from "@/assets/images/service-beard.jpg";
 import serviceBeauty from "@/assets/images/service-beauty.jpg";
-import experienceInterior from "@/assets/images/experience-interior.jpg";
-import experienceTools from "@/assets/images/experience-tools.jpg";
-import experienceMirror from "@/assets/images/experience-mirror.jpg";
 import gallery1 from "@/assets/images/gallery-1.jpg";
 import gallery2 from "@/assets/images/gallery-2.jpg";
 import gallery3 from "@/assets/images/gallery-3.jpg";
@@ -77,13 +73,6 @@ export const images = {
     unsplash("Omid Armin", "jvjZuJ9Inc8"),
     "72% 22%",
   ),
-  introDetail: stock(
-    introDetail,
-    "Rasoio a mano libera, pennello da barba e strumenti da barbiere su un panno scuro",
-    "Dettaglio verticale 3:4 di strumenti professionali: forbici, pettine, rasoio.",
-    pexels("Nikolaos Dimou"),
-    "40% 50%",
-  ),
   serviceCut: stock(
     serviceCut,
     "Barbiere che rifinisce un taglio sfumato con pettine e forbici",
@@ -111,27 +100,6 @@ export const images = {
     "Trattamento estetico, ambiente luminoso 4:5.",
     unsplash("Gabriel Silvério", "u3WmDyKGsrY"),
     "50% 30%",
-  ),
-  experienceInterior: stock(
-    experienceInterior,
-    "Interno di una barberia d'epoca con poltrone, specchi e arredi in legno",
-    "Interno del salone, orizzontale 16:10, postazioni e specchi.",
-    { author: "Theo Rivierenlaan", license: "Pixabay Content License" },
-    "50% 55%",
-  ),
-  experienceTools: stock(
-    experienceTools,
-    "Tagliacapelli, pettine e accessori da barbiere su un piano in legno",
-    "Strumenti e prodotti ordinati, verticale 3:4.",
-    pexels("Gonzalo Guzman"),
-    "35% 50%",
-  ),
-  experienceMirror: stock(
-    experienceMirror,
-    "Postazione con specchio, piante e luce naturale in un salone con mattoni a vista",
-    "Riflesso nello specchio, quadrato 1:1.",
-    pexels("Lisa Fotios"),
-    "50% 45%",
   ),
   gallery1: stock(
     gallery1,

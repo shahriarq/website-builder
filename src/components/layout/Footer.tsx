@@ -1,101 +1,82 @@
-import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { site, telHref } from "@/config/site";
-import { bookingAnchor, navItems } from "@/config/navigation";
+import { navItems } from "@/config/navigation";
+import { BrandMark } from "@/components/brand/BrandMark";
 import { CookiePreferences } from "./CookiePreferences";
 import { Year } from "./Year";
 
 export function Footer() {
   return (
-    <footer id="footer" className="surface-dark bg-obsidian text-ivory">
-      <div className="mx-auto max-w-[1440px] px-5 sm:px-8 lg:px-12">
-        <div className="grid gap-10 border-b border-ivory/10 py-20 md:py-28 lg:grid-cols-12 lg:items-end">
-          <p className="display max-w-[16ch] text-[clamp(2.5rem,6.5vw,5.5rem)] lg:col-span-8 lg:max-w-none" data-reveal>
-            Ti aspettiamo in <em className="font-light italic text-brass">Via Ornato</em>.
-          </p>
-          <div className="lg:col-span-4 lg:justify-self-end" data-reveal>
-            <a href={bookingAnchor} className="btn btn-brass">
-              Prenota il tuo appuntamento
-              <ArrowRightIcon size={18} className="btn-icon" aria-hidden="true" />
-            </a>
-          </div>
+    <footer id="footer" className="mx-auto max-w-[1360px] px-5 sm:px-8 lg:px-10">
+      <div className="rule-top grid grid-cols-2 gap-x-6 gap-y-10 py-12 lg:grid-cols-12 lg:gap-10">
+        <div className="col-span-2 lg:col-span-5">
+          <BrandMark className="text-[2.25rem]" />
+          <p className="mt-4 text-[0.9375rem] text-muted">{site.category} a Milano</p>
         </div>
 
-        <div className="grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <p className="wordmark text-[3rem]">
-              STYLE<span className="text-brass">86</span>
-            </p>
-            <p className="mt-3 text-sm text-mist">{site.category}</p>
-          </div>
-
-          <div className="text-sm leading-relaxed lg:col-span-3">
-            <h2 className="font-semibold text-ivory">Contatti</h2>
-            <p className="mt-3 text-ivory/80">
-              {site.address.street}
-              <br />
-              {site.address.postalCode} {site.address.city} {site.address.province}
-            </p>
-            <a href={telHref()} className="link-underline mt-3 inline-block text-ivory">
-              {site.contact.phoneDisplay}
+        <div className="col-span-2 text-[0.9375rem] sm:col-span-1 lg:col-span-3">
+          <h2 className="type-label">Salone</h2>
+          <p className="mt-3">
+            {site.address.street}
+            <br />
+            {site.address.postalCode} {site.address.city} {site.address.province}
+          </p>
+          <a href={telHref()} className="link mt-2 inline-flex min-h-11 items-center tabular-nums">
+            {site.contact.phoneDisplay}
+          </a>
+          {site.contact.email && (
+            <a href={`mailto:${site.contact.email}`} className="link block w-fit">
+              {site.contact.email}
             </a>
-            {site.contact.email && (
-              <a href={`mailto:${site.contact.email}`} className="link-underline mt-2 block w-fit text-ivory">
-                {site.contact.email}
+          )}
+        </div>
+
+        <nav aria-label="Navigazione nel piè di pagina" className="text-[0.9375rem] lg:col-span-2">
+          <h2 className="type-label">Sezioni</h2>
+          <ul className="mt-2 grid">
+            {navItems.map((item) => (
+              <li key={item.href}>
+                <a href={item.href} className="link-quiet inline-flex min-h-10 items-center">
+                  {item.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="text-[0.9375rem] lg:col-span-2">
+          <h2 className="type-label">Altrove</h2>
+          <ul className="mt-2 grid">
+            <li>
+              <a href={site.links.treatwell} target="_blank" rel="noopener noreferrer" className="link-quiet inline-flex min-h-10 items-center">
+                Treatwell<span className="sr-only"> (si apre in una nuova scheda)</span>
               </a>
-            )}
-          </div>
-
-          <nav aria-label="Navigazione nel piè di pagina" className="text-sm lg:col-span-2">
-            <h2 className="font-semibold text-ivory">Sezioni</h2>
-            <ul className="mt-3 grid gap-1">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <a href={item.href} className="inline-flex min-h-9 items-center text-ivory/80 transition-colors hover:text-ivory">
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div className="text-sm lg:col-span-3">
-            {site.social.length > 0 && (
-              <>
-                <h2 className="font-semibold text-ivory">Seguici</h2>
-                <ul className="mt-3 mb-8 grid gap-1">
-                  {site.social.map((s) => (
-                    <li key={s.href}>
-                      <a href={s.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-9 items-center text-ivory/80 hover:text-ivory">
-                        {s.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-            <h2 className="font-semibold text-ivory">Prenota anche su</h2>
-            <a
-              href={site.links.treatwell}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link-underline mt-3 inline-block text-ivory/80"
-            >
-              Treatwell
-            </a>
-          </div>
+            </li>
+            <li>
+              <a href={site.links.googleListing} target="_blank" rel="noopener noreferrer" className="link-quiet inline-flex min-h-10 items-center">
+                Google Maps<span className="sr-only"> (si apre in una nuova scheda)</span>
+              </a>
+            </li>
+            {site.social.map((s) => (
+              <li key={s.href}>
+                <a href={s.href} target="_blank" rel="noopener noreferrer" className="link-quiet inline-flex min-h-10 items-center">
+                  {s.label}<span className="sr-only"> (si apre in una nuova scheda)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
+      </div>
 
-        <div className="flex flex-col gap-4 border-t border-ivory/10 py-8 pb-24 text-[0.8125rem] text-mist sm:flex-row sm:items-center sm:justify-between lg:pb-8">
-          <p>
-            © <Year initial={new Date().getFullYear()} /> {site.name}
-            {site.privacy.vatNumber ? `. P. IVA ${site.privacy.vatNumber}` : ""}
-          </p>
-          <div className="flex gap-6">
-            <a href="/privacy" className="link-underline">
-              Privacy
-            </a>
-            <CookiePreferences />
-          </div>
+      <div className="flex flex-col gap-3 border-t border-line py-6 text-[0.8125rem] text-muted sm:flex-row sm:items-center sm:justify-between">
+        <p>
+          © <Year initial={new Date().getFullYear()} /> {site.name}
+          {site.privacy.vatNumber ? `. P. IVA ${site.privacy.vatNumber}` : ""}
+        </p>
+        <div className="flex gap-6">
+          <a href="/privacy" className="link inline-flex min-h-11 items-center">
+            Privacy
+          </a>
+          <CookiePreferences />
         </div>
       </div>
     </footer>
