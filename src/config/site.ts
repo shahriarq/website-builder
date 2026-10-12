@@ -42,6 +42,20 @@ export interface ReviewSource {
   url: string;
 }
 
+/** Un componente reale del team, mostrato nella sezione "Il team". */
+export interface TeamMember {
+  name: string;
+  /** Ruolo come lo descrive il salone, es. "Barbiere", "Titolare". */
+  role: string;
+  /** Specialita' facoltativa, es. "Sfumature e rasatura". */
+  focus?: string;
+  /**
+   * Foto reale della persona (con il suo consenso), importata come le altre
+   * immagini, es. import marco from "@/assets/images/team-marco.jpg".
+   */
+  photo?: import("next/image").StaticImageData;
+}
+
 export interface SocialLink {
   label: string;
   href: string;
@@ -116,6 +130,13 @@ export const site = {
    * e gli orari non compaiono nei dati strutturati.
    */
   openingHours: null as OpeningHoursEntry[] | null,
+
+  /**
+   * IL TEAM. DA COMPILARE con il titolare: solo persone reali, con il loro
+   * consenso a comparire sul sito. Finche' l'elenco e' vuoto la sezione
+   * "Il team" racconta il lavoro in poltrona senza nomi.
+   */
+  team: [] as TeamMember[],
 
   /**
    * Profili social. Aggiungi solo profili reali, es.

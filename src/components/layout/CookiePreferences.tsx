@@ -38,7 +38,7 @@ export function CookiePreferences() {
       >
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-4">
-            <h2 id="cookie-title" className="type-h3">
+            <h2 id="cookie-title" className="display display-s">
               Preferenze cookie
             </h2>
             <button

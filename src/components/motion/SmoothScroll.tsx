@@ -8,8 +8,6 @@ import { gsap, ScrollTrigger, setLenis, scrollToElement } from "@/lib/motion";
  * Scorrimento morbido con inerzia (Lenis) sincronizzato con ScrollTrigger.
  * - Disattivato con prefers-reduced-motion.
  * - Sul touch resta lo scorrimento nativo (Lenis agisce solo su rotella e trackpad).
- * - Pubblica la posizione di scorrimento in --sy, usata dal palo da barbiere
- *   e dalle strisce decorative senza ricalcoli React.
  * - Intercetta i link interni (#...) per scorrere con la stessa inerzia.
  */
 export function SmoothScroll() {
@@ -19,7 +17,6 @@ export function SmoothScroll() {
     let lenis: Lenis | null = null;
     let tick: ((time: number) => void) | null = null;
 
-    const publish = () => root.style.setProperty("--sy", String(Math.round(window.scrollY)));
 
     function start() {
       if (lenis || reduce.matches) return;
@@ -61,14 +58,11 @@ export function SmoothScroll() {
     };
 
     start();
-    publish();
-    window.addEventListener("scroll", publish, { passive: true });
     reduce.addEventListener("change", onPreference);
     document.addEventListener("click", onClick);
 
     // Le scene fissate cambiano l'altezza della pagina: ricalcola dopo font e immagini.
     const refresh = () => ScrollTrigger.refresh();
-    document.fonts?.ready.then(refresh);
     window.addEventListener("load", refresh);
 
     // Arrivo con un'ancora nell'URL: posiziona dopo il calcolo delle scene.
@@ -79,7 +73,6 @@ export function SmoothScroll() {
 
     return () => {
       stop();
-      window.removeEventListener("scroll", publish);
       reduce.removeEventListener("change", onPreference);
       document.removeEventListener("click", onClick);
       window.removeEventListener("load", refresh);

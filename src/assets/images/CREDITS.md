@@ -1,34 +1,37 @@
 # Crediti fotografici
 
 Tutte le fotografie attuali sono **immagini di repertorio illustrative**. Non ritraggono il salone
-Style86, il suo staff o i suoi clienti, e il sito le segnala come "Immagini a scopo illustrativo".
+Style86, il suo staff o i suoi clienti, e il sito le segnala come "Foto di repertorio".
 Sostituiscile con foto reali del salone appena disponibili (vedi `src/content/images.ts`).
 
-Ogni foto e' stata ridimensionata; sul sito tutte le immagini sono mostrate in bianco e nero
-(filtro CSS `.photo`), cosi' anche le future foto reali avranno lo stesso trattamento. Le licenze sotto consentono uso commerciale e
-modifiche senza obbligo di attribuzione; i crediti sono riportati per trasparenza.
+Sul sito tutte le immagini ricevono la stessa resa in monocromia calda (filtro CSS `.photo`), cosi'
+anche le future foto reali avranno lo stesso trattamento. Le licenze sotto consentono uso commerciale
+e modifiche senza obbligo di attribuzione; i crediti sono riportati per trasparenza.
 
-| File | Autore | Licenza | Origine |
-| --- | --- | --- | --- |
-| hero-portrait.jpg | Omid Armin | Unsplash License | https://unsplash.com/photos/jvjZuJ9Inc8 |
-| service-styling.jpg | Averie Woodard | Unsplash License | https://unsplash.com/photos/4nulm-JUYFo |
-| service-beauty.jpg | Gabriel Silvério | Unsplash License | https://unsplash.com/photos/u3WmDyKGsrY |
-| gallery-1.jpg | Gustavo Spindula | Unsplash License | https://unsplash.com/photos/K2D7muBun1A |
-| gallery-3.jpg | Salha Frija | Unsplash License | ID dal nome file: dsQoLK2N7DQ2 |
-| gallery-5.jpg | Jessica Felicio | Unsplash License | https://unsplash.com/photos/_cvwXhGqG-o |
-| gallery-6.jpg | George Bohunicky | Unsplash License | https://unsplash.com/photos/qJKT2rMU0VU |
-| service-cut.jpg | Thgusstavo Santana | Pexels License | (1) |
-| service-beard.jpg | Thgusstavo Santana | Pexels License | (1) |
-| gallery-2.jpg | Thgusstavo Santana | Pexels License | (1) |
-| gallery-4.jpg | Alex Urezkov | Pexels License | (1) |
+| File | Autore | Licenza |
+| --- | --- | --- |
+| hero-tools.webp | Nikolaos Dimou | Pexels License |
+| hero-shave.webp | Thgusstavo Santana | Pexels License |
+| craft-tools.webp | Gonzalo Guzman | Pexels License |
+| service-cut.webp | Thgusstavo Santana | Pexels License |
+| service-beard.webp | Thgusstavo Santana | Pexels License |
+| service-styling.webp | Thgusstavo Santana | Pexels License |
+| service-face.webp | Lucas Andrade | Pexels License |
+| team-hands.webp | Alex Urezkov | Pexels License |
+| gallery-tailored.webp | Andrea Piacquadio | Pexels License |
+| gallery-street.webp | Andrea Piacquadio | Pexels License |
+| gallery-stubble.webp | Safa Bakirci | Pexels License |
+| gallery-shop.webp | Lisa Fotios | Pexels License |
+| gallery-pompadour.webp | Nathan Fertig | Unsplash License |
+| gallery-interior.webp | Theo Rivierenlaan | Pixabay Content License |
+| gallery-goatee.webp | autore non indicato | Pixabay Content License |
 
-Le foto Unsplash provengono dal repository open source `jessefrench/wanderlust`, che conserva i nomi
-file originali di Unsplash (autore e ID della foto).
+Provenienza: tutte le foto arrivano dal repository open source `pavlo-myskov/barber-shop`, che le
+conserva con il nome dell'autore e della piattaforma nel nome del file. Il suo README dichiara che le
+foto provengono da Pexels, Pixabay e StockSnap con licenza libera senza obbligo di attribuzione, e che
+sono state ridimensionate e ritoccate. L'ID originale delle singole foto non e' riportato: prima della
+pubblicazione e' consigliabile ritrovare ogni foto sul sito d'origine (ricerca per autore) oppure
+sostituirla con foto reali del salone.
 
-(1) Ottenute dal repository open source `pavlo-myskov/barber-shop`, il cui README dichiara che le
-foto provengono da fonti con licenza libera senza obbligo di attribuzione. L'ID originale su
-Pexels/Pixabay non e' riportato: prima della pubblicazione e' consigliabile ritrovare ogni foto sul
-sito d'origine (ricerca per autore) oppure sostituirla con foto reali del salone.
-
-Nota: le licenze Unsplash e Pexels non includono liberatorie per le persone ritratte. Le foto non
-vanno usate in modo da far credere che le persone siano clienti o collaboratori di Style86.
+Nota: le licenze Unsplash, Pexels e Pixabay non includono liberatorie per le persone ritratte. Le foto
+non vanno usate in modo da far credere che le persone siano clienti o collaboratori di Style86.

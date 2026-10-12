@@ -208,16 +208,16 @@ export function BookingForm() {
   const describedBy = (field: BookingField, helper = false) =>
     [helper && !errors[field] ? id(`${field}-help`) : null, errors[field] ? id(`${field}-error`) : null].filter(Boolean).join(" ") || undefined;
 
-  const panel = "border border-line-strong bg-raised p-6 sm:p-10";
+  const panel = "border-t border-line pt-8";
 
   // ---------- Esiti ----------
   if (status.kind === "whatsapp") {
     return (
       <div className={panel} aria-live="polite">
-        <span className="inline-flex size-10 items-center justify-center bg-ink text-paper" aria-hidden="true">
+        <span className="inline-flex size-10 items-center justify-center bg-bronze text-charcoal" aria-hidden="true">
           <CheckIcon size={22} weight="bold" />
         </span>
-        <h3 ref={resultRef} tabIndex={-1} className="type-h3 mt-6 text-[clamp(1.6rem,3vw,2.1rem)] outline-none">
+        <h3 ref={resultRef} tabIndex={-1} className="display display-m mt-6 outline-none">
           La tua richiesta è stata preparata.
         </h3>
         <p className="mt-4 max-w-[34rem]">
@@ -251,10 +251,10 @@ export function BookingForm() {
   if (status.kind === "sent") {
     return (
       <div className={panel} aria-live="polite">
-        <span className="inline-flex size-10 items-center justify-center bg-ink text-paper" aria-hidden="true">
+        <span className="inline-flex size-10 items-center justify-center bg-bronze text-charcoal" aria-hidden="true">
           <CheckIcon size={22} weight="bold" />
         </span>
-        <h3 ref={resultRef} tabIndex={-1} className="type-h3 mt-6 text-[clamp(1.6rem,3vw,2.1rem)] outline-none">
+        <h3 ref={resultRef} tabIndex={-1} className="display display-m mt-6 outline-none">
           Richiesta inviata al salone.
         </h3>
         <p className="mt-4 max-w-[34rem]">
@@ -270,7 +270,7 @@ export function BookingForm() {
   if (delivery === "none") {
     return (
       <div className={panel}>
-        <h3 className="type-h3">Prenota per telefono</h3>
+        <h3 className="display display-s">Prenota per telefono</h3>
         <p className="mt-4">La richiesta online sarà presto disponibile. Nel frattempo chiamaci o prenota su Treatwell.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <a href={telHref()} className="btn btn-primary">

@@ -1,20 +1,29 @@
 "use client";
 
 import { useRef } from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
+import { ArrowRightIcon } from "@phosphor-icons/react";
+import { site } from "@/config/site";
+import { bookingAnchor } from "@/config/navigation";
 import { altFor, focus, images } from "@/content/images";
-import { BarberPole } from "@/components/brand/BarberPole";
 import { MOTION, gsap, useGSAP, type MotionConditions } from "@/lib/motion";
-import { QuickBook } from "./QuickBook";
 
 /**
- * Scena 1: chi, dove e come prenotare, subito. Il palo da barbiere gira con
- * lo scorrimento; ritratto e palo si muovono a velocita' diverse (parallasse).
- * Nessuna animazione blocca il modulo rapido di prenotazione.
+ * Hero a tutto schermo. Sullo sfondo gli strumenti del barbiere (su
+ * telefono la rasatura, inquadratura verticale), in primo piano un ritratto
+ * al lavoro che si apre come un sipario. Le righe del titolo salgono da una
+ * maschera (CSS, nessuna attesa del JavaScript); allo scorrimento i piani
+ * si separano in parallasse.
  */
 export function Hero() {
-  const hero = images.heroPortrait;
   const ref = useRef<HTMLElement>(null);
+  const bg = images.heroTools;
+  const shave = images.heroShave;
+
+  // Direzione artistica: verticale su telefono, orizzontale da tablet in su.
+  const common = { alt: "", sizes: "100vw", fill: true, fetchPriority: "high" as const, loading: "eager" as const, quality: 75 };
+  const { props: desktop } = getImageProps({ ...common, src: bg.src });
+  const { props: mobile } = getImageProps({ ...common, src: shave.src });
 
   useGSAP(
     () => {
@@ -22,11 +31,33 @@ export function Hero() {
       mm.add(MOTION, (ctx) => {
         const { reduce, wide } = ctx.conditions as MotionConditions;
         if (reduce) return;
-        const scrub = { trigger: ref.current, start: "top top", end: "bottom top", scrub: true };
-        gsap.fromTo("[data-hero-photo]", { scale: 1.14 }, { scale: 1, ease: "none", scrollTrigger: scrub });
-        gsap.to("[data-hero-frame]", { yPercent: wide ? 10 : 6, ease: "none", scrollTrigger: scrub });
-        gsap.to("[data-hero-pole]", { yPercent: wide ? -18 : -8, ease: "none", scrollTrigger: scrub });
-        gsap.to("[data-hero-title]", { yPercent: -12, ease: "none", scrollTrigger: scrub });
+        const st = {
+          trigger: ref.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        };
+        gsap.to("[data-hero-bg]", {
+          yPercent: 18,
+          ease: "none",
+          scrollTrigger: st,
+        });
+        gsap.to("[data-hero-veil]", {
+          opacity: 0.9,
+          ease: "none",
+          scrollTrigger: st,
+        });
+        gsap.to("[data-hero-title]", {
+          yPercent: wide ? -22 : -10,
+          ease: "none",
+          scrollTrigger: st,
+        });
+        if (wide)
+          gsap.to("[data-hero-portrait]", {
+            yPercent: -16,
+            ease: "none",
+            scrollTrigger: st,
+          });
       });
       return () => mm.revert();
     },
@@ -34,47 +65,89 @@ export function Hero() {
   );
 
   return (
-    <section ref={ref} id="top" aria-labelledby="hero-title" className="relative overflow-hidden">
-      <div id="top-sentinel" aria-hidden="true" className="absolute inset-x-0 top-0 h-4" />
-      <div className="mx-auto grid min-h-[calc(100svh-4rem)] max-w-[1360px] grid-cols-1 gap-10 px-5 pt-8 pb-14 sm:px-8 md:pt-12 lg:min-h-[calc(100svh-72px)] lg:grid-cols-12 lg:items-center lg:gap-10 lg:px-10 lg:pb-16">
-        <div className="relative z-10 lg:col-span-7">
-          <h1 id="hero-title" className="type-display enter" data-hero-title>
-            <span className="sr-only">Style86 Parrucchieri &amp; Estetica: </span>
-            Il salone di <span className="whitespace-nowrap">Via Ornato.</span>
-          </h1>
-          <p className="enter mt-6 max-w-[34rem] text-[1.125rem] leading-relaxed text-muted md:mt-8" style={{ "--d": 80 } as React.CSSProperties}>
-            Parrucchieri, barba ed estetica a Milano. Scegli il servizio, indica quando preferisci venire: il salone ti
-            conferma l&apos;orario.
-          </p>
-          <div className="enter mt-8 md:mt-10" style={{ "--d": 140 } as React.CSSProperties}>
-            <QuickBook />
-          </div>
+    <section ref={ref} id="top" aria-labelledby="hero-title" className="relative isolate flex min-h-[100svh] flex-col overflow-hidden">
+      {/* Sfondo */}
+      <div className="hero-open grain absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 -top-[10%] h-[120%]" data-hero-bg>
+          <picture>
+            <source media="(min-width: 768px)" srcSet={desktop.srcSet} sizes={desktop.sizes} />
+            {/* Sfondo d'atmosfera sotto il titolo: decorativo (alt vuoto). Il ritratto in primo piano ha il suo testo. */}
+            <img {...mobile} alt="" className="photo h-full w-full object-cover" style={{ ...mobile.style, ...focus(bg) }} />
+          </picture>
         </div>
+        <div className="absolute inset-0 bg-charcoal/55" data-hero-veil />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,var(--color-charcoal),transparent)]" />
+      </div>
 
-        <figure className="relative lg:col-span-5">
-          <div className="relative" data-hero-frame>
-            <div className="relative aspect-[16/12] overflow-hidden bg-raised sm:aspect-[16/10] lg:aspect-[4/5] lg:max-h-[calc(100svh-12rem)] lg:w-full">
-              <Image
-                src={hero.src}
-                alt={altFor(hero)}
-                fill
-                priority
-                placeholder="blur"
-                sizes="(min-width: 1024px) 40vw, 100vw"
-                style={focus(hero)}
-                className="photo object-cover"
-                data-hero-photo
-              />
-            </div>
-            <div
-              className="absolute top-[-1.5rem] right-4 bottom-[-1.5rem] [--pole-width:2.75rem] sm:right-6 lg:top-[-2.5rem] lg:right-auto lg:bottom-[-2.5rem] lg:-left-8 lg:[--pole-width:3.75rem]"
-              data-hero-pole
-            >
-              <BarberPole />
-            </div>
+      <div className="mx-auto grid w-full max-w-[1440px] flex-1 grid-cols-12 grid-rows-[1fr] gap-x-6 px-5 md:grid-rows-[auto_1fr] pt-28 pb-10 sm:px-8 md:pt-32 lg:px-12 lg:pb-14">
+        {/* Ritratto in primo piano (da tablet) */}
+        <figure
+          className="hero-open relative col-span-4 col-start-9 row-start-1 hidden self-start md:block lg:col-span-4 lg:col-start-8 lg:w-fit lg:justify-self-center"
+          data-hero-portrait
+        >
+          <div className="relative aspect-[2/3] max-h-[48svh] overflow-hidden bg-raised lg:h-[48svh] lg:max-h-none">
+            <Image
+              src={shave.src}
+              alt={altFor(shave)}
+              fill
+              sizes="(min-width: 1024px) 24vw, 33vw"
+              placeholder="blur"
+              style={focus(shave)}
+              className="photo object-cover"
+            />
           </div>
-          <figcaption className="mt-3 text-[0.8125rem] text-muted lg:mt-4 lg:text-right">Foto di repertorio</figcaption>
+          <figcaption className="caption mt-3 flex justify-between gap-4">
+            <span className="hidden lg:inline">Rasatura a mano libera</span>
+            <span>Foto di repertorio</span>
+          </figcaption>
         </figure>
+
+        <div
+          className="relative z-10 col-span-12 row-start-1 flex flex-col justify-end self-end md:row-start-2 md:-mt-28 lg:-mt-40"
+          data-hero-title
+        >
+          <p className="kicker fade-in mb-6 md:mb-8" style={{ "--d": 100 } as React.CSSProperties}>
+            <span className="text-bronze-text">Barbiere</span> &nbsp;/&nbsp; {site.address.street}, {site.address.city}
+          </p>
+          <h1 id="hero-title" className="display display-xl">
+            <span className="sr-only">Style86, barbiere a Milano: </span>
+            <span className="line">
+              <span style={{ "--d": 150 } as React.CSSProperties}>Il rito</span>
+            </span>
+            <span className="line md:pl-[12vw]">
+              <span style={{ "--d": 260 } as React.CSSProperties}>
+                del <em>taglio.</em>
+              </span>
+            </span>
+          </h1>
+        </div>
+      </div>
+
+      <div className="mx-auto w-full max-w-[1440px] px-5 pb-8 sm:px-8 lg:px-12 lg:pb-10">
+        <div
+          className="fade-in grid gap-6 border-t border-line pt-6 md:grid-cols-12 md:items-end md:gap-6"
+          style={{ "--d": 600 } as React.CSSProperties}
+        >
+          <p className="max-w-[30rem] text-[1.0625rem] text-ink/85 md:col-span-5">
+            Taglio, barba e cura del viso in Via Ornato, a Milano. Scegli il servizio e il momento che preferisci: il salone ti conferma
+            l&apos;orario.
+          </p>
+          <div className="flex flex-wrap items-center gap-3 md:col-span-5 md:col-start-6">
+            <a href={bookingAnchor} className="btn btn-primary">
+              Prenota
+              <ArrowRightIcon size={16} className="btn-icon" aria-hidden="true" />
+            </a>
+            <a href="#servizi" className="btn btn-secondary">
+              I servizi
+            </a>
+          </div>
+          <a href="#filosofia" className="kicker hidden items-center gap-3 justify-self-end md:col-span-2 md:inline-flex">
+            Scorri
+            <span aria-hidden="true" className="relative block h-10 w-px overflow-hidden bg-line">
+              <span className="scroll-cue absolute inset-x-0 top-0 block h-1/2 bg-ink" />
+            </span>
+          </a>
+        </div>
       </div>
     </section>
   );

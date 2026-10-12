@@ -3,10 +3,10 @@
 Website for Style86, a hair and beauty salon at Via Luigi Ornato 59, 20162 Milano.
 Italian-language, single-page site with a working booking-request flow.
 
-**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP + ScrollTrigger for
-scroll scenes, Lenis for smooth inertial scrolling, three.js for the 3D barber tools
-(loaded only when the scene approaches), Phosphor icons, Archivo (variable, with width
-axis) self-hosted via `next/font`. No analytics.
+**Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP (ScrollTrigger,
+SplitText) for scroll storytelling, Lenis for smooth inertial scrolling, React
+`<ViewTransition>` for page transitions, Phosphor icons. Bodoni Moda (headlines) and Archivo
+(text) self-hosted via `next/font`. No analytics.
 
 ## Quick start
 
@@ -33,6 +33,7 @@ TypeScript stripping).
 | Privacy controller details | `src/config/site.ts` (`privacy`) and `src/app/privacy/page.tsx` |
 | Services (names, descriptions, duration, price) | `src/content/services.ts` |
 | Images, alt text, crop focal points, credits | `src/content/images.ts`, `src/assets/images/` |
+| Team members (real people only, with consent) | `src/config/site.ts` (`team`) |
 | Navigation labels | `src/config/navigation.ts` |
 | SEO title and description | `src/lib/seo.ts` |
 
@@ -101,10 +102,11 @@ Copy `.env.example` to `.env.local` for local development.
 
 ## Images
 
-All 11 photos are **illustrative stock images** (Unsplash, Pexels and Pixabay licenses).
-They do not show the Style86 salon, its staff or its clients, and the page labels them
-"Foto di repertorio". The site shows every photo in black and white (CSS class `.photo`)
-so that images from different sources read as one set.
+All 15 photos are **illustrative stock images** (Pexels, Unsplash and Pixabay licenses):
+barbershop work, tools and men's portraits. They do not show the Style86 salon, its staff or
+its clients, and the page labels them "Foto di repertorio". The site gives every photo the
+same warm monochrome grade (CSS class `.photo`), so images from different sources, and
+future real photos, read as one shoot.
 Authors, licenses and provenance are in `src/assets/images/CREDITS.md`.
 
 To use real salon photos:
@@ -149,10 +151,17 @@ only. It never overwrites existing photos unless you pass `-- --force`.
 - [ ] **Opening hours:** fill `openingHours` (and `booking.closedWeekdays`).
 - [ ] **Privacy:** fill `privacy.controllerName`, optional VAT number and contact email,
       and have the privacy text reviewed.
-- [ ] **Copy:** review the Italian brand copy (intro, salon notes), written as a tone of
+- [ ] **Copy:** review the Italian brand copy (hero, philosophy "Tempo / Mano / Misura",
+      team intro), written as a tone of
       voice proposal without factual claims.
 - [ ] **Domain:** set `NEXT_PUBLIC_SITE_URL`.
 - [ ] **Photos:** replace stock images with real salon photography when available.
+- [ ] **Team:** add the real barbers to `site.team` (name, role, optional speciality and a
+      photo taken with their consent). Until then the "Il team" chapter describes the work
+      without names or faces.
+- [ ] **Positioning:** the site now speaks as a men's barbershop ("Barbiere"). The salon
+      also offers women's hair and beauty: confirm this positioning, or adjust the hero,
+      SEO title (`src/lib/seo.ts`) and services copy.
 - [ ] **Performance:** run PageSpeed Insights on the deployed URL.
 
 ## Project structure
@@ -162,60 +171,58 @@ src/
   app/                 layout, page, privacy, API route, sitemap, robots, OG image
   components/
     layout/            Header (mobile menu), Footer, cookie preferences, mobile booking bar
-    brand/             BrandMark ("STYLE" + red "86" tile), BarberPole, PoleBand
-    scenes/            ToolsScene (3D barber tools, three.js renderer)
-    motion/            SmoothScroll (Lenis), Marquee, CountUp, RevealController
-    sections/          Hero, QuickBook, Facts, Services, Gallery (Ispirazioni, lightbox),
-                       Reviews, Booking, Contact, MapEmbed
+    brand/             BrandMark ("Style" + italic bronze "86")
+    motion/            SmoothScroll (Lenis), ScrollEffects, Marquee, BookingBadge, CountUp,
+                       RevealController
+    sections/          Hero, Philosophy, Services, Gallery (lightbox), Team, Reviews,
+                       Visit (location, hours, booking form), MapEmbed
     booking/           BookingForm
   config/              site.ts (all business data), navigation.ts
   content/             services.ts, images.ts
   lib/booking/         validation, message formatting, rate limiter (pure, tested)
-  assets/              images, OG font (SIL Open Font License)
+  assets/              images, OG fonts (SIL Open Font License)
 scripts/               placeholder plate generator
 tests/                 node:test unit tests
 ```
 
-## Design system
+## Design system: "Bottega Bodoni"
 
-A night-time barbershop: one dark theme, one grotesk typeface, one barber-pole red,
-chrome in the 3D tools. Tokens live in `src/app/globals.css` (`@theme`), with computed
-contrast ratios at the top of the file.
+Luxury Italian editorial (a men's magazine) told like a film. Chapters are numbered in
+Roman numerals; one chapter (the philosophy) is set in ivory. Tokens live in
+`src/app/globals.css` (`@theme`), with computed contrast ratios at the top of the file;
+`.theme-ivory` swaps the same roles for the ivory chapter.
 
 | Token | Value | Use |
 | --- | --- | --- |
-| `paper` / `raised` | `#0e0e0d` / `#171715` | Page and booking-panel backgrounds |
-| `ink` / `muted` | `#efede8` / `#a3a29b` | Text |
-| `line` / `line-strong` | ink at 14% / 80% | Rules, borders |
-| `red` | `#ef4a36` | Red text and marks |
-| `red-fill` | `#c92a1c` | Primary button, "86" tile, pole stripes (light text on it: 5.2:1) |
-| `error` | `#ff8f80` | Form errors |
+| `paper` / `raised` | `#121110` / `#1a1916` | Charcoal page and booking panel |
+| `ink` / `muted` | `#ece5d8` / `#a59e91` | Warm ivory text, secondary text |
+| `line` / `line-strong` | ivory at 14% / 55% | Hairlines, borders |
+| `bronze` / `bronze-text` | `#b08d62` / `#c4a27a` | Hairlines, fills, italic accents (7.9:1 as text) |
+| `error` | `#e8907e` | Form errors |
 
-Rules: square corners; one CTA label per intent ("Prenota" for booking, "Continua su
-WhatsApp" for the form submit); type hierarchy through Archivo's width axis; photos in
-black and white.
+Type: Bodoni Moda (from Giambattista Bodoni's Parma types) for headlines, with one italic
+bronze accent per heading; Archivo for text and small spaced capitals (`.kicker`). Square
+corners everywhere; the circular booking seal in the footer is the one deliberate exception.
 
-## Scroll story
+## Motion
 
-| Scene | Component | What happens |
+| Where | What happens | Code |
 | --- | --- | --- |
-| Hero | `sections/Hero.tsx` | Barber pole (`brand/BarberPole.tsx`) spins faster as you scroll; portrait and pole move at different speeds. Service chips + Prenota work immediately. |
-| Il mestiere | `scenes/ToolsScene.tsx`, `scenes/toolsRenderer.ts` | Pinned stage. 3D scissors snip, a straight razor unfolds, a comb sweeps; each tool is tied to a bookable service. |
-| Word band | `motion/Marquee.tsx` | "Taglio, Barba, Piega, Estetica" slide sideways with scroll. |
-| Servizi | `sections/Services.tsx` | From 768 px: pinned horizontal track with photo parallax. Phones: vertical list. |
-| Rest | Gallery, Reviews (count-up rating), Booking, Contact | Normal scrolling; booking never depends on an animation. |
+| First visit | Charcoal curtain with the wordmark lifts (CSS, about 1.4 s, once per session) | `app/layout.tsx`, `globals.css` |
+| Hero | Photo opens from the centre, headline lines rise from masks; on scroll the layers separate in parallax | `sections/Hero.tsx` |
+| Marquee | Bodoni italic band; scroll speeds it up and flips its direction | `motion/Marquee.tsx` |
+| I Filosofia | Manifesto words light up as you read; photos open from clipping masks | `sections/Philosophy.tsx` |
+| II Servizi | Hover a row: a photo follows the cursor through a mask, the row slides and gets a bronze rule; "Prenota" preselects the service | `sections/Services.tsx` |
+| III Galleria | Asymmetric spread, mask reveals, different parallax speeds, lightbox | `sections/Gallery.tsx` |
+| Headings | Lines rise from masks as they enter (`data-split`) | `motion/ScrollEffects.tsx` |
+| Header | Transparent over the hero, hides scrolling down, returns scrolling up; full-screen menu on small screens | `layout/Header.tsx` |
+| Footer | Rotating booking seal, wordmark rising letter by letter | `layout/Footer.tsx` |
+| Pages | Home, privacy and 404 cross-fade with a vertical drift (React `<ViewTransition>`) | `app/page.tsx` and siblings |
 
-Behaviour:
-
-- **Smooth scroll:** Lenis on wheel and trackpad (`motion/SmoothScroll.tsx`); touch keeps
-  native scrolling. In-page links scroll with the same inertia and move focus.
-- **Reduced motion:** no Lenis, no pins, no scrubbing; the tools scene becomes a static
-  list with the three tools side by side.
-- **No JavaScript or no WebGL:** every section renders complete; the tools scene shows
-  its text without the 3D canvas.
-- **Keyboard:** focusing a link inside a pinned scene scrolls to where it is visible.
-- The 3D models are procedural (no downloaded model files); the render loop runs only
-  while the scene is on screen.
+Rules: scroll effects only touch content below the fold and are prepared when the browser is
+idle; nothing is pinned, so booking never waits on an animation. With
+`prefers-reduced-motion` there is no curtain, no smooth scrolling, no scrubbing and no
+reveals. Without JavaScript every section renders complete.
 
 ## Accessibility and motion
 

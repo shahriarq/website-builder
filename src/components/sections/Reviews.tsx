@@ -3,47 +3,50 @@ import { site, type ReviewSource } from "@/config/site";
 import { CountUp } from "@/components/motion/CountUp";
 
 /**
- * "Dicono di noi". Nessuna testimonianza inventata:
- * - Google e Treatwell sono mostrati separatamente, ciascuno con i propri dati;
- * - le citazioni compaiono solo se inserite in configurazione da fonti reali;
- * - ogni blocco rimanda alle recensioni originali.
+ * Capitolo V, "Dicono di noi". Nessuna testimonianza inventata:
+ * - Google e Treatwell restano separati, ciascuno con i propri dati;
+ * - le citazioni compaiono solo se inserite in configurazione, copiate alla
+ *   lettera da recensioni reali, con il link all'originale.
  */
-
-
 function formatDate(iso: string) {
   const d = new Date(`${iso}T12:00:00Z`);
-  return Number.isNaN(d.getTime()) ? iso : new Intl.DateTimeFormat("it-IT", { month: "long", year: "numeric" }).format(d);
+  return Number.isNaN(d.getTime())
+    ? iso
+    : new Intl.DateTimeFormat("it-IT", {
+        month: "long",
+        year: "numeric",
+      }).format(d);
 }
 
-function SourceBlock({ source, delay }: { source: ReviewSource; delay: number }) {
+function Source({ source, delay }: { source: ReviewSource; delay: number }) {
   const hasRating = source.rating !== null;
   return (
-    <div className="rule-top flex flex-col pt-6 pb-2" data-reveal style={{ "--reveal-delay": delay } as React.CSSProperties}>
-      <h3 className="type-label">Su {source.label}</h3>
+    <div className="rule-top flex flex-col pt-6" data-reveal style={{ "--reveal-delay": delay } as React.CSSProperties}>
+      <p className="kicker">Su {source.label}</p>
       {hasRating ? (
         <>
-          <p className="mt-5 flex items-baseline gap-3">
-            <CountUp value={source.rating!} className="type-figure text-[clamp(4.5rem,10vw,7.5rem)] text-red" />
-            <span className="text-lg font-medium">su 5</span>
+          <p className="mt-6 flex items-end gap-4">
+            <CountUp value={source.rating!} className="figure text-[clamp(6rem,16vw,13rem)]" />
+            <span className="display display-s pb-[0.4em] italic text-bronze-text">su 5</span>
           </p>
-          <p className="mt-4 max-w-[24rem] text-muted">
+          <p className="mt-5 max-w-[24rem] text-muted">
             {source.count !== null
               ? `Valutazione media da ${source.count} recensioni su ${source.label}.`
               : `Valutazione media su ${source.label}.`}
           </p>
         </>
       ) : (
-        <p className="mt-5 max-w-[22rem] text-[1.25rem] leading-snug font-medium">
-          Le opinioni di chi ha prenotato tramite {source.label}, pubblicate sulla piattaforma.
+        <p className="display display-s mt-6 max-w-[18ch]">
+          Le opinioni di chi ha prenotato tramite <em>{source.label}</em>.
         </p>
       )}
       <a
         href={source.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="link mt-5 inline-flex min-h-11 items-center gap-1.5 self-start text-[0.9375rem] font-semibold"
+        className="mt-6 inline-flex min-h-11 items-center gap-2 self-start text-[0.8125rem] font-semibold tracking-[0.16em] uppercase"
       >
-        Leggi tutte le recensioni
+        <span className="link">Leggi tutte le recensioni</span>
         <ArrowUpRightIcon size={15} aria-hidden="true" />
         <span className="sr-only"> su {source.label} (si apre in una nuova scheda)</span>
       </a>
@@ -55,30 +58,30 @@ export function Reviews() {
   const { google, treatwell, quotes } = site.reviews;
 
   return (
-    <section id="recensioni" aria-labelledby="recensioni-title" className="mx-auto max-w-[1360px] px-5 py-20 sm:px-8 md:py-28 lg:px-10">
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
-        <div className="lg:col-span-4">
-          <h2 id="recensioni-title" className="type-h2" data-reveal>
-            Dicono di noi
-          </h2>
-          <p className="mt-5 max-w-[26rem] text-muted" data-reveal>
-            Google e Treatwell raccolgono recensioni diverse: le trovi qui separate, come compaiono su ciascuna
-            piattaforma.
-          </p>
+    <section id="recensioni" aria-labelledby="recensioni-title" className="relative">
+      <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
+        <div className="chapter mb-14 md:mb-20">
+          <span className="kicker kicker-bronze">V</span>
+          <p className="kicker">Dicono di noi</p>
         </div>
 
-        <div className="grid gap-10 sm:grid-cols-2 sm:gap-10 lg:col-span-8">
-          <SourceBlock source={google} delay={0} />
-          <SourceBlock source={treatwell} delay={100} />
+        <div className="grid gap-16 md:grid-cols-12 md:gap-6">
+          <h2 id="recensioni-title" className="display display-l md:col-span-5" data-split>
+            La parola <em>ai clienti.</em>
+          </h2>
+          <div className="grid gap-14 sm:grid-cols-2 sm:gap-8 md:col-span-7">
+            <Source source={google} delay={0} />
+            <Source source={treatwell} delay={120} />
+          </div>
         </div>
 
         {quotes.length > 0 && (
-          <ul className="grid gap-10 md:grid-cols-3 md:gap-10 lg:col-span-8 lg:col-start-5">
-            {quotes.slice(0, 3).map((q, i) => (
-              <li key={`${q.source}-${i}`} className="rule-top pt-6" data-reveal style={{ "--reveal-delay": i * 100 } as React.CSSProperties}>
+          <ul className="mt-24 grid gap-16 md:grid-cols-2 md:gap-x-6">
+            {quotes.slice(0, 4).map((q, i) => (
+              <li key={`${q.source}-${i}`} className={i % 2 === 1 ? "md:mt-24" : undefined} data-reveal>
                 <figure>
-                  <blockquote className="text-[1.1875rem] leading-snug font-medium">“{q.text}”</blockquote>
-                  <figcaption className="mt-4 text-[0.875rem] text-muted">
+                  <blockquote className="display display-s italic">“{q.text}”</blockquote>
+                  <figcaption className="caption mt-5">
                     {q.author ? `${q.author}, ` : ""}
                     <a href={q.url} target="_blank" rel="noopener noreferrer" className="link">
                       recensione su {q.source}

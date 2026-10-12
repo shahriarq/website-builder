@@ -1,45 +1,56 @@
 @import "tailwindcss";
 
 /*
- * STYLE86 DESIGN SYSTEM
+ * STYLE86, BOTTEGA BODONI
  * --------------------------------------------------------------------------
- * Direzione: bottega da barbiere notturna. Tema unico scuro, un solo
- * carattere grotesk (Archivo, asse della larghezza), un unico accento rosso
- * "palo da barbiere", acciaio cromato negli strumenti 3D.
+ * Direzione: editoriale italiano di lusso (rivista maschile) raccontato come
+ * un film. Carbone profondo, avorio caldo, bronzo opaco; un solo capitolo in
+ * avorio. Titoli in Bodoni Moda (Parma, tipografia italiana), testo in
+ * Archivo. Angoli vivi, filetti sottili, nessun gradiente decorativo.
  *
- * Contrasti calcolati (WCAG 2.2, su fondo / su fondo rialzato):
- *   testo 16.5 / 15.3, secondario 7.5 / 7.0, rosso testo 5.3 / 4.9,
- *   errore 8.7 / 8.1, testo chiaro su rosso pieno 5.2.
- *
- * Regole fisse:
- *   - un solo accento (rosso), per l'azione principale, il palo e pochi segni;
- *   - angoli vivi ovunque (raggio 0): bottoni, campi, chip, immagini;
- *   - foto in bianco e nero, per unificare immagini di provenienza diversa;
- *   - movimento legato allo scorrimento, mai necessario per prenotare.
+ * Contrasti calcolati (WCAG 2.2):
+ *   su carbone: avorio 15.1, secondario 7.1 (6.6 su rialzato), bronzo testo 7.9,
+ *               errore 7.8; carbone su avorio (bottone) 15.1
+ *   capitolo avorio: inchiostro 14.6, secondario 5.5, bronzo testo 4.7
  */
 @theme {
-  --color-paper: #0e0e0d;
-  --color-raised: #171715;
-  --color-ink: #efede8;
-  --color-muted: #a3a29b;
-  --color-line: rgb(239 237 232 / 0.14);
-  --color-line-strong: rgb(239 237 232 / 0.8);
-  --color-red: #ef4a36; /* rosso per testo e segni */
-  --color-red-fill: #c92a1c; /* rosso pieno dietro testo chiaro: bottoni, tessera "86" */
-  --color-red-press: #a8220f;
-  --color-on-red: #fafaf8;
-  --color-error: #ff8f80;
-  --color-chrome: #d9d8d3;
+  --color-paper: #121110; /* carbone */
+  --color-raised: #1a1916;
+  --color-ink: #ece5d8; /* avorio */
+  --color-muted: #a59e91;
+  --color-line: rgb(236 229 216 / 0.14);
+  --color-line-strong: rgb(236 229 216 / 0.55);
+  --color-bronze: #b08d62; /* segni, filetti, riempimenti */
+  --color-bronze-text: #c4a27a; /* bronzo leggibile come testo */
+  --color-error: #e8907e;
+  --color-ivory: #ece5d8;
+  --color-charcoal: #121110;
 
   --font-sans: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bodoni), "Bodoni Moda", "Didot", "Bodoni 72", ui-serif, serif;
 
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-cinema: cubic-bezier(0.76, 0, 0.24, 1);
 
   --breakpoint-xs: 25rem;
 }
 
-/* Livelli z: header 40, barra mobile 30, dialoghi nel top layer nativo. */
+/* Capitolo in avorio: stessi ruoli, valori invertiti. */
+.theme-ivory {
+  --color-paper: #ece5d8;
+  --color-raised: #f3eee5;
+  --color-ink: #161513;
+  --color-muted: #5f5a51;
+  --color-line: rgb(22 21 19 / 0.14);
+  --color-line-strong: rgb(22 21 19 / 0.6);
+  --color-bronze: #8a6a43;
+  --color-bronze-text: #7d5f3c;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* Livelli z: sipario 60, header 40, barra mobile 30, dialoghi nel top layer nativo. */
 
 @layer base {
   html {
@@ -58,7 +69,6 @@
     }
   }
 
-  /* Lenis: lo scorrimento nativo non deve aggiungere un secondo smorzamento. */
   html.lenis,
   html.lenis body {
     height: auto;
@@ -75,8 +85,7 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 1.0625rem;
-    line-height: 1.55;
-    font-variation-settings: "wdth" 100;
+    line-height: 1.65;
     overflow-x: clip;
   }
 
@@ -91,13 +100,13 @@
   }
 
   ::selection {
-    background-color: var(--color-red-fill);
-    color: var(--color-on-red);
+    background-color: var(--color-bronze);
+    color: var(--color-charcoal);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
+    outline: 1px solid var(--color-ink);
+    outline-offset: 4px;
   }
 
   dialog {
@@ -111,159 +120,214 @@
 }
 
 @layer components {
-  /* Scala tipografica. La larghezza (asse wdth) separa i livelli, non solo il corpo. */
-  .type-display {
-    font-size: clamp(2.6rem, 6.4vw, 5.9rem);
-    font-weight: 760;
-    font-stretch: 125%;
-    font-variation-settings: "wdth" 125;
+  /* ---------- Tipografia ---------- */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-optical-sizing: auto;
+    letter-spacing: -0.025em;
+    line-height: 0.92;
+  }
+  .display em {
+    font-style: italic;
+    color: var(--color-bronze-text);
+  }
+  .display-xl {
+    font-size: clamp(3.4rem, min(11vw, 18.5svh), 12.5rem);
+    line-height: 0.86;
     letter-spacing: -0.035em;
-    line-height: 0.96;
   }
-  .type-h2 {
-    font-size: clamp(2rem, 4.3vw, 3.6rem);
-    font-weight: 720;
-    font-stretch: 122%;
-    font-variation-settings: "wdth" 122;
-    letter-spacing: -0.03em;
-    line-height: 1;
+  .display-l {
+    font-size: clamp(2.9rem, 7.5vw, 7rem);
   }
-  .type-h3 {
-    font-size: clamp(1.35rem, 2vw, 1.7rem);
-    font-weight: 650;
-    font-stretch: 112%;
-    font-variation-settings: "wdth" 112;
+  .display-m {
+    font-size: clamp(2.1rem, 4.4vw, 4rem);
+    line-height: 0.98;
+  }
+  .display-s {
+    font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+    line-height: 1.05;
     letter-spacing: -0.015em;
-    line-height: 1.15;
+  }
+  .lede {
+    font-size: clamp(1.125rem, 1.4vw, 1.3rem);
+    line-height: 1.6;
+    color: var(--color-muted);
+  }
+  /* Etichette in maiuscoletto spaziato: numeri di capitolo, didascalie. */
+  .kicker {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .kicker-bronze {
+    color: var(--color-bronze-text);
+  }
+  .caption {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
   }
   .type-label {
     font-size: 0.8125rem;
-    font-weight: 600;
-    letter-spacing: 0.005em;
+    font-weight: 500;
+    letter-spacing: 0.04em;
     color: var(--color-muted);
   }
-  .type-figure {
-    font-weight: 780;
-    font-stretch: 125%;
-    font-variation-settings: "wdth" 125;
+  .figure {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.82;
     letter-spacing: -0.04em;
-    line-height: 0.85;
-    font-variant-numeric: tabular-nums lining-nums;
+    font-variant-numeric: lining-nums;
   }
 
-  /* Marchio: "STYLE" + tessera rossa "86". */
+  /* Marchio: "Style" in tondo, "86" in corsivo bronzo. */
   .brand-mark {
-    display: inline-flex;
-    align-items: center;
-    font-weight: 780;
-    font-stretch: 125%;
-    font-variation-settings: "wdth" 125;
+    font-family: var(--font-display);
+    font-weight: 500;
     letter-spacing: -0.02em;
     line-height: 1;
-  }
-  /* Box ridotto all'altezza delle maiuscole: la tessera e' centrata sulle lettere. */
-  .brand-mark > span {
-    text-box: trim-both cap alphabetic;
+    white-space: nowrap;
   }
   .brand-mark .brand-num {
-    display: inline-flex;
-    align-items: center;
-    margin-left: 0.18em;
-    padding: 0.16em 0.18em;
-    background-color: var(--color-red-fill);
-    color: var(--color-on-red);
-    letter-spacing: -0.04em;
+    font-style: italic;
+    color: var(--color-bronze-text);
+    margin-left: 0.04em;
   }
 
-  /* Bottoni: rettangoli netti, una sola azione principale (rossa). */
+  /* Riga di capitolo: numero romano + titolo + filetto bronzo. */
+  .chapter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .chapter::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: var(--color-line);
+  }
+
+  /* ---------- Bottoni ---------- */
   .btn {
+    position: relative;
     display: inline-flex;
     min-height: 3.25rem;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    padding-inline: 1.5rem;
-    font-size: 1rem;
-    font-weight: 650;
-    letter-spacing: 0.005em;
+    gap: 0.75rem;
+    padding-inline: 1.75rem;
+    overflow: hidden;
+    isolation: isolate;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     white-space: nowrap;
     border: 1px solid transparent;
     transition:
-      background-color 0.2s var(--ease-out-quart),
-      color 0.2s var(--ease-out-quart),
-      border-color 0.2s var(--ease-out-quart),
-      transform 0.12s var(--ease-out-quart);
+      color 0.5s var(--ease-out-expo),
+      border-color 0.5s var(--ease-out-expo),
+      transform 0.15s var(--ease-out-quart);
+  }
+  /* Riempimento che sale dal basso al passaggio: bronzo sul primario. */
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    transform: scaleY(0);
+    transform-origin: 50% 100%;
+    transition: transform 0.55s var(--ease-out-expo);
   }
   .btn:active {
     transform: translateY(1px);
   }
   .btn .btn-icon {
-    transition: transform 0.25s var(--ease-out-quart);
+    transition: transform 0.5s var(--ease-out-expo);
   }
   @media (hover: hover) {
+    .btn:hover::before {
+      transform: scaleY(1);
+    }
     .btn:hover .btn-icon {
-      transform: translateX(3px);
+      transform: translateX(4px);
     }
   }
   .btn[disabled] {
     cursor: not-allowed;
     opacity: 0.65;
   }
-
   .btn-primary {
-    background-color: var(--color-red-fill);
-    color: var(--color-on-red);
+    background-color: var(--color-ink);
+    color: var(--color-paper);
   }
-  @media (hover: hover) {
-    .btn-primary:hover {
-      background-color: var(--color-red-press);
-    }
+  .btn-primary::before {
+    background-color: var(--color-bronze);
   }
-
   .btn-secondary {
     border-color: var(--color-line-strong);
     color: var(--color-ink);
   }
+  .btn-secondary::before {
+    background-color: var(--color-ink);
+  }
   @media (hover: hover) {
     .btn-secondary:hover {
-      background-color: var(--color-ink);
       color: var(--color-paper);
+      border-color: var(--color-ink);
     }
   }
 
-  /* Link testuale con sottolineatura che si accorcia al passaggio. */
+  /* Link con sottolineatura che si ridisegna da sinistra. */
   .link {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
-    text-decoration-color: var(--color-line-strong);
-    transition: text-decoration-color 0.2s var(--ease-out-quart), color 0.2s var(--ease-out-quart);
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 100% 1px;
+    padding-bottom: 2px;
+    transition: background-size 0.6s var(--ease-out-expo), color 0.3s var(--ease-out-quart);
   }
   @media (hover: hover) {
     .link:hover {
-      color: var(--color-red);
-      text-decoration-color: var(--color-red);
+      animation: link-redraw 0.7s var(--ease-out-expo);
+      color: var(--color-bronze-text);
     }
   }
-
-  /* Variante silenziosa per elenchi di link (footer): sottolineatura solo al passaggio. */
+  @keyframes link-redraw {
+    0% {
+      background-size: 100% 1px;
+      background-position: 100% 100%;
+    }
+    45% {
+      background-size: 0 1px;
+      background-position: 100% 100%;
+    }
+    46% {
+      background-position: 0 100%;
+    }
+    100% {
+      background-size: 100% 1px;
+      background-position: 0 100%;
+    }
+  }
   .link-quiet {
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
-    text-decoration-color: transparent;
-    transition: text-decoration-color 0.2s var(--ease-out-quart);
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    background-size: 0 1px;
+    padding-bottom: 2px;
+    transition: background-size 0.5s var(--ease-out-expo);
   }
-  @media (hover: hover) {
-    .link-quiet:hover {
-      text-decoration-color: currentColor;
-    }
-  }
+  .link-quiet:hover,
   .link-quiet:focus-visible {
-    text-decoration-color: currentColor;
+    background-size: 100% 1px;
   }
 
-  /* Chip di scelta (radio): quadrati, nessuna pillola. */
+  /* ---------- Modulo ---------- */
   .chip {
     position: relative;
     display: inline-flex;
@@ -278,45 +342,49 @@
     display: inline-flex;
     min-height: 2.75rem;
     align-items: center;
-    gap: 0.5rem;
     padding-inline: 1rem;
     border: 1px solid var(--color-line-strong);
     font-size: 0.9375rem;
-    font-weight: 560;
     transition:
-      background-color 0.18s var(--ease-out-quart),
-      color 0.18s var(--ease-out-quart);
+      background-color 0.3s var(--ease-out-quart),
+      color 0.3s var(--ease-out-quart),
+      border-color 0.3s var(--ease-out-quart);
   }
   @media (hover: hover) {
     .chip:hover span {
-      background-color: rgb(from var(--color-ink) r g b / 0.06);
+      border-color: var(--color-ink);
     }
   }
   .chip input:checked + span {
     background-color: var(--color-ink);
+    border-color: var(--color-ink);
     color: var(--color-paper);
   }
   .chip input:focus-visible + span {
-    outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
+    outline: 1px solid var(--color-ink);
+    outline-offset: 4px;
   }
   [data-invalid] .chip input:not(:checked) + span {
     border-color: var(--color-error);
   }
 
-  /* Campi del modulo. */
   .field {
     display: block;
     width: 100%;
     min-height: 3.25rem;
-    border: 1px solid var(--color-line-strong);
-    background-color: var(--color-raised);
-    padding: 0.75rem 0.9rem;
+    border: 0;
+    border-bottom: 1px solid var(--color-line-strong);
+    background-color: transparent;
+    padding: 0.75rem 0;
     color: var(--color-ink);
-    font-size: 1rem;
+    font-size: 1.0625rem;
     line-height: 1.4;
     border-radius: 0;
-    transition: border-color 0.18s var(--ease-out-quart), box-shadow 0.18s var(--ease-out-quart);
+    transition: border-color 0.3s var(--ease-out-quart), box-shadow 0.3s var(--ease-out-quart);
+  }
+  textarea.field {
+    border: 1px solid var(--color-line-strong);
+    padding: 0.75rem 0.9rem;
   }
   .field::placeholder {
     color: var(--color-muted);
@@ -324,365 +392,328 @@
   }
   .field:focus-visible {
     outline: none;
-    box-shadow: inset 0 0 0 1px var(--color-ink), 0 0 0 3px rgb(from var(--color-ink) r g b / 0.18);
+    border-color: var(--color-ink);
+    box-shadow: 0 1px 0 0 var(--color-ink);
+  }
+  textarea.field:focus-visible {
+    box-shadow: inset 0 0 0 1px var(--color-ink);
   }
   .field[aria-invalid="true"] {
     border-color: var(--color-error);
-    box-shadow: inset 0 0 0 1px var(--color-error);
+    box-shadow: 0 1px 0 0 var(--color-error);
   }
   input[type="date"].field::-webkit-calendar-picker-indicator {
     cursor: pointer;
-    filter: invert(0.9);
+    filter: invert(0.9) sepia(0.2);
   }
 
-  /* Fotografia: bianco e nero per tutte le immagini, reali o di repertorio. */
+  /* ---------- Fotografia ---------- */
+  /* Monocromia calda per tutte le foto: un'unica "pellicola" per immagini di fonti diverse. */
   .photo {
-    filter: grayscale(1) contrast(1.08) brightness(0.88);
+    filter: grayscale(1) sepia(0.24) contrast(1.06) brightness(0.9);
   }
-
-  /*
-   * Palo da barbiere. Le strisce sono una piastrella diagonale che scorre in
-   * verticale: l'animazione continua (--pole-idle) e lo scorrimento della
-   * pagina (--sy, pubblicato da SmoothScroll) si sommano.
-   */
-  .pole {
-    --pole-tile: 3.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: var(--pole-width, 3.5rem);
-    height: 100%;
+  .theme-ivory .photo {
+    filter: grayscale(1) sepia(0.2) contrast(1.04) brightness(0.98);
   }
-  .pole-finial {
-    width: 46%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 30%, #ffffff 0 8%, #c9c8c2 30%, #5d5c57 70%, #2a2a28 100%);
-  }
-  .pole-cap {
-    width: 100%;
-    height: 1.4rem;
-    flex: none;
-    margin-top: -2px;
-    border-radius: 40% 40% 0 0 / 70% 70% 0 0;
-    background: linear-gradient(90deg, #3b3b38 0%, #8d8c86 18%, #f5f4f0 38%, #b8b7b1 55%, #5b5a56 78%, #2b2b29 100%);
-  }
-  .pole-cap-bottom {
-    margin-top: 0;
-    border-radius: 0 0 40% 40% / 0 0 70% 70%;
-  }
-  .pole-glass {
-    position: relative;
-    flex: 1;
-    width: 84%;
-    overflow: hidden;
-    background: #efede8;
-    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.08);
-  }
-  .pole-stripes {
+  /* Grana sottile sopra le foto grandi, per un sapore di pellicola. */
+  .grain::after {
+    content: "";
     position: absolute;
-    inset: 0;
-    background-image: linear-gradient(
-      135deg,
-      var(--color-red-fill) 0 25%,
-      #efede8 25% 50%,
-      var(--color-red-fill) 50% 75%,
-      #efede8 75% 100%
-    );
-    background-size: var(--pole-tile) var(--pole-tile);
-    background-position: 0 calc(var(--pole-idle) + var(--sy, 0) * 0.45px);
-  }
-  .pole-shade {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      rgb(0 0 0 / 0.62) 0%,
-      rgb(0 0 0 / 0.12) 26%,
-      rgb(255 255 255 / 0.34) 40%,
-      rgb(255 255 255 / 0) 54%,
-      rgb(0 0 0 / 0.28) 78%,
-      rgb(0 0 0 / 0.7) 100%
-    );
-  }
-
-  .pole-band {
-    height: 0.625rem;
-    background-image: linear-gradient(
-      135deg,
-      var(--color-red-fill) 0 25%,
-      #efede8 25% 50%,
-      var(--color-red-fill) 50% 75%,
-      #efede8 75% 100%
-    );
-    background-size: 1.25rem 1.25rem;
-    background-position: calc(var(--sy, 0) * -0.35px) 0;
-  }
-
-  /*
-   * Scena "Il mestiere". Senza scorrimento animato (movimento ridotto, niente
-   * JavaScript) e' un elenco statico; con .is-scrub diventa un palco fissato
-   * a tutto schermo in cui i passaggi si alternano.
-   */
-  .tools {
-    position: relative;
-    padding-block: 5rem;
-  }
-  .tools-stage {
-    position: relative;
-  }
-  .tools-canvas {
-    display: block;
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    margin-block: 2rem;
-  }
-  @media (min-width: 768px) {
-    .tools-canvas {
-      aspect-ratio: 16 / 7;
-    }
-  }
-  .tools:not(.has-webgl) .tools-canvas {
-    display: none;
-  }
-  /* Elenco statico: prima il testo, poi i tre strumenti affiancati. */
-  .tools:not(.is-scrub) .tools-stage {
-    display: flex;
-    flex-direction: column;
-  }
-  .tools:not(.is-scrub) .tools-canvas {
-    order: 1;
-    margin-bottom: 0;
-  }
-
-  .tools-steps {
-    display: grid;
-    gap: 2.5rem;
-    margin-top: 2.5rem;
-  }
-  @media (min-width: 768px) {
-    .tools-steps {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-  .tools-step {
-    border-top: 1px solid var(--color-line-strong);
-    padding-top: 1.25rem;
-  }
-  .tools-progress {
-    display: none;
-  }
-
-  .tools.is-scrub {
-    padding-block: 0;
-  }
-  .tools.is-scrub .tools-stage {
-    height: 100svh;
-    overflow: hidden;
-  }
-  .tools.is-scrub .tools-canvas {
-    position: absolute;
-    inset: 0;
-    height: 100%;
-    margin: 0;
-    aspect-ratio: auto;
-  }
-  .tools.is-scrub .tools-copy {
-    position: relative;
-    display: grid;
-    height: 100%;
-    grid-template-rows: auto 1fr auto;
-    padding-top: 6rem;
-    padding-bottom: 1.75rem;
+    inset: -50%;
     pointer-events: none;
-  }
-  .tools.is-scrub .tools-steps {
-    grid-template-columns: none;
-    align-content: end;
-    margin-top: 0;
-    gap: 0;
-  }
-  .tools.is-scrub .tools-step {
-    grid-area: 1 / 1;
-    border-top: 0;
-    padding-top: 0;
-    opacity: 0;
-    transform: translate3d(0, 1.25rem, 0);
-    transition:
-      opacity 0.45s var(--ease-out-quart),
-      transform 0.6s var(--ease-out-expo);
-  }
-  .tools.is-scrub .tools-step[data-active] {
-    opacity: 1;
-    transform: none;
-    pointer-events: auto;
-  }
-  .tools.is-scrub .tools-progress {
-    display: block;
-    height: 0.625rem;
-    margin-top: 1.5rem;
-    background: var(--color-line);
-  }
-  .tools-progress-bar {
-    display: block;
-    height: 100%;
-    clip-path: inset(0 100% 0 0);
-  }
-  /* Telefono: strumenti in alto, testo in basso su fondo pieno sfumato. */
-  @media (max-width: 639.98px) {
-    /* Spazio per la barra di prenotazione fissa in basso sui telefoni. */
-    .tools.is-scrub .tools-copy {
-      padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
-    }
-  }
-  @media (max-width: 767.98px) {
-    .tools.is-scrub .tools-steps {
-      margin-inline: -1.25rem;
-      padding: 3rem 1.25rem 0;
-      background: linear-gradient(to top, var(--color-paper) 70%, transparent);
-    }
-  }
-  @media (min-width: 768px) {
-    .tools.is-scrub .tools-steps {
-      align-content: center;
-      max-width: 42%;
-    }
-    .tools.is-scrub .tools-copy {
-      padding-top: 7rem;
-      padding-bottom: 2.5rem;
-    }
+    opacity: 0.09;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
   }
 
-  /*
-   * Servizi: elenco (telefono, movimento ridotto) oppure binario orizzontale
-   * fissato (.is-track, da 768 px) che scorre con lo scorrimento verticale.
-   */
-  .services {
-    padding-block: 5rem;
-  }
-  .services-track {
-    display: grid;
-    gap: 3.5rem;
-    max-width: 1360px;
-    margin: 2.5rem auto 0;
-    padding-inline: 1.25rem;
-  }
-  @media (min-width: 640px) {
-    .services-track {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 3rem 2rem;
-      padding-inline: 2rem;
-    }
-  }
-  .services-note {
-    align-self: start;
-    border-top: 1px solid var(--color-line-strong);
-    padding-top: 1.5rem;
+  .rule-top {
+    border-top: 1px solid var(--color-line);
   }
 
-  .services.is-track {
-    padding-block: 0;
-  }
-  .services.is-track .services-inner {
+  /* ---------- Marquee ---------- */
+  .marquee {
     display: flex;
-    height: 100svh;
-    flex-direction: column;
-    justify-content: center;
-    padding-top: 4.5rem;
     overflow: hidden;
+    user-select: none;
   }
-  .services.is-track .services-track {
+  .marquee-track {
     display: flex;
-    width: max-content;
-    max-width: none;
-    gap: 2.5rem;
-    margin: 2rem 0 0;
-    padding-inline: max(2.5rem, calc((100vw - 1360px) / 2 + 2.5rem));
+    flex: none;
+    align-items: center;
+    gap: 0;
     will-change: transform;
   }
-  .services.is-track .services-panel {
-    width: clamp(18rem, 27vw, 25rem);
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    padding-right: clamp(1.5rem, 4vw, 3.5rem);
+    white-space: nowrap;
+  }
+  .marquee-dot {
+    width: 0.4em;
+    height: 0.4em;
     flex: none;
-  }
-  .services.is-track .services-photo {
-    aspect-ratio: auto;
-    height: min(46svh, 27rem);
-  }
-  .services.is-track .services-note {
-    align-self: center;
-    width: clamp(16rem, 22vw, 20rem);
+    rotate: 45deg;
+    border: 1px solid var(--color-bronze);
   }
 
-  .marquee-outline {
-    color: transparent;
-    -webkit-text-stroke: 1.5px var(--color-ink);
+  /* ---------- Servizi: riga interattiva ---------- */
+  .service-row {
+    position: relative;
+    border-top: 1px solid var(--color-line);
   }
-
-  /* Riga della griglia: filetto pieno sopra a un blocco di contenuto. */
-  .rule-top {
-    border-top: 1px solid var(--color-line-strong);
+  .service-row::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--color-bronze);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.8s var(--ease-out-expo);
+  }
+  .service-row:last-child {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .service-name {
+    transition:
+      transform 0.7s var(--ease-out-expo),
+      color 0.5s var(--ease-out-quart);
+  }
+  @media (hover: hover) and (min-width: 1024px) {
+    .services-list:hover .service-row:not(:hover) .service-name {
+      color: var(--color-muted);
+    }
+    .service-row:hover::before,
+    .service-row:focus-within::before {
+      transform: scaleX(1);
+    }
+    .service-row:hover .service-name,
+    .service-row:focus-within .service-name {
+      transform: translateX(1.25rem);
+    }
+  }
+  /* Immagine che segue il cursore (solo desktop con mouse). */
+  .service-preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    width: clamp(15rem, 20vw, 20rem);
+    aspect-ratio: 3 / 4;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transition:
+      clip-path 0.7s var(--ease-out-expo),
+      opacity 0.3s linear;
+  }
+  .service-preview[data-on] {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+  .service-preview-img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.12);
+    transition:
+      opacity 0.5s var(--ease-out-quart),
+      transform 0.9s var(--ease-out-expo);
+  }
+  .service-preview-img[data-active] {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 /*
- * MOVIMENTO (intensita' 3): solo comparse brevi, stati e transizioni.
- * Le comparse si attivano dopo l'idratazione (RevealController): senza
- * JavaScript, o con movimento ridotto, tutto e' visibile da subito.
+ * MOVIMENTO
+ * Tutto cio' che e' nascosto all'inizio lo e' solo con movimento consentito.
+ * Il sipario d'apertura e le righe del titolo sono puro CSS: finiscono anche
+ * se il JavaScript non arriva. Le comparse allo scorrimento le aggiunge GSAP.
  */
-@property --pole-idle {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .pole-stripes {
-    animation: pole-idle 2.4s linear infinite;
+  /* Sipario d'apertura (classe .intro impostata prima del primo disegno). */
+  .curtain {
+    display: none;
   }
-  @keyframes pole-idle {
+  .intro .curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    background: var(--color-charcoal);
+    pointer-events: none;
+    animation: curtain-up 1.1s var(--ease-cinema) 0.95s both;
+  }
+  .intro .curtain-mark {
+    overflow: hidden;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .intro .curtain-mark > span {
+    display: block;
+    animation: rise 0.9s var(--ease-out-expo) 0.1s both;
+  }
+  .intro .curtain-rule {
+    width: clamp(6rem, 14vw, 10rem);
+    height: 1px;
+    margin-top: 1.25rem;
+    background: var(--color-bronze);
+    transform-origin: 0 50%;
+    animation: draw 0.9s var(--ease-out-expo) 0.3s both;
+  }
+  @keyframes curtain-up {
     to {
-      --pole-idle: 3.5rem;
+      clip-path: inset(0 0 100% 0);
+    }
+  }
+  @keyframes draw {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  /* Righe del titolo che salgono da una maschera. */
+  .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
+  }
+  .line > span {
+    display: block;
+    animation: rise 1.2s var(--ease-out-expo) both;
+    animation-delay: calc(var(--d, 0) * 1ms + var(--intro-delay, 0ms));
+  }
+  .intro {
+    --intro-delay: 1250ms;
+  }
+  @keyframes rise {
+    from {
+      transform: translate3d(0, 105%, 0);
+    }
+  }
+
+  .fade-in {
+    animation: fade-up 1.1s var(--ease-out-expo) both;
+    animation-delay: calc(var(--d, 0) * 1ms + var(--intro-delay, 0ms));
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 1rem, 0);
+    }
+  }
+
+  /* Apertura della foto dell'hero: il sipario si apre dal centro. */
+  .hero-open {
+    animation: hero-open 1.6s var(--ease-cinema) both;
+    animation-delay: calc(150ms + var(--intro-delay, 0ms));
+  }
+  @keyframes hero-open {
+    from {
+      clip-path: inset(18% 22% 18% 22%);
+    }
+  }
+  .hero-open img {
+    animation: hero-zoom 2.4s var(--ease-out-expo) both;
+    animation-delay: calc(150ms + var(--intro-delay, 0ms));
+  }
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.25);
+    }
+  }
+
+  .badge-ring {
+    animation: badge-spin 22s linear infinite;
+  }
+  .booking-badge:hover .badge-ring {
+    animation-duration: 9s;
+  }
+  @keyframes badge-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  .scroll-cue {
+    animation: scroll-cue 2.2s var(--ease-cinema) infinite;
+  }
+  @keyframes scroll-cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(200%);
     }
   }
 
   .reveal-ready [data-reveal] {
     transition:
-      opacity 0.6s var(--ease-out-expo),
-      transform 0.7s var(--ease-out-expo);
+      opacity 0.9s var(--ease-out-expo),
+      transform 1s var(--ease-out-expo);
     transition-delay: calc(var(--reveal-delay, 0) * 1ms);
   }
   .reveal-ready [data-reveal]:not(.is-visible) {
     opacity: 0;
-    transform: translate3d(0, 0.75rem, 0);
-  }
-
-  .enter {
-    animation: enter 0.7s var(--ease-out-expo) both;
-    animation-delay: calc(var(--d, 0) * 1ms);
-  }
-  @keyframes enter {
-    from {
-      opacity: 0;
-      transform: translate3d(0, 0.6rem, 0);
-    }
+    transform: translate3d(0, 1.25rem, 0);
   }
 
   .menu-dialog[open] {
-    animation: fade-in 0.25s var(--ease-out-quart) both;
+    animation: menu-in 0.7s var(--ease-cinema) both;
+  }
+  @keyframes menu-in {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
   }
   .menu-dialog[open] .menu-item {
-    animation: enter 0.45s var(--ease-out-expo) both;
-    animation-delay: calc(60ms + var(--i, 0) * 40ms);
+    animation: rise 0.9s var(--ease-out-expo) both;
+    animation-delay: calc(250ms + var(--i, 0) * 60ms);
+  }
+  .menu-dialog[open] .menu-fade {
+    animation: fade-up 0.9s var(--ease-out-expo) both;
+    animation-delay: 550ms;
   }
   .lightbox[open] {
-    animation: fade-in 0.25s var(--ease-out-quart) both;
+    animation: fade-up 0.4s var(--ease-out-quart) both;
   }
   .lightbox-image {
-    animation: fade-in 0.35s var(--ease-out-quart) both;
+    animation: lightbox-image 0.7s var(--ease-out-expo) both;
   }
-  @keyframes fade-in {
+  @keyframes lightbox-image {
     from {
       opacity: 0;
+      transform: scale(0.97);
+    }
+  }
+}
+
+/* Transizione tra pagine (React ViewTransition, browser compatibili). */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(.page) {
+    animation: 0.45s var(--ease-cinema) both page-out;
+  }
+  ::view-transition-new(.page) {
+    animation: 0.8s var(--ease-out-expo) 0.15s both page-in;
+  }
+  @keyframes page-out {
+    to {
+      opacity: 0;
+      transform: translate3d(0, -2rem, 0);
+    }
+  }
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 3rem, 0);
     }
   }
 }

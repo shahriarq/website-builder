@@ -7,19 +7,20 @@
  */
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import type Lenis from "lenis";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+  gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
   // La barra dell'indirizzo su mobile cambia l'altezza: niente ricalcoli a ogni scatto.
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 /**
  * Condizioni per gsap.matchMedia:
- * - wide: scene fissate (pin) con timeline legate allo scorrimento;
- * - narrow: scene piu' corte, nessuno scorrimento orizzontale fissato;
+ * - wide: parallasse piu' ampia e anteprime che seguono il cursore;
+ * - narrow: parallasse ridotta, nessun effetto legato al cursore;
  * - reduce: nessuna animazione, composizioni finali statiche.
  */
 export const MOTION = {
@@ -51,25 +52,19 @@ export function headerOffset() {
  */
 export function scrollToElement(target: HTMLElement, opts: { immediate?: boolean } = {}) {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Destinazione calcolata dalla posizione reale della pagina, lasciando lo spazio
+  // dell'header (scroll-padding-top in globals.css).
+  const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || headerOffset();
+  const top = Math.max(0, target.getBoundingClientRect().top + window.scrollY - padding);
   if (lenis) {
-    // Lenis applica gia' scroll-padding-top (globals.css), che lascia spazio all'header.
-    lenis.scrollTo(target, { immediate: opts.immediate || reduce, duration: 1.2 });
+    // Se la pagina si e' mossa senza passare da Lenis, riallinea il suo stato prima di partire.
+    if (!lenis.isScrolling && Math.abs(lenis.animatedScroll - window.scrollY) > 1) {
+      lenis.scrollTo(window.scrollY, { immediate: true, force: true });
+    }
+    lenis.scrollTo(top, { immediate: opts.immediate || reduce, duration: 1.2, force: true });
     return;
   }
-  const top = target.getBoundingClientRect().top + window.scrollY - headerOffset();
   window.scrollTo({ top, behavior: opts.immediate || reduce ? "auto" : "smooth" });
 }
 
-/**
- * Se un elemento attivabile da tastiera riceve il focus mentre una scena
- * fissata e' a meta', porta lo scorrimento a una posizione in cui e' visibile.
- */
-export function revealOnFocus(root: HTMLElement, onFocus: (el: HTMLElement) => void) {
-  const handler = (e: FocusEvent) => {
-    if (e.target instanceof HTMLElement) onFocus(e.target);
-  };
-  root.addEventListener("focusin", handler);
-  return () => root.removeEventListener("focusin", handler);
-}
-
-export { gsap, ScrollTrigger, useGSAP };
+export { gsap, ScrollTrigger, SplitText, useGSAP };
