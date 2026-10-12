@@ -1,10 +1,10 @@
 export const navItems = [
-  { label: "Filosofia", href: "#filosofia", numeral: "I" },
-  { label: "Servizi", href: "#servizi", numeral: "II" },
-  { label: "Galleria", href: "#galleria", numeral: "III" },
-  { label: "Team", href: "#team", numeral: "IV" },
-  { label: "Recensioni", href: "#recensioni", numeral: "V" },
-  { label: "Contatti", href: "#contatti", numeral: "VI" },
+  { label: "Filosofia", href: "#filosofia" },
+  { label: "Servizi", href: "#servizi" },
+  { label: "Galleria", href: "#galleria" },
+  { label: "Team", href: "#team" },
+  { label: "Recensioni", href: "#recensioni" },
+  { label: "Contatti", href: "#contatti" },
 ] as const;
 
 export const bookingAnchor = "#prenota";

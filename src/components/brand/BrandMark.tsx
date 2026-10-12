@@ -1,6 +1,6 @@
 import { site } from "@/config/site";
 
-/** Marchio tipografico in Bodoni: "Style" in tondo, "86" in corsivo bronzo. */
+/** Marchio tipografico: "Style" in semibold, "86" nel secondo tono bronzo. */
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <span className={`brand-mark ${className}`} aria-label={site.shortName} role="img">

@@ -36,7 +36,7 @@ export default function PrivacyPage() {
           </h1>
           <p className="mt-8 text-[0.9375rem] text-muted">Ultimo aggiornamento: {lastUpdated}</p>
 
-          <div className="mt-12 grid gap-10 leading-relaxed [&_h2]:font-display [&_h2]:text-[1.75rem] [&_h2]:leading-tight [&_h2]:tracking-[-0.01em] [&_p]:text-ink/85 [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4 [&_ul]:mt-3 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-2 [&_ul]:pl-5">
+          <div className="mt-12 grid gap-10 leading-relaxed [&_h2]:text-[1.5rem] [&_h2]:font-semibold [&_h2]:leading-tight [&_h2]:tracking-[-0.01em] [&_p]:text-ink/85 [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4 [&_ul]:mt-3 [&_ul]:grid [&_ul]:list-disc [&_ul]:gap-2 [&_ul]:pl-5">
             <section>
               <h2>Titolare del trattamento</h2>
               <p className="mt-3">

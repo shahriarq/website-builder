@@ -6,7 +6,7 @@ import { MOTION, gsap, ScrollTrigger, useGSAP, type MotionConditions } from "@/l
 const DEFAULT_WORDS = ["Taglio", "Barba", "Styling", "Viso", "Via Ornato, Milano"];
 
 /**
- * Nastro di parole in Bodoni corsivo. Scorre lentamente da solo; lo
+ * Nastro di parole in grande corpo semibold. Scorre lentamente da solo; lo
  * scorrimento della pagina lo accelera e ne inverte il verso.
  * Decorativo: le stesse voci sono nei servizi, quindi e' nascosto ai lettori di schermo.
  */
@@ -65,7 +65,7 @@ export function Marquee({ words = DEFAULT_WORDS, className = "" }: { words?: str
   );
 
   return (
-    <div ref={ref} aria-hidden="true" className={`marquee display text-[clamp(3rem,9vw,8.5rem)] italic ${className}`}>
+    <div ref={ref} aria-hidden="true" className={`marquee display text-[clamp(2.75rem,8vw,7.5rem)] ${className}`}>
       {run}
       {run}
     </div>

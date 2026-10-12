@@ -79,8 +79,7 @@ export function Services() {
     <section id="servizi" aria-labelledby="servizi-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <span className="kicker kicker-bronze">II</span>
-          <p className="kicker">Servizi</p>
+          <p className="eyebrow">Servizi</p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-12 md:items-end md:gap-6">
@@ -128,7 +127,7 @@ export function Services() {
                   <a
                     href={bookingAnchor}
                     onClick={() => requestService(service.id, true)}
-                    className="col-span-2 inline-flex min-h-11 items-center gap-2 justify-self-start text-[0.8125rem] font-semibold tracking-[0.16em] uppercase lg:col-span-1 lg:justify-self-end"
+                    className="col-span-2 inline-flex min-h-11 items-center gap-2 justify-self-start text-[1.0625rem] font-medium lg:col-span-1 lg:justify-self-end"
                   >
                     <span className="link-quiet group-hover:bg-[length:100%_1px]">Prenota</span>
                     <span className="sr-only"> {service.name.toLowerCase()}</span>

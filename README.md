@@ -5,8 +5,9 @@ Italian-language, single-page site with a working booking-request flow.
 
 **Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP (ScrollTrigger,
 SplitText) for scroll storytelling, Lenis for smooth inertial scrolling, React
-`<ViewTransition>` for page transitions, Phosphor icons. Bodoni Moda (headlines) and Archivo
-(text) self-hosted via `next/font`. No analytics.
+`<ViewTransition>` for page transitions, Phosphor icons. Typography follows Apple's system:
+San Francisco via the system font stack on Apple devices, Inter (self-hosted via
+`next/font`, with optical sizes) everywhere else. No analytics.
 
 ## Quick start
 
@@ -185,24 +186,37 @@ scripts/               placeholder plate generator
 tests/                 node:test unit tests
 ```
 
-## Design system: "Bottega Bodoni"
+## Design system: "Bottega"
 
-Luxury Italian editorial (a men's magazine) told like a film. Chapters are numbered in
-Roman numerals; one chapter (the philosophy) is set in ivory. Tokens live in
+An Italian barbershop told like a film, set in Apple's typographic system. Tokens live in
 `src/app/globals.css` (`@theme`), with computed contrast ratios at the top of the file;
-`.theme-ivory` swaps the same roles for the ivory chapter.
+`.theme-ivory` swaps the same roles for the ivory philosophy chapter.
 
 | Token | Value | Use |
 | --- | --- | --- |
 | `paper` / `raised` | `#121110` / `#1a1916` | Charcoal page and booking panel |
-| `ink` / `muted` | `#ece5d8` / `#a59e91` | Warm ivory text, secondary text |
+| `ink` / `muted` | `#ece5d8` / `#a59e91` | Warm ivory text, secondary text and second-tone emphasis |
 | `line` / `line-strong` | ivory at 14% / 55% | Hairlines, borders |
-| `bronze` / `bronze-text` | `#b08d62` / `#c4a27a` | Hairlines, fills, italic accents (7.9:1 as text) |
+| `bronze` / `bronze-text` | `#b08d62` / `#c4a27a` | Eyebrows, the "86", fills (7.9:1 as text) |
 | `error` | `#e8907e` | Form errors |
 
-Type: Bodoni Moda (from Giambattista Bodoni's Parma types) for headlines, with one italic
-bronze accent per heading; Archivo for text and small spaced capitals (`.kicker`). Square
-corners everywhere; the circular booking seal in the footer is the one deliberate exception.
+Typography (modelled on apple.com and the Human Interface Guidelines):
+
+| Class | Size | Weight / leading / tracking | Use |
+| --- | --- | --- | --- |
+| `.display-xl` | 48-128 px | 600 / 1.04 / -0.025em | Hero, location |
+| `.display-l` | 40-80 px | 600 / 1.05 / -0.02em | Section headlines |
+| `.display-m` | 30-48 px | 600 / 1.1 / -0.012em | Statements, booking panel |
+| `.display-s` | 21-28 px | 600 / 1.17 / -0.005em | Sub-headlines |
+| `.lede` | 19-21 px | 400 / 1.38 / +0.009em | Intro paragraphs |
+| body | 17 px | 400 / 1.47 / -0.022em | Running text |
+| `.eyebrow` | 17-21 px | 600, bronze | Section labels |
+| `.kicker` / `.caption` | 14 px / 12 px | 600 / 400 | Small labels, photo captions |
+
+Rules: one family, sentence case everywhere (no spaced capitals), emphasis by a second tone
+(`<em>` renders in the secondary colour, never italic), pill-shaped controls (buttons,
+chips, icon buttons) and square-edged photos and fields. SF Pro cannot be self-hosted under
+Apple's licence, so it is only used where the operating system provides it.
 
 ## Motion
 
@@ -210,10 +224,10 @@ corners everywhere; the circular booking seal in the footer is the one deliberat
 | --- | --- | --- |
 | First visit | Charcoal curtain with the wordmark lifts (CSS, about 1.4 s, once per session) | `app/layout.tsx`, `globals.css` |
 | Hero | Photo opens from the centre, headline lines rise from masks; on scroll the layers separate in parallax | `sections/Hero.tsx` |
-| Marquee | Bodoni italic band; scroll speeds it up and flips its direction | `motion/Marquee.tsx` |
-| I Filosofia | Manifesto words light up as you read; photos open from clipping masks | `sections/Philosophy.tsx` |
-| II Servizi | Hover a row: a photo follows the cursor through a mask, the row slides and gets a bronze rule; "Prenota" preselects the service | `sections/Services.tsx` |
-| III Galleria | Asymmetric spread, mask reveals, different parallax speeds, lightbox | `sections/Gallery.tsx` |
+| Marquee | Large semibold band; scroll speeds it up and flips its direction | `motion/Marquee.tsx` |
+| Filosofia | Manifesto words light up as you read; photos open from clipping masks | `sections/Philosophy.tsx` |
+| Servizi | Hover a row: a photo follows the cursor through a mask, the row slides and gets a bronze rule; "Prenota" preselects the service | `sections/Services.tsx` |
+| Galleria | Asymmetric spread, mask reveals, different parallax speeds, lightbox | `sections/Gallery.tsx` |
 | Headings | Lines rise from masks as they enter (`data-split`) | `motion/ScrollEffects.tsx` |
 | Header | Transparent over the hero, hides scrolling down, returns scrolling up; full-screen menu on small screens | `layout/Header.tsx` |
 | Footer | Rotating booking seal, wordmark rising letter by letter | `layout/Footer.tsx` |

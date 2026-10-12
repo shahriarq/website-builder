@@ -27,7 +27,7 @@ function Source({ source, delay }: { source: ReviewSource; delay: number }) {
         <>
           <p className="mt-6 flex items-end gap-4">
             <CountUp value={source.rating!} className="figure text-[clamp(6rem,16vw,13rem)]" />
-            <span className="display display-s pb-[0.4em] italic text-bronze-text">su 5</span>
+            <span className="display display-s pb-[0.35em] whitespace-nowrap text-muted">su 5</span>
           </p>
           <p className="mt-5 max-w-[24rem] text-muted">
             {source.count !== null
@@ -44,7 +44,7 @@ function Source({ source, delay }: { source: ReviewSource; delay: number }) {
         href={source.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-6 inline-flex min-h-11 items-center gap-2 self-start text-[0.8125rem] font-semibold tracking-[0.16em] uppercase"
+        className="mt-6 inline-flex min-h-11 items-center gap-2 self-start text-[1.0625rem] font-medium"
       >
         <span className="link">Leggi tutte le recensioni</span>
         <ArrowUpRightIcon size={15} aria-hidden="true" />
@@ -61,8 +61,7 @@ export function Reviews() {
     <section id="recensioni" aria-labelledby="recensioni-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <span className="kicker kicker-bronze">V</span>
-          <p className="kicker">Dicono di noi</p>
+          <p className="eyebrow">Dicono di noi</p>
         </div>
 
         <div className="grid gap-16 md:grid-cols-12 md:gap-6">
@@ -80,7 +79,7 @@ export function Reviews() {
             {quotes.slice(0, 4).map((q, i) => (
               <li key={`${q.source}-${i}`} className={i % 2 === 1 ? "md:mt-24" : undefined} data-reveal>
                 <figure>
-                  <blockquote className="display display-s italic">“{q.text}”</blockquote>
+                  <blockquote className="display display-s">“{q.text}”</blockquote>
                   <figcaption className="caption mt-5">
                     {q.author ? `${q.author}, ` : ""}
                     <a href={q.url} target="_blank" rel="noopener noreferrer" className="link">

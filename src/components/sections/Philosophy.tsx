@@ -14,8 +14,7 @@ export function Philosophy() {
     <section id="filosofia" aria-labelledby="filosofia-title" className="theme-ivory relative overflow-hidden">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <span className="kicker kicker-bronze">I</span>
-          <h2 id="filosofia-title" className="kicker">
+          <h2 id="filosofia-title" className="eyebrow">
             La filosofia
           </h2>
         </div>

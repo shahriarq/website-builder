@@ -60,8 +60,7 @@ export function Gallery() {
     <section id="galleria" aria-labelledby="galleria-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <span className="kicker kicker-bronze">III</span>
-          <p className="kicker">Galleria</p>
+          <p className="eyebrow">Galleria</p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-12 md:items-end md:gap-6">
@@ -105,7 +104,7 @@ export function Gallery() {
                     </span>
                     <span
                       aria-hidden="true"
-                      className="absolute right-4 bottom-4 inline-flex size-11 items-center justify-center bg-ivory text-charcoal opacity-0 transition-[opacity,transform] duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
+                      className="absolute right-4 bottom-4 inline-flex size-11 items-center justify-center rounded-full bg-ivory text-charcoal opacity-0 transition-[opacity,transform] duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100"
                     >
                       <PlusIcon size={18} />
                     </span>
@@ -148,7 +147,7 @@ export function Gallery() {
               <button
                 type="button"
                 onClick={close}
-                className="inline-flex h-11 items-center gap-3 border border-line-strong px-4 text-[0.75rem] font-semibold tracking-[0.18em] uppercase"
+                className="inline-flex h-11 items-center gap-3 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium"
               >
                 Chiudi
               </button>
@@ -172,7 +171,7 @@ export function Gallery() {
               <button
                 type="button"
                 onClick={() => step(-1)}
-                className="pointer-events-auto inline-flex size-12 items-center justify-center border border-line-strong bg-paper transition-colors hover:bg-ink hover:text-paper"
+                className="pointer-events-auto inline-flex size-12 items-center justify-center rounded-full border border-line-strong bg-paper transition-colors hover:bg-ink hover:text-paper"
               >
                 <CaretLeftIcon size={22} aria-hidden="true" />
                 <span className="sr-only">Immagine precedente</span>
@@ -180,7 +179,7 @@ export function Gallery() {
               <button
                 type="button"
                 onClick={() => step(1)}
-                className="pointer-events-auto inline-flex size-12 items-center justify-center border border-line-strong bg-paper transition-colors hover:bg-ink hover:text-paper"
+                className="pointer-events-auto inline-flex size-12 items-center justify-center rounded-full border border-line-strong bg-paper transition-colors hover:bg-ink hover:text-paper"
               >
                 <CaretRightIcon size={22} aria-hidden="true" />
                 <span className="sr-only">Immagine successiva</span>

@@ -17,8 +17,7 @@ export function Team() {
     <section id="team" aria-labelledby="team-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <span className="kicker kicker-bronze">IV</span>
-          <p className="kicker">Il team</p>
+          <p className="eyebrow">Il team</p>
         </div>
 
         {team.length > 0 ? (

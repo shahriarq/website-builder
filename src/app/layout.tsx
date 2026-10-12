@@ -1,27 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Bodoni_Moda } from "next/font/google";
+import { Inter } from "next/font/google";
 import { site } from "@/config/site";
 import { hairSalonJsonLd, seo } from "@/lib/seo";
 import { RevealController } from "@/components/motion/RevealController";
 import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
-// Un solo carattere: Archivo variabile, con l'asse della larghezza (wdth)
-// per distinguere titoli espansi e testo corrente.
-const archivo = Archivo({
+// Un solo carattere, come nel sistema Apple. SF Pro non e' distribuibile sul
+// web: sui dispositivi Apple la pila in globals.css usa il carattere di sistema
+// (SF Pro); altrove Inter, con le dimensioni ottiche (Text e Display).
+const inter = Inter({
   subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
-  display: "swap",
-});
-
-// Titoli: Bodoni Moda, erede dei caratteri di Giambattista Bodoni (Parma).
-// Asse della dimensione ottica: tratti sottili piu' fini ai corpi grandi.
-const bodoni = Bodoni_Moda({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
   axes: ["opsz"],
-  variable: "--font-bodoni",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -63,7 +54,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="it" className={`${archivo.variable} ${bodoni.variable}`} suppressHydrationWarning>
+    <html lang="it" className={inter.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: introScript }} />
       </head>

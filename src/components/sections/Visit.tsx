@@ -25,8 +25,7 @@ export function Visit() {
     <section id="contatti" aria-labelledby="contatti-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <span className="kicker kicker-bronze">VI</span>
-          <p className="kicker">Visita e prenota</p>
+          <p className="eyebrow">Visita e prenota</p>
         </div>
 
         <h2 id="contatti-title" className="display display-xl" data-split>
@@ -118,8 +117,8 @@ export function Visit() {
               <ol className="mt-8 grid gap-0 border-t border-line sm:grid-cols-3">
                 {steps.map((step, i) => (
                   <li key={step} className="flex gap-3 border-b border-line py-4 text-[0.9375rem] sm:border-b-0 sm:pr-4">
-                    <span className="font-display text-bronze-text italic" aria-hidden="true">
-                      {["i", "ii", "iii"][i]}
+                    <span className="font-semibold text-bronze-text tabular-nums" aria-hidden="true">
+                      {i + 1}
                     </span>
                     <span>{step}</span>
                   </li>

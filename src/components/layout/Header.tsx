@@ -100,11 +100,10 @@ export function Header() {
                     <a
                       href={item.href}
                       aria-current={isActive ? "location" : undefined}
-                      className={`group relative inline-flex items-baseline gap-1.5 py-2 text-[0.875rem] tracking-[0.04em] transition-colors duration-300 ${
+                      className={`group relative inline-flex items-center py-2 text-[0.875rem] tracking-[-0.01em] transition-colors duration-300 ${
                         isActive ? "text-ink" : "text-muted hover:text-ink"
                       }`}
                     >
-                      <span className="font-display text-[0.75rem] text-bronze-text italic">{item.numeral}</span>
                       {item.label}
                       <span
                         aria-hidden="true"
@@ -120,12 +119,12 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-5">
-            <a href={telHref()} className="link-quiet hidden text-[0.875rem] tracking-[0.04em] tabular-nums xl:inline">
+            <a href={telHref()} className="link-quiet hidden text-[0.875rem] tracking-[-0.01em] tabular-nums xl:inline">
               {site.contact.phoneDisplay}
             </a>
             <a
               href={telHref()}
-              className="inline-flex size-11 items-center justify-center border border-line-strong lg:hidden"
+              className="inline-flex size-11 items-center justify-center rounded-full border border-line-strong lg:hidden"
               aria-label={`Chiama ${site.contact.phoneDisplay}`}
             >
               <PhoneIcon size={19} aria-hidden="true" />
@@ -140,7 +139,7 @@ export function Header() {
               aria-haspopup="dialog"
               aria-expanded={menuOpen}
               aria-controls="menu-mobile"
-              className="group inline-flex h-11 items-center gap-3 border border-line-strong px-4 text-[0.75rem] font-semibold tracking-[0.18em] uppercase lg:hidden"
+              className="group inline-flex h-11 items-center gap-3 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium lg:hidden"
             >
               Menu
               <span aria-hidden="true" className="grid gap-[5px]">
@@ -171,7 +170,7 @@ export function Header() {
             <button
               type="button"
               onClick={closeMenu}
-              className="inline-flex h-11 items-center gap-3 border border-line-strong px-4 text-[0.75rem] font-semibold tracking-[0.18em] uppercase"
+              className="inline-flex h-11 items-center gap-3 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium"
             >
               Chiudi
               <span aria-hidden="true" className="relative block size-3.5">
@@ -191,7 +190,6 @@ export function Header() {
                     className="menu-item display flex items-baseline gap-4 py-2 text-[clamp(2.75rem,12vw,4.5rem)]"
                     style={{ "--i": i } as React.CSSProperties}
                   >
-                    <span className="w-10 text-[1rem] text-bronze-text italic">{item.numeral}</span>
                     {item.label}
                   </a>
                 </li>

@@ -13,13 +13,13 @@ export function BookingBadge() {
     <a
       href={bookingAnchor}
       className="booking-badge group relative hidden size-44 shrink-0 items-center justify-center md:inline-flex lg:size-52"
-     
+      aria-label={ring.replace(/ · $/, "")}
     >
-      <svg viewBox="0 0 200 200" className="badge-ring absolute inset-0 h-full w-full" role="presentation">
+      <svg viewBox="0 0 200 200" className="badge-ring absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
           <path id="badge-circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
         </defs>
-        <text className="fill-ink text-[13px] tracking-[0.32em] uppercase" style={{ fontFamily: "var(--font-archivo)" }}>
+        <text className="fill-ink text-[14px] font-medium tracking-[0.08em]" style={{ fontFamily: "var(--font-sans)" }}>
           <textPath href="#badge-circle" textLength="486" lengthAdjust="spacing">
             {ring}
           </textPath>

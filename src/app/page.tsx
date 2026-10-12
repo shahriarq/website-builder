@@ -13,9 +13,9 @@ import { Reviews } from "@/components/sections/Reviews";
 import { Visit } from "@/components/sections/Visit";
 
 /**
- * Style86, "Bottega Bodoni": una rivista maschile raccontata come un film.
- *   Hero  ·  nastro  ·  I Filosofia (avorio)  ·  II Servizi  ·  III Galleria
- *   IV Team  ·  V Recensioni  ·  VI Visita e prenota  ·  chiusura
+ * Style86, "Bottega": una bottega italiana raccontata come un film.
+ *   Hero  ·  nastro  ·  Filosofia (avorio)  ·  Servizi  ·  Galleria
+ *   Team  ·  Recensioni  ·  Visita e prenota  ·  chiusura
  * Prenotare non dipende mai da un'animazione: modulo e contatti sono sempre
  * nel markup, e con movimento ridotto tutto e' statico.
  */

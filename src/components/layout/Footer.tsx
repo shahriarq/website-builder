@@ -50,8 +50,7 @@ export function Footer() {
             <ul className="mt-3 grid">
               {navItems.map((item) => (
                 <li key={item.href}>
-                  <a href={item.href} className="inline-flex min-h-10 items-baseline gap-3">
-                    <span className="font-display w-6 text-[0.8125rem] text-bronze-text italic">{item.numeral}</span>
+                  <a href={item.href} className="inline-flex min-h-10 items-center">
                     <span className="link-quiet">{item.label}</span>
                   </a>
                 </li>

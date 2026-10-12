@@ -114,7 +114,7 @@ export function Hero() {
             <span className="line">
               <span style={{ "--d": 150 } as React.CSSProperties}>Il rito</span>
             </span>
-            <span className="line md:pl-[12vw]">
+            <span className="line">
               <span style={{ "--d": 260 } as React.CSSProperties}>
                 del <em>taglio.</em>
               </span>
@@ -125,14 +125,14 @@ export function Hero() {
 
       <div className="mx-auto w-full max-w-[1440px] px-5 pb-8 sm:px-8 lg:px-12 lg:pb-10">
         <div
-          className="fade-in grid gap-6 border-t border-line pt-6 md:grid-cols-12 md:items-end md:gap-6"
+          className="fade-in grid gap-5 border-t border-line pt-5 md:grid-cols-12 md:items-end md:gap-6"
           style={{ "--d": 600 } as React.CSSProperties}
         >
-          <p className="max-w-[30rem] text-[1.0625rem] text-ink/85 md:col-span-5">
+          <p className="max-w-[36rem] text-[1.0625rem] text-ink/85 md:col-span-6">
             Taglio, barba e cura del viso in Via Ornato, a Milano. Scegli il servizio e il momento che preferisci: il salone ti conferma
             l&apos;orario.
           </p>
-          <div className="flex flex-wrap items-center gap-3 md:col-span-5 md:col-start-6">
+          <div className="flex flex-wrap items-center gap-3 md:col-span-4 md:col-start-7">
             <a href={bookingAnchor} className="btn btn-primary">
               Prenota
               <ArrowRightIcon size={16} className="btn-icon" aria-hidden="true" />
