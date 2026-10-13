@@ -17,7 +17,7 @@ import {
   type BookingInput,
 } from "@/lib/booking/validate";
 import { whatsappMessage, whatsappUrl } from "@/lib/booking/message";
-import { SERVICE_EVENT } from "@/lib/booking/events";
+import { SERVICE_EVENT, type ServiceRequest } from "@/lib/booking/events";
 
 type Status =
   | { kind: "editing" }
@@ -39,6 +39,9 @@ const FIELD_LABELS: Record<BookingField, string> = {
   notes: "Note",
   consent: "Consenso privacy",
 };
+
+/** Campi che seguono il servizio, nell'ordine in cui si compilano. */
+const NEXT_FIELDS: BookingField[] = ["date", "time", "name", "phone"];
 
 /** Canale effettivo: senza numero WhatsApp configurato, il modulo non puo' consegnare. */
 function resolveDelivery(): "whatsapp" | "telegram" | "none" {
@@ -62,6 +65,7 @@ export function BookingForm() {
 
   const startedAt = useRef<number>(0);
   const submitting = useRef(false);
+  const valuesRef = useRef<BookingInput>(EMPTY);
   const summaryRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLHeadingElement>(null);
 
@@ -69,19 +73,31 @@ export function BookingForm() {
     startedAt.current = performance.now();
   }, []);
 
-  // Preselezione dal pulsante "Prenota" di un servizio.
+  useEffect(() => {
+    valuesRef.current = values;
+  }, [values]);
+
+  // Preselezione dai pulsanti "Prenota" (hero, servizi).
   useEffect(() => {
     const onService = (e: Event) => {
-      const serviceId = (e as CustomEvent<string>).detail;
-      if (serviceOptions.some((s) => s.id === serviceId)) {
-        setValues((v) => ({ ...v, service: serviceId }));
-        setErrors((errs) => ({ ...errs, service: undefined }));
-        setStatus((s) => (s.kind === "editing" || s.kind === "error" ? s : { kind: "editing" }));
+      const { serviceId, focusNext } = (e as CustomEvent<ServiceRequest>).detail ?? {};
+      if (!serviceOptions.some((s) => s.id === serviceId)) return;
+      setValues((v) => ({ ...v, service: serviceId }));
+      setErrors((errs) => ({ ...errs, service: undefined }));
+      setStatus((s) => (s.kind === "editing" || s.kind === "error" ? s : { kind: "editing" }));
+
+      // Focus sul primo campo ancora vuoto, solo con puntatore preciso:
+      // su touch aprirebbe tastiera o selettore durante lo scorrimento.
+      if (focusNext && window.matchMedia("(pointer: fine)").matches) {
+        const next = NEXT_FIELDS.find((f) => !valuesRef.current[f]);
+        // Dopo la navigazione all'ancora, che altrimenti riporterebbe il focus al documento.
+        if (next) requestAnimationFrame(() => document.getElementById(id(next))?.focus({ preventScroll: true }));
       }
     };
     window.addEventListener(SERVICE_EVENT, onService);
     return () => window.removeEventListener(SERVICE_EVENT, onService);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uid]);
 
   useEffect(() => {
     if (status.kind === "whatsapp" || status.kind === "sent") resultRef.current?.focus();
@@ -192,34 +208,38 @@ export function BookingForm() {
   const describedBy = (field: BookingField, helper = false) =>
     [helper && !errors[field] ? id(`${field}-help`) : null, errors[field] ? id(`${field}-error`) : null].filter(Boolean).join(" ") || undefined;
 
+  const panel = "border-t border-line pt-8";
+
   // ---------- Esiti ----------
   if (status.kind === "whatsapp") {
     return (
-      <div className="border border-ivory/15 bg-obsidian/40 p-6 sm:p-10" aria-live="polite">
-        <CheckIcon size={28} weight="light" className="text-brass" aria-hidden="true" />
-        <h3 ref={resultRef} tabIndex={-1} className="display mt-5 text-[2rem] leading-tight outline-none sm:text-[2.5rem]">
+      <div className={panel} aria-live="polite">
+        <span className="inline-flex size-10 items-center justify-center bg-bronze text-charcoal" aria-hidden="true">
+          <CheckIcon size={22} weight="bold" />
+        </span>
+        <h3 ref={resultRef} tabIndex={-1} className="display display-m mt-6 outline-none">
           La tua richiesta è stata preparata.
         </h3>
-        <p className="mt-4 max-w-[34rem] leading-relaxed text-ivory/85">
+        <p className="mt-4 max-w-[34rem]">
           {status.opened
             ? "Abbiamo aperto WhatsApp con il messaggio già compilato. Per completare la richiesta premi Invia nella chat."
             : "Apri WhatsApp per trovare il messaggio già compilato, poi premi Invia nella chat."}{" "}
           L&apos;appuntamento sarà confermato dal salone.
         </p>
-        <p className="mt-3 text-sm text-mist">Finché il messaggio non viene inviato, il salone non riceve la tua richiesta.</p>
+        <p className="mt-3 text-[0.9375rem] text-muted">Finché il messaggio non viene inviato, il salone non riceve la tua richiesta.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <a href={status.url} target="_blank" rel="noopener noreferrer" className="btn btn-brass">
-            <WhatsappLogoIcon size={20} weight="regular" aria-hidden="true" />
+          <a href={status.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+            <WhatsappLogoIcon size={20} aria-hidden="true" />
             {status.opened ? "Riapri WhatsApp" : "Apri WhatsApp"}
             <span className="sr-only"> (si apre in una nuova scheda)</span>
           </a>
-          <button type="button" onClick={() => reset(true)} className="btn btn-outline-light">
+          <button type="button" onClick={() => reset(true)} className="btn btn-secondary">
             Modifica la richiesta
           </button>
         </div>
-        <p className="mt-8 border-t border-ivory/10 pt-6 text-sm text-mist">
+        <p className="mt-8 border-t border-line pt-6 text-[0.9375rem] text-muted">
           Non usi WhatsApp? Chiama il salone al{" "}
-          <a href={telHref()} className="link-underline whitespace-nowrap text-ivory">
+          <a href={telHref()} className="link whitespace-nowrap text-ink">
             {site.contact.phoneDisplay}
           </a>
           .
@@ -230,15 +250,17 @@ export function BookingForm() {
 
   if (status.kind === "sent") {
     return (
-      <div className="border border-ivory/15 bg-obsidian/40 p-6 sm:p-10" aria-live="polite">
-        <CheckIcon size={28} weight="light" className="text-brass" aria-hidden="true" />
-        <h3 ref={resultRef} tabIndex={-1} className="display mt-5 text-[2rem] leading-tight outline-none sm:text-[2.5rem]">
+      <div className={panel} aria-live="polite">
+        <span className="inline-flex size-10 items-center justify-center bg-bronze text-charcoal" aria-hidden="true">
+          <CheckIcon size={22} weight="bold" />
+        </span>
+        <h3 ref={resultRef} tabIndex={-1} className="display display-m mt-6 outline-none">
           Richiesta inviata al salone.
         </h3>
-        <p className="mt-4 max-w-[34rem] leading-relaxed text-ivory/85">
+        <p className="mt-4 max-w-[34rem]">
           L&apos;appuntamento non è ancora confermato: il salone ti contatterà al numero indicato per confermare giorno e orario.
         </p>
-        <button type="button" onClick={() => reset(false)} className="btn btn-outline-light mt-8">
+        <button type="button" onClick={() => reset(false)} className="btn btn-secondary mt-8">
           Nuova richiesta
         </button>
       </div>
@@ -247,15 +269,15 @@ export function BookingForm() {
 
   if (delivery === "none") {
     return (
-      <div className="border border-ivory/15 bg-obsidian/40 p-6 sm:p-10">
-        <h3 className="display text-[2rem] leading-tight">Prenota per telefono</h3>
-        <p className="mt-4 leading-relaxed text-ivory/85">La richiesta online sarà presto disponibile. Nel frattempo chiamaci o prenota su Treatwell.</p>
+      <div className={panel}>
+        <h3 className="display display-s">Prenota per telefono</h3>
+        <p className="mt-4">La richiesta online sarà presto disponibile. Nel frattempo chiamaci o prenota su Treatwell.</p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <a href={telHref()} className="btn btn-brass">
+          <a href={telHref()} className="btn btn-primary">
             <PhoneIcon size={18} aria-hidden="true" />
             {site.contact.phoneDisplay}
           </a>
-          <a href={site.links.treatwell} target="_blank" rel="noopener noreferrer" className="btn btn-outline-light">
+          <a href={site.links.treatwell} target="_blank" rel="noopener noreferrer" className="btn btn-secondary">
             Prenota su Treatwell
           </a>
         </div>
@@ -268,22 +290,22 @@ export function BookingForm() {
   const maxDate = today ? addDays(today, site.booking.maxDaysAhead) : undefined;
 
   return (
-    <form noValidate onSubmit={onSubmit} aria-labelledby="prenota-title" className="relative grid gap-6" aria-busy={isSubmitting}>
+    <form noValidate onSubmit={onSubmit} aria-labelledby="prenota-title" className="relative grid gap-8" aria-busy={isSubmitting}>
       {showSummary && errorList.length > 0 && (
         <div
           ref={summaryRef}
           tabIndex={-1}
           aria-labelledby={id("summary-title")}
-          className="border border-error-light/60 bg-obsidian/50 p-5 outline-none focus-visible:outline-2 focus-visible:outline-error-light"
+          className="border-2 border-error bg-raised p-5 outline-none focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-ink"
         >
-          <p id={id("summary-title")} className="flex items-center gap-2 font-semibold text-error-light">
-            <WarningCircleIcon size={20} aria-hidden="true" />
+          <p id={id("summary-title")} className="flex items-center gap-2 font-semibold text-error">
+            <WarningCircleIcon size={20} weight="bold" aria-hidden="true" />
             {errorList.length === 1 ? "C'è un campo da correggere" : `Ci sono ${errorList.length} campi da correggere`}
           </p>
-          <ul className="mt-3 grid gap-1.5 text-sm">
+          <ul className="mt-3 grid gap-1.5 text-[0.9375rem]">
             {errorList.map((f) => (
               <li key={f}>
-                <a href={`#${id(f)}`} className="link-underline text-ivory">
+                <a href={`#${id(f)}`} className="link">
                   {FIELD_LABELS[f]}: {errors[f]}
                 </a>
               </li>
@@ -293,22 +315,22 @@ export function BookingForm() {
       )}
 
       {status.kind === "error" && (
-        <div role="alert" className="border border-error-light/60 bg-obsidian/50 p-5">
-          <p className="flex items-start gap-2 text-error-light">
-            <WarningCircleIcon size={20} className="mt-0.5 shrink-0" aria-hidden="true" />
+        <div role="alert" className="border-2 border-error bg-raised p-5">
+          <p className="flex items-start gap-2 font-medium text-error">
+            <WarningCircleIcon size={20} weight="bold" className="mt-0.5 shrink-0" aria-hidden="true" />
             <span>{status.message}</span>
           </p>
           {status.fallback && (
-            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-              <a href={telHref()} className="link-underline text-ivory">
+            <div className="mt-3 flex flex-wrap gap-x-6 text-[0.9375rem]">
+              <a href={telHref()} className="link inline-flex min-h-11 items-center">
                 Chiama {site.contact.phoneDisplay}
               </a>
               {whatsappChatHref() && (
-                <a href={whatsappChatHref()!} target="_blank" rel="noopener noreferrer" className="link-underline text-ivory">
+                <a href={whatsappChatHref()!} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center">
                   Scrivi su WhatsApp
                 </a>
               )}
-              <a href={site.links.treatwell} target="_blank" rel="noopener noreferrer" className="link-underline text-ivory">
+              <a href={site.links.treatwell} target="_blank" rel="noopener noreferrer" className="link inline-flex min-h-11 items-center">
                 Prenota su Treatwell
               </a>
             </div>
@@ -330,36 +352,25 @@ export function BookingForm() {
         />
       </div>
 
-      <Field label="Servizio" htmlFor={id("service")} error={errors.service} errorId={id("service-error")}>
-        <select
-          id={id("service")}
-          name="service"
-          value={values.service}
-          onChange={(e) => update("service", e.target.value)}
-          onBlur={() => blur("service")}
-          aria-invalid={errors.service ? true : undefined}
-          aria-describedby={describedBy("service")}
-          required
-          className="field"
-        >
-          <option value="" disabled>
-            Scegli un servizio
-          </option>
-          {serviceOptions.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </Field>
+      <ChoiceGroup
+        legend="Servizio"
+        name="service"
+        optionId={(i) => (i === 0 ? id("service") : id(`service-${i}`))}
+        options={serviceOptions.map((s) => ({ value: s.id, label: s.name }))}
+        value={values.service}
+        onChange={(v) => update("service", v)}
+        error={errors.service}
+        errorId={id("service-error")}
+        describedBy={describedBy("service")}
+      />
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-6">
         <Field
           label="Data preferita"
           htmlFor={id("date")}
           error={errors.date}
           errorId={id("date-error")}
-          helper="Il salone ti confermerà la disponibilità."
+          helper="Il salone ti conferma la disponibilità."
           helperId={id("date-help")}
         >
           <input
@@ -378,38 +389,22 @@ export function BookingForm() {
           />
         </Field>
 
-        <Field
-          label="Orario preferito"
-          htmlFor={id("time")}
+        <ChoiceGroup
+          legend="Orario preferito"
+          name="time"
+          optionId={(i) => (i === 0 ? id("time") : id(`time-${i}`))}
+          options={site.booking.timePreferences.map((t) => ({ value: t, label: t }))}
+          value={values.time}
+          onChange={(v) => update("time", v)}
           error={errors.time}
           errorId={id("time-error")}
-          helper="È una preferenza, non uno slot garantito."
+          helper="È una preferenza, non un orario garantito."
           helperId={id("time-help")}
-        >
-          <select
-            id={id("time")}
-            name="time"
-            value={values.time}
-            onChange={(e) => update("time", e.target.value)}
-            onBlur={() => blur("time")}
-            aria-invalid={errors.time ? true : undefined}
-            aria-describedby={describedBy("time", true)}
-            required
-            className="field"
-          >
-            <option value="" disabled>
-              Scegli una fascia
-            </option>
-            {site.booking.timePreferences.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </Field>
+          describedBy={describedBy("time", true)}
+        />
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-8 sm:grid-cols-2 sm:gap-6">
         <Field label="Nome e cognome" htmlFor={id("name")} error={errors.name} errorId={id("name-error")}>
           <input
             id={id("name")}
@@ -484,32 +479,27 @@ export function BookingForm() {
             aria-invalid={errors.consent ? true : undefined}
             aria-describedby={describedBy("consent")}
             required
-            className="mt-0.5 size-5 shrink-0 cursor-pointer accent-brass"
+            className="mt-0.5 size-5 shrink-0 cursor-pointer accent-ink"
           />
-          <label htmlFor={id("consent")} className="cursor-pointer text-sm leading-relaxed text-ivory/85">
+          <label htmlFor={id("consent")} className="cursor-pointer text-[0.9375rem] leading-relaxed">
             Acconsento al trattamento dei dati inseriti al solo scopo di ricevere una risposta alla mia richiesta di
             appuntamento, come descritto nell&apos;
-            <a href="/privacy" className="link-underline text-ivory">
+            <a href="/privacy" className="link">
               informativa privacy
             </a>
             .
           </label>
         </div>
-        {errors.consent && (
-          <p id={id("consent-error")} className="mt-2 flex items-start gap-1.5 text-sm text-error-light">
-            <WarningCircleIcon size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
-            {errors.consent}
-          </p>
-        )}
+        {errors.consent && <ErrorText id={id("consent-error")}>{errors.consent}</ErrorText>}
       </div>
 
-      <div className="grid gap-4 border-t border-ivory/10 pt-6">
-        <p className="text-sm leading-relaxed text-mist">
+      <div className="grid gap-4 border-t border-line pt-6">
+        <p className="max-w-[36rem] text-[0.9375rem] text-muted">
           {delivery === "whatsapp"
-            ? "Si aprirà WhatsApp con il messaggio già compilato: per completare la richiesta dovrai solo premere Invia."
-            : "La richiesta arriva direttamente al salone, che ti ricontatterà per confermare."}
+            ? "Si apre WhatsApp con il messaggio già compilato: per completare la richiesta premi Invia nella chat."
+            : "La richiesta arriva direttamente al salone, che ti ricontatta per confermare."}
         </p>
-        <button type="submit" disabled={isSubmitting} className="btn btn-brass w-full sm:w-auto sm:justify-self-start">
+        <button type="submit" disabled={isSubmitting} className="btn btn-primary w-full sm:w-auto sm:justify-self-start">
           {isSubmitting ? (
             <>
               <CircleNotchIcon size={18} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
@@ -517,7 +507,7 @@ export function BookingForm() {
             </>
           ) : delivery === "whatsapp" ? (
             <>
-              <WhatsappLogoIcon size={20} weight="regular" aria-hidden="true" />
+              <WhatsappLogoIcon size={20} aria-hidden="true" />
               Continua su WhatsApp
             </>
           ) : (
@@ -529,6 +519,15 @@ export function BookingForm() {
         </button>
       </div>
     </form>
+  );
+}
+
+function ErrorText({ id, children }: { id: string; children: React.ReactNode }) {
+  return (
+    <p id={id} className="mt-2 flex items-start gap-1.5 text-[0.875rem] font-medium text-error">
+      <WarningCircleIcon size={16} weight="bold" className="mt-0.5 shrink-0" aria-hidden="true" />
+      {children}
+    </p>
   );
 }
 
@@ -553,22 +552,75 @@ function Field({
 }) {
   return (
     <div className="grid content-start gap-2">
-      <label htmlFor={htmlFor} className="text-sm font-semibold text-ivory">
+      <label htmlFor={htmlFor} className="text-[0.9375rem] font-semibold">
         {label}
-        {optional && <span className="font-normal text-mist"> (facoltativo)</span>}
+        {optional && <span className="font-normal text-muted"> (facoltativo)</span>}
       </label>
       {children}
       {helper && !error && (
-        <p id={helperId} className="text-[0.8125rem] text-mist">
+        <p id={helperId} className="text-[0.8125rem] text-muted">
           {helper}
         </p>
       )}
-      {error && (
-        <p id={errorId} className="flex items-start gap-1.5 text-sm text-error-light">
-          <WarningCircleIcon size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
-          {error}
+      {error && <ErrorText id={errorId}>{error}</ErrorText>}
+    </div>
+  );
+}
+
+/**
+ * Gruppo di scelte a chip (radio). Le opzioni sono poche e brevi: tutte
+ * visibili in un colpo d'occhio, piu' rapide da toccare di un menu a tendina.
+ */
+function ChoiceGroup({
+  legend,
+  name,
+  optionId,
+  options,
+  value,
+  onChange,
+  error,
+  errorId,
+  helper,
+  helperId,
+  describedBy,
+}: {
+  legend: string;
+  name: string;
+  optionId: (index: number) => string;
+  options: Array<{ value: string; label: string }>;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  errorId: string;
+  helper?: string;
+  helperId?: string;
+  describedBy?: string;
+}) {
+  return (
+    <fieldset className="grid content-start gap-2" aria-describedby={describedBy} data-invalid={error ? "" : undefined}>
+      <legend className="mb-2 text-[0.9375rem] font-semibold">{legend}</legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option, i) => (
+          <label key={option.value} className="chip">
+            <input
+              id={optionId(i)}
+              type="radio"
+              name={name}
+              value={option.value}
+              checked={value === option.value}
+              onChange={() => onChange(option.value)}
+              required
+            />
+            <span>{option.label}</span>
+          </label>
+        ))}
+      </div>
+      {helper && !error && (
+        <p id={helperId} className="text-[0.8125rem] text-muted">
+          {helper}
         </p>
       )}
-    </div>
+      {error && <ErrorText id={errorId}>{error}</ErrorText>}
+    </fieldset>
   );
 }

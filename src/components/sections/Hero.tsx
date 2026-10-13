@@ -1,97 +1,153 @@
-import Image from "next/image";
-import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
+"use client";
+
+import { useRef } from "react";
+import Image, { getImageProps } from "next/image";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { site } from "@/config/site";
 import { bookingAnchor } from "@/config/navigation";
 import { altFor, focus, images } from "@/content/images";
+import { MOTION, gsap, useGSAP, type MotionConditions } from "@/lib/motion";
 
+/**
+ * Hero a tutto schermo. Sullo sfondo gli strumenti del barbiere (su
+ * telefono la rasatura, inquadratura verticale), in primo piano un ritratto
+ * al lavoro che si apre come un sipario. Le righe del titolo salgono da una
+ * maschera (CSS, nessuna attesa del JavaScript); allo scorrimento i piani
+ * si separano in parallasse.
+ */
 export function Hero() {
-  const hero = images.heroPortrait;
+  const ref = useRef<HTMLElement>(null);
+  const bg = images.heroTools;
+  const shave = images.heroShave;
+
+  // Direzione artistica: verticale su telefono, orizzontale da tablet in su.
+  const common = { alt: "", sizes: "100vw", fill: true, fetchPriority: "high" as const, loading: "eager" as const, quality: 75 };
+  const { props: desktop } = getImageProps({ ...common, src: bg.src });
+  const { props: mobile } = getImageProps({ ...common, src: shave.src });
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add(MOTION, (ctx) => {
+        const { reduce, wide } = ctx.conditions as MotionConditions;
+        if (reduce) return;
+        const st = {
+          trigger: ref.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        };
+        gsap.to("[data-hero-bg]", {
+          yPercent: 18,
+          ease: "none",
+          scrollTrigger: st,
+        });
+        gsap.to("[data-hero-veil]", {
+          opacity: 0.9,
+          ease: "none",
+          scrollTrigger: st,
+        });
+        gsap.to("[data-hero-title]", {
+          yPercent: wide ? -22 : -10,
+          ease: "none",
+          scrollTrigger: st,
+        });
+        if (wide)
+          gsap.to("[data-hero-portrait]", {
+            yPercent: -16,
+            ease: "none",
+            scrollTrigger: st,
+          });
+      });
+      return () => mm.revert();
+    },
+    { scope: ref },
+  );
 
   return (
-    <section id="top" aria-labelledby="hero-title" className="surface-dark relative isolate overflow-hidden bg-obsidian">
-      {/* Sentinella: l'header diventa pieno quando esce dal viewport. */}
-      <div id="hero-sentinel" aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-20" />
-
-      {/* Fotografia: a tutta pagina su mobile, colonna destra da lg. */}
-      <div className="absolute inset-0 -z-10 lg:left-auto lg:w-[45%]">
-        <div className="hero-reveal absolute inset-0 overflow-hidden">
-          <div className="parallax-hero absolute inset-x-0 -top-[8%] h-[116%]">
-            <Image
-              src={hero.src}
-              alt={altFor(hero)}
-              fill
-              priority
-              placeholder="blur"
-              sizes="(min-width: 1024px) 45vw, 100vw"
-              style={focus(hero)}
-              className="hero-reveal-img object-cover"
-            />
-          </div>
+    <section ref={ref} id="top" aria-labelledby="hero-title" className="relative isolate flex min-h-[100svh] flex-col overflow-hidden">
+      {/* Sfondo */}
+      <div className="hero-open grain absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 -top-[10%] h-[120%]" data-hero-bg>
+          <picture>
+            <source media="(min-width: 768px)" srcSet={desktop.srcSet} sizes={desktop.sizes} />
+            {/* Sfondo d'atmosfera sotto il titolo: decorativo (alt vuoto). Il ritratto in primo piano ha il suo testo. */}
+            <img {...mobile} alt="" className="photo h-full w-full object-cover" style={{ ...mobile.style, ...focus(bg) }} />
+          </picture>
         </div>
-        {/* Velature per la leggibilita': dal basso su mobile, da sinistra da lg. */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-obsidian from-30% via-obsidian/70 via-55% to-obsidian/5 lg:bg-gradient-to-r lg:from-obsidian lg:from-0% lg:via-obsidian/10 lg:via-35% lg:to-transparent"
-        />
+        <div className="absolute inset-0 bg-charcoal/55" data-hero-veil />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,var(--color-charcoal),transparent)]" />
       </div>
 
-      <div className="mx-auto grid min-h-[100dvh] max-w-[1440px] grid-cols-1 content-end px-5 pt-28 pb-8 sm:px-8 lg:grid-rows-[1fr_auto] lg:content-stretch lg:px-12 lg:pt-32 lg:pb-5">
-        <div className="max-w-[34rem] self-center lg:max-w-[46%] lg:pb-10">
-          <p className="eyebrow hero-rise text-brass" style={{ "--d": 0 } as React.CSSProperties}>
-            Milano · {site.category}
-          </p>
+      <div className="mx-auto grid w-full max-w-[1440px] flex-1 grid-cols-12 grid-rows-[1fr] gap-x-6 px-5 md:grid-rows-[auto_1fr] pt-28 pb-10 sm:px-8 md:pt-32 lg:px-12 lg:pb-14">
+        {/* Ritratto in primo piano (da tablet) */}
+        <figure
+          className="hero-open relative col-span-4 col-start-9 row-start-1 hidden self-start md:block lg:col-span-4 lg:col-start-8 lg:w-fit lg:justify-self-center"
+          data-hero-portrait
+        >
+          <div className="relative aspect-[2/3] max-h-[48svh] overflow-hidden bg-raised lg:h-[48svh] lg:max-h-none">
+            <Image
+              src={shave.src}
+              alt={altFor(shave)}
+              fill
+              sizes="(min-width: 1024px) 24vw, 33vw"
+              placeholder="blur"
+              style={focus(shave)}
+              className="photo object-cover"
+            />
+          </div>
+          <figcaption className="caption mt-3 flex justify-between gap-4">
+            <span className="hidden lg:inline">Rasatura a mano libera</span>
+            <span>Foto di repertorio</span>
+          </figcaption>
+        </figure>
 
-          <h1 id="hero-title" className="sr-only">
-            {site.name}, Milano
+        <div
+          className="relative z-10 col-span-12 row-start-1 flex flex-col justify-end self-end md:row-start-2 md:-mt-28 lg:-mt-40"
+          data-hero-title
+        >
+          <p className="kicker fade-in mb-6 md:mb-8" style={{ "--d": 100 } as React.CSSProperties}>
+            <span className="text-bronze-text">Barbiere</span> &nbsp;/&nbsp; {site.address.street}, {site.address.city}
+          </p>
+          <h1 id="hero-title" className="display display-xl">
+            <span className="sr-only">Style86, barbiere a Milano: </span>
+            <span className="line">
+              <span style={{ "--d": 150 } as React.CSSProperties}>Il rito</span>
+            </span>
+            <span className="line">
+              <span style={{ "--d": 260 } as React.CSSProperties}>
+                del <em>taglio.</em>
+              </span>
+            </span>
           </h1>
+        </div>
+      </div>
 
-          {/* Wordmark su mobile, sopra il titolo. */}
-          <p
-            aria-hidden="true"
-            className="wordmark hero-rise mt-5 text-[clamp(4.25rem,21vw,7rem)] leading-[0.82] tracking-[0.01em] lg:hidden"
-            style={{ "--d": 80 } as React.CSSProperties}
-          >
-            STYLE<span className="text-brass">86</span>
+      <div className="mx-auto w-full max-w-[1440px] px-5 pb-8 sm:px-8 lg:px-12 lg:pb-10">
+        <div
+          className="fade-in grid gap-5 border-t border-line pt-5 md:grid-cols-12 md:items-end md:gap-6"
+          style={{ "--d": 600 } as React.CSSProperties}
+        >
+          <p className="max-w-[36rem] text-[1.0625rem] text-ink/85 md:col-span-6">
+            Taglio, barba e cura del viso in Via Ornato, a Milano. Scegli il servizio e il momento che preferisci: il salone ti conferma
+            l&apos;orario.
           </p>
-
-          <p className="display mt-6 text-[clamp(2.5rem,9.5vw,3.25rem)] text-ivory lg:mt-7 lg:text-[clamp(3.5rem,5.4vw,5.5rem)]">
-            <span className="hero-rise block" style={{ "--d": 160 } as React.CSSProperties}>
-              Il tuo stile.
-            </span>
-            <span className="hero-rise block" style={{ "--d": 260 } as React.CSSProperties}>
-              La tua <em className="font-light italic text-brass">firma</em>.
-            </span>
-          </p>
-
-          <p
-            className="hero-rise mt-5 max-w-[30rem] text-base leading-relaxed text-ivory/85 sm:text-[1.0625rem] lg:mt-7"
-            style={{ "--d": 360 } as React.CSSProperties}
-          >
-            Parrucchieri ed estetica in Via Ornato, a Milano. Un taglio pensato su di te, rifinito con cura in ogni dettaglio.
-          </p>
-
-          <div
-            className="hero-rise mt-7 flex flex-col gap-3 xs:flex-row xs:flex-wrap lg:mt-9"
-            style={{ "--d": 420 } as React.CSSProperties}
-          >
-            <a href={bookingAnchor} className="btn btn-brass">
-              Prenota un appuntamento
-              <ArrowRightIcon size={18} weight="regular" className="btn-icon" aria-hidden="true" />
+          <div className="flex flex-wrap items-center gap-3 md:col-span-4 md:col-start-7">
+            <a href={bookingAnchor} className="btn btn-primary">
+              Prenota
+              <ArrowRightIcon size={16} className="btn-icon" aria-hidden="true" />
             </a>
-            <a href="#servizi" className="btn btn-outline-light">
-              Scopri i servizi
+            <a href="#servizi" className="btn btn-secondary">
+              I servizi
             </a>
           </div>
+          <a href="#filosofia" className="kicker hidden items-center gap-3 justify-self-end md:col-span-2 md:inline-flex">
+            Scorri
+            <span aria-hidden="true" className="relative block h-10 w-px overflow-hidden bg-line">
+              <span className="scroll-cue absolute inset-x-0 top-0 block h-1/2 bg-ink" />
+            </span>
+          </a>
         </div>
-
-        {/* Wordmark monumentale da lg: attraversa il testo e la fotografia. */}
-        <p
-          aria-hidden="true"
-          className="wordmark hero-rise pointer-events-none -mx-[0.04em] hidden select-none whitespace-nowrap text-[18vw] leading-[0.8] tracking-[-0.01em] text-ivory lg:block 2xl:text-[16.5rem]"
-          style={{ "--d": 200 } as React.CSSProperties}
-        >
-          STYLE<span className="text-brass">86</span>
-        </p>
       </div>
     </section>
   );

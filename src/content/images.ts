@@ -10,7 +10,7 @@
  *      Style86, il suo staff o lavori realizzati nel salone (con consenso).
  *
  * Stato attuale: foto di repertorio con licenza libera (Unsplash, Pexels,
- * Pixabay), elaborate con una gradazione calda comune. NON ritraggono il
+ * Pixabay), mostrate in monocromia calda sul sito (classe .photo). NON ritraggono il
  * salone Style86, il suo staff o i suoi clienti: restano `illustrative: true`
  * e il sito le segnala come immagini illustrative. Crediti e provenienza in
  * src/assets/images/CREDITS.md.
@@ -18,21 +18,21 @@
 
 import type { StaticImageData } from "next/image";
 
-import heroPortrait from "@/assets/images/hero-portrait.jpg";
-import introDetail from "@/assets/images/intro-detail.jpg";
-import serviceCut from "@/assets/images/service-cut.jpg";
-import serviceStyling from "@/assets/images/service-styling.jpg";
-import serviceBeard from "@/assets/images/service-beard.jpg";
-import serviceBeauty from "@/assets/images/service-beauty.jpg";
-import experienceInterior from "@/assets/images/experience-interior.jpg";
-import experienceTools from "@/assets/images/experience-tools.jpg";
-import experienceMirror from "@/assets/images/experience-mirror.jpg";
-import gallery1 from "@/assets/images/gallery-1.jpg";
-import gallery2 from "@/assets/images/gallery-2.jpg";
-import gallery3 from "@/assets/images/gallery-3.jpg";
-import gallery4 from "@/assets/images/gallery-4.jpg";
-import gallery5 from "@/assets/images/gallery-5.jpg";
-import gallery6 from "@/assets/images/gallery-6.jpg";
+import heroTools from "@/assets/images/hero-tools.webp";
+import heroShave from "@/assets/images/hero-shave.webp";
+import craftTools from "@/assets/images/craft-tools.webp";
+import serviceCut from "@/assets/images/service-cut.webp";
+import serviceBeard from "@/assets/images/service-beard.webp";
+import serviceStyling from "@/assets/images/service-styling.webp";
+import serviceFace from "@/assets/images/service-face.webp";
+import teamHands from "@/assets/images/team-hands.webp";
+import galleryPompadour from "@/assets/images/gallery-pompadour.webp";
+import galleryTailored from "@/assets/images/gallery-tailored.webp";
+import galleryGoatee from "@/assets/images/gallery-goatee.webp";
+import galleryStubble from "@/assets/images/gallery-stubble.webp";
+import galleryInterior from "@/assets/images/gallery-interior.webp";
+import galleryStreet from "@/assets/images/gallery-street.webp";
+import galleryShop from "@/assets/images/gallery-shop.webp";
 
 export interface PhotoCredit {
   author: string;
@@ -60,9 +60,10 @@ export interface SiteImage {
 const unsplash = (author: string, id: string): PhotoCredit => ({
   author,
   license: "Unsplash License",
-  url: `https://unsplash.com/photos/${id}`,
+  url: id ? `https://unsplash.com/photos/${id}` : undefined,
 });
 const pexels = (author: string): PhotoCredit => ({ author, license: "Pexels License" });
+const pixabay = (author: string): PhotoCredit => ({ author, license: "Pixabay Content License" });
 
 /** Foto di repertorio: illustrativa, con credito e punto focale. */
 function stock(src: StaticImageData, alt: string, brief: string, credit: PhotoCredit, position?: string): SiteImage {
@@ -70,110 +71,110 @@ function stock(src: StaticImageData, alt: string, brief: string, credit: PhotoCr
 }
 
 export const images = {
-  heroPortrait: stock(
-    heroPortrait,
-    "Donna con lunghi capelli ricci in movimento, occhi chiusi, in luce naturale",
-    "Ritratto verticale 4:5, luce calda laterale, sfondo scuro e pulito.",
-    unsplash("Omid Armin", "jvjZuJ9Inc8"),
-    "72% 22%",
-  ),
-  introDetail: stock(
-    introDetail,
-    "Rasoio a mano libera, pennello da barba e strumenti da barbiere su un panno scuro",
-    "Dettaglio verticale 3:4 di strumenti professionali: forbici, pettine, rasoio.",
+  heroTools: stock(
+    heroTools,
+    "Ciotola da barba con pennello, rasoi a mano libera e pettini su un panno scuro",
+    "Strumenti del salone su un piano di lavoro, luce radente, orizzontale 3:2.",
     pexels("Nikolaos Dimou"),
-    "40% 50%",
+    "30% 40%",
+  ),
+  heroShave: stock(
+    heroShave,
+    "Barbiere che rifinisce la barba di un cliente con il rasoio a mano libera",
+    "Rasatura in corso, verticale 2:3, sfondo del salone sfocato.",
+    pexels("Thgusstavo Santana"),
+    "60% 35%",
+  ),
+  craftTools: stock(
+    craftTools,
+    "Rasoio di sicurezza nella sua custodia, pettino e macchinetta d'epoca su un banco di legno",
+    "Dettaglio di strumenti su legno, orizzontale 5:4.",
+    pexels("Gonzalo Guzman"),
+    "55% 50%",
   ),
   serviceCut: stock(
     serviceCut,
-    "Barbiere che rifinisce un taglio sfumato con pettine e forbici",
-    "Taglio in corso, inquadratura ravvicinata 4:5.",
+    "Barbiere che rifinisce un taglio sfumato con le dita e le forbici",
+    "Taglio in corso, verticale 2:3.",
     pexels("Thgusstavo Santana"),
-    "50% 35%",
-  ),
-  serviceStyling: stock(
-    serviceStyling,
-    "Donna con lunghi capelli biondi mossi, acconciati in onde morbide",
-    "Piega o styling finito, luce morbida 4:5.",
-    unsplash("Averie Woodard", "4nulm-JUYFo"),
     "50% 30%",
   ),
   serviceBeard: stock(
     serviceBeard,
-    "Barbiere che rifinisce la barba di un cliente con il rasoio",
-    "Rifinitura barba, dettaglio 4:5 su sfondo scuro.",
+    "Barbiere che regola la barba di un cliente disteso in poltrona",
+    "Cura della barba in poltrona, verticale 3:4.",
     pexels("Thgusstavo Santana"),
     "45% 45%",
   ),
-  serviceBeauty: stock(
-    serviceBeauty,
-    "Ritratto sorridente con lentiggini, rossetto rosso e capelli raccolti",
-    "Trattamento estetico, ambiente luminoso 4:5.",
-    unsplash("Gabriel Silvério", "u3WmDyKGsrY"),
-    "50% 30%",
-  ),
-  experienceInterior: stock(
-    experienceInterior,
-    "Interno di una barberia d'epoca con poltrone, specchi e arredi in legno",
-    "Interno del salone, orizzontale 16:10, postazioni e specchi.",
-    { author: "Theo Rivierenlaan", license: "Pixabay Content License" },
-    "50% 55%",
-  ),
-  experienceTools: stock(
-    experienceTools,
-    "Tagliacapelli, pettine e accessori da barbiere su un piano in legno",
-    "Strumenti e prodotti ordinati, verticale 3:4.",
-    pexels("Gonzalo Guzman"),
-    "35% 50%",
-  ),
-  experienceMirror: stock(
-    experienceMirror,
-    "Postazione con specchio, piante e luce naturale in un salone con mattoni a vista",
-    "Riflesso nello specchio, quadrato 1:1.",
-    pexels("Lisa Fotios"),
-    "50% 45%",
-  ),
-  gallery1: stock(
-    gallery1,
-    "Donna sorridente con lunghe trecce box braids",
-    "Lavoro finito, verticale 4:5.",
-    unsplash("Gustavo Spindula", "K2D7muBun1A"),
-    "50% 18%",
-  ),
-  gallery2: stock(
-    gallery2,
-    "Barbiere che fissa con la lacca un taglio corto pettinato all'indietro",
-    "Gesto tecnico, orizzontale 3:2.",
+  serviceStyling: stock(
+    serviceStyling,
+    "Barbiere che fissa con la lacca un taglio pettinato all'indietro",
+    "Finitura dello styling, verticale 2:3.",
     pexels("Thgusstavo Santana"),
-    "60% 30%",
+    "55% 30%",
   ),
-  gallery3: stock(
-    gallery3,
-    "Ragazza sorridente con frangia piena e capelli raccolti",
-    "Lavoro finito, quadrato 1:1.",
-    unsplash("Salha Frija", "dsQoLK2N7DQ2"),
-    "40% 30%",
+  serviceFace: stock(
+    serviceFace,
+    "Dettaglio ravvicinato di una barba corta curata e del collo",
+    "Dettaglio del viso, verticale 2:3.",
+    pexels("Lucas Andrade"),
+    "50% 40%",
   ),
-  gallery4: stock(
-    gallery4,
+  teamHands: stock(
+    teamHands,
     "Barbiere che asciuga e modella una barba lunga con spazzola e phon",
-    "Gesto tecnico, verticale 3:4.",
+    "Il barbiere al lavoro, verticale 2:3.",
     pexels("Alex Urezkov"),
     "50% 30%",
   ),
-  gallery5: stock(
-    gallery5,
-    "Ritratto di una ragazza con capelli afro voluminosi",
-    "Lavoro finito, verticale 4:5.",
-    unsplash("Jessica Felicio", "_cvwXhGqG-o"),
-    "50% 35%",
+  galleryPompadour: stock(
+    galleryPompadour,
+    "Ragazzo con taglio sfumato ai lati e ciuffo pettinato all'indietro, barba corta",
+    "Lavoro finito, orizzontale 3:2.",
+    unsplash("Nathan Fertig", ""),
+    "52% 30%",
   ),
-  gallery6: stock(
-    gallery6,
-    "Lunghi capelli rosa in movimento, donna di profilo",
-    "Capelli in movimento, orizzontale 3:2.",
-    unsplash("George Bohunicky", "qJKT2rMU0VU"),
-    "60% 40%",
+  galleryTailored: stock(
+    galleryTailored,
+    "Uomo con barba piena e capelli corti laterali, giacca scura e pochette",
+    "Ritratto in studio, orizzontale 3:2.",
+    pexels("Andrea Piacquadio"),
+    "62% 35%",
+  ),
+  galleryGoatee: stock(
+    galleryGoatee,
+    "Ritratto in bianco e nero di un uomo con pizzetto grigio e occhiali da sole",
+    "Ritratto a contrasto, orizzontale 3:2.",
+    pixabay("Autore Pixabay"),
+    "55% 40%",
+  ),
+  galleryStubble: stock(
+    galleryStubble,
+    "Uomo con barba corta e occhiali da sole, completo grigio",
+    "Ritratto, verticale 2:3.",
+    pexels("Safa Bakirci"),
+    "50% 30%",
+  ),
+  galleryInterior: stock(
+    galleryInterior,
+    "Bottega da barbiere d'epoca con due poltrone in legno e cuoio davanti a un mobile a cassetti",
+    "Interno del salone, orizzontale 3:2.",
+    pixabay("Theo Rivierenlaan"),
+    "50% 55%",
+  ),
+  galleryStreet: stock(
+    galleryStreet,
+    "Uomo con barba e occhiali in cappotto chiaro, a passeggio in citta'",
+    "Ritratto in esterni, orizzontale 3:2.",
+    pexels("Andrea Piacquadio"),
+    "55% 35%",
+  ),
+  galleryShop: stock(
+    galleryShop,
+    "Interno di un salone da barbiere con parete in mattoni, poltrona e piante",
+    "Interno, verticale 3:4.",
+    pexels("Lisa Fotios"),
+    "50% 50%",
   ),
 } satisfies Record<string, SiteImage>;
 
@@ -189,4 +190,11 @@ export function focus(image: SiteImage): React.CSSProperties | undefined {
   return image.position ? { objectPosition: image.position } : undefined;
 }
 
-export const galleryImages: ImageKey[] = ["gallery1", "gallery2", "gallery3", "gallery4", "gallery5", "gallery6"];
+export const galleryImages: ImageKey[] = [
+  "galleryTailored",
+  "galleryStubble",
+  "galleryPompadour",
+  "galleryInterior",
+  "galleryStreet",
+  "galleryGoatee",
+];

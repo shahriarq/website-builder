@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PhoneIcon } from "@phosphor-icons/react";
+import { ArrowRightIcon, PhoneIcon } from "@phosphor-icons/react";
 import { site, telHref } from "@/config/site";
 import { bookingAnchor } from "@/config/navigation";
 
 /**
- * Barra di prenotazione su mobile: compare dopo l'hero e si nasconde quando
+ * Barra di prenotazione sui telefoni (da 640 px il bottone e' nell'header): compare dopo l'hero e si nasconde quando
  * il modulo o il footer sono visibili, per non coprire contenuti utili.
  */
 export function MobileBookingBar() {
@@ -39,17 +39,18 @@ export function MobileBookingBar() {
 
   return (
     <div
-      className={`surface-dark fixed inset-x-0 bottom-0 z-30 border-t border-ivory/10 bg-obsidian/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-sm transition-[transform,opacity] duration-500 ease-[var(--ease-editorial)] motion-reduce:transition-none lg:hidden ${
+      className={`fixed inset-x-0 bottom-0 z-30 border-t border-line-strong bg-paper px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[transform,opacity] duration-300 ease-[var(--ease-out-quart)] motion-reduce:transition-none sm:hidden ${
         show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-full opacity-0"
       }`}
       aria-hidden={!show}
       inert={!show}
     >
       <div className="mx-auto flex max-w-lg gap-3">
-        <a href={bookingAnchor} className="btn btn-brass min-h-12 flex-1">
-          Prenota un appuntamento
+        <a href={bookingAnchor} className="btn btn-primary flex-1">
+          Prenota
+          <ArrowRightIcon size={18} className="btn-icon" aria-hidden="true" />
         </a>
-        <a href={telHref()} className="btn btn-outline-light min-h-12 w-12 shrink-0 px-0" aria-label={`Chiama ${site.contact.phoneDisplay}`}>
+        <a href={telHref()} className="btn btn-secondary w-[3.25rem] shrink-0 px-0" aria-label={`Chiama ${site.contact.phoneDisplay}`}>
           <PhoneIcon size={20} aria-hidden="true" />
         </a>
       </div>

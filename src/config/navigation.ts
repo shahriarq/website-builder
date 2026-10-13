@@ -1,8 +1,9 @@
 export const navItems = [
-  { label: "Home", href: "#top" },
+  { label: "Filosofia", href: "#filosofia" },
   { label: "Servizi", href: "#servizi" },
-  { label: "Il salone", href: "#salone" },
   { label: "Galleria", href: "#galleria" },
+  { label: "Team", href: "#team" },
+  { label: "Recensioni", href: "#recensioni" },
   { label: "Contatti", href: "#contatti" },
 ] as const;
 

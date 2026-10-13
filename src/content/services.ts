@@ -32,40 +32,40 @@ export const services: Service[] = [
     id: "taglio",
     name: "Taglio",
     description:
-      "Un taglio costruito sulla forma del viso, sulla texture dei capelli e sul modo in cui li porti ogni giorno.",
+      "Forbici, macchinetta e sfumature costruite sulla forma della testa, sulla crescita dei capelli e su come li porti ogni giorno.",
     duration: null,
     price: null,
     image: "serviceCut",
     confirmed: false,
   },
   {
-    id: "styling",
-    name: "Piega e styling",
-    description:
-      "Piega, finish e styling per la giornata o per un'occasione speciale, con prodotti scelti per i tuoi capelli.",
-    duration: null,
-    price: null,
-    image: "serviceStyling",
-    confirmed: false,
-  },
-  {
     id: "barba",
     name: "Barba",
     description:
-      "Rifinitura e cura della barba, con linee pulite e proporzioni pensate insieme al taglio.",
+      "Disegno, rifinitura e cura della barba: linee nette sul collo e sugli zigomi, proporzioni pensate insieme al taglio.",
     duration: null,
     price: null,
     image: "serviceBeard",
     confirmed: false,
   },
   {
-    id: "estetica",
-    name: "Trattamenti estetici",
+    id: "styling",
+    name: "Styling",
     description:
-      "Trattamenti di estetica e cura della persona, per completare il tuo appuntamento in salone.",
+      "Piega e finish con prodotti scelti per il tuo tipo di capello, per la giornata o per un'occasione.",
     duration: null,
     price: null,
-    image: "serviceBeauty",
+    image: "serviceStyling",
+    confirmed: false,
+  },
+  {
+    id: "estetica",
+    name: "Viso ed estetica",
+    description:
+      "Trattamenti di estetica e cura della persona, per completare l'appuntamento in poltrona.",
+    duration: null,
+    price: null,
+    image: "serviceFace",
     confirmed: false,
   },
 ];

@@ -3,13 +3,20 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { site } from "@/config/site";
 
-export const alt = `${site.name}, Milano`;
+export const alt = `${site.shortName}, barbiere a Milano`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/** Immagine di anteprima per i social, generata al momento della build. */
+/**
+ * Anteprima per i social, generata alla build con i colori del sito.
+ * Carattere: Inter (il generatore non puo' usare SF Pro di sistema).
+ */
 export default async function OpenGraphImage() {
-  const cormorant = await readFile(join(process.cwd(), "src/assets/fonts/CormorantGaramond-Medium.ttf"));
+  const fonts = join(process.cwd(), "src/assets/fonts");
+  const [regular, semibold] = await Promise.all([
+    readFile(join(fonts, "Inter-Regular.woff")),
+    readFile(join(fonts, "Inter-SemiBold.woff")),
+  ]);
 
   return new ImageResponse(
     (
@@ -20,24 +27,31 @@ export default async function OpenGraphImage() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "linear-gradient(135deg, #171715 0%, #292824 100%)",
+          background: "#121110",
           padding: "64px 72px",
-          color: "#E9E2D7",
-          fontFamily: "Cormorant",
+          color: "#ece5d8",
+          fontFamily: "Inter",
         }}
       >
-        <div style={{ display: "flex", fontSize: 26, letterSpacing: 6, color: "#C8A77B" }}>
-          MILANO · PARRUCCHIERI &amp; ESTETICA
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 28, fontWeight: 600, letterSpacing: -0.5 }}>
+          <span>
+            Style<span style={{ color: "#c4a27a" }}>86</span>
+          </span>
+          <span style={{ color: "#c4a27a" }}>Barbiere a Milano</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 76, lineHeight: 1.05 }}>Il tuo stile. La tua firma.</div>
-          <div style={{ display: "flex", marginTop: 18, fontSize: 30, color: "#A9A397" }}>{site.address.full}</div>
+        <div style={{ display: "flex", flexDirection: "column", fontSize: 128, fontWeight: 600, lineHeight: 1.04, letterSpacing: -4 }}>
+          <span>Il rito</span>
+          <span style={{ color: "#a59e91" }}>del taglio.</span>
         </div>
-        <div style={{ display: "flex", fontSize: 168, lineHeight: 0.8, letterSpacing: 4 }}>
-          STYLE<span style={{ color: "#C8A77B" }}>86</span>
-        </div>
+        <div style={{ display: "flex", fontSize: 30, color: "#a59e91", letterSpacing: -0.4 }}>{site.address.full}</div>
       </div>
     ),
-    { ...size, fonts: [{ name: "Cormorant", data: cormorant, weight: 500, style: "normal" }] },
+    {
+      ...size,
+      fonts: [
+        { name: "Inter", data: regular, weight: 400, style: "normal" },
+        { name: "Inter", data: semibold, weight: 600, style: "normal" },
+      ],
+    },
   );
 }

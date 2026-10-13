@@ -11,9 +11,9 @@ const schemaDay: Record<DayKey, string> = {
 };
 
 export const seo = {
-  title: "Style86 Parrucchieri & Estetica | Parrucchiere a Milano, Via Ornato",
+  title: "Style86 | Barbiere e parrucchiere uomo a Milano, Via Ornato",
   description:
-    "Style86 Parrucchieri & Estetica in Via Luigi Ornato 59 a Milano. Taglio, styling e cura della persona. Richiedi un appuntamento online o chiama il salone.",
+    "Style86 in Via Luigi Ornato 59 a Milano: taglio, barba, styling e cura del viso. Prenota online la tua poltrona: il salone ti conferma l'orario.",
 };
 
 /**
