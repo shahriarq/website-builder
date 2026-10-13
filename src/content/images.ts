@@ -46,6 +46,8 @@ export interface SiteImage {
   src: StaticImageData;
   /** Testo alternativo: descrive cio' che la foto mostra davvero. */
   alt: string;
+  /** Lo stesso testo alternativo in inglese. */
+  altEn: string;
   /** Soggetto ideale per lo slot quando arriveranno le foto del salone. */
   brief: string;
   /** true = lastra segnaposto generata, non una fotografia. */
@@ -65,9 +67,27 @@ const unsplash = (author: string, id: string): PhotoCredit => ({
 const pexels = (author: string): PhotoCredit => ({ author, license: "Pexels License" });
 const pixabay = (author: string): PhotoCredit => ({ author, license: "Pixabay Content License" });
 
+const ALT_EN = new Map<string, string>([
+  ["Ciotola da barba con pennello, rasoi a mano libera e pettini su un panno scuro", "Shaving bowl and brush, straight razors and combs on a dark cloth"],
+  ["Barbiere che rifinisce la barba di un cliente con il rasoio a mano libera", "Barber finishing a client's beard with a straight razor"],
+  ["Rasoio di sicurezza nella sua custodia, pettino e macchinetta d'epoca su un banco di legno", "Safety razor in its case, a comb and vintage clippers on a wooden bench"],
+  ["Barbiere che rifinisce un taglio sfumato con le dita e le forbici", "Barber finishing a fade with his fingers and scissors"],
+  ["Barbiere che regola la barba di un cliente disteso in poltrona", "Barber trimming the beard of a client reclined in the chair"],
+  ["Barbiere che fissa con la lacca un taglio pettinato all'indietro", "Barber setting a slicked-back cut with hairspray"],
+  ["Dettaglio ravvicinato di una barba corta curata e del collo", "Close-up of a short, groomed beard and neck"],
+  ["Barbiere che asciuga e modella una barba lunga con spazzola e phon", "Barber blow-drying and shaping a long beard with a brush"],
+  ["Ragazzo con taglio sfumato ai lati e ciuffo pettinato all'indietro, barba corta", "Young man with faded sides, a swept-back quiff and a short beard"],
+  ["Uomo con barba piena e capelli corti laterali, giacca scura e pochette", "Man with a full beard and short sides, dark jacket and pocket square"],
+  ["Ritratto in bianco e nero di un uomo con pizzetto grigio e occhiali da sole", "Black-and-white portrait of a man with a grey goatee and sunglasses"],
+  ["Uomo con barba corta e occhiali da sole, completo grigio", "Man with a short beard and sunglasses in a grey suit"],
+  ["Bottega da barbiere d'epoca con due poltrone in legno e cuoio davanti a un mobile a cassetti", "Vintage barbershop with two wood-and-leather chairs in front of a chest of drawers"],
+  ["Uomo con barba e occhiali in cappotto chiaro, a passeggio in citta'", "Bearded man with glasses in a light coat, walking in the city"],
+  ["Interno di un salone da barbiere con parete in mattoni, poltrona e piante", "Barbershop interior with a brick wall, a chair and plants"],
+]);
+
 /** Foto di repertorio: illustrativa, con credito e punto focale. */
 function stock(src: StaticImageData, alt: string, brief: string, credit: PhotoCredit, position?: string): SiteImage {
-  return { src, alt, brief, placeholder: false, illustrative: true, position, credit };
+  return { src, alt, altEn: ALT_EN.get(alt) ?? alt, brief, placeholder: false, illustrative: true, position, credit };
 }
 
 export const images = {
@@ -181,8 +201,10 @@ export const images = {
 export type ImageKey = keyof typeof images;
 
 /** Testo alternativo effettivo: dichiara il segnaposto finche' non c'e' la foto. */
-export function altFor(image: SiteImage): string {
-  return image.placeholder ? `Immagine segnaposto. Foto prevista: ${image.alt.toLowerCase()}` : image.alt;
+export function altFor(image: SiteImage, lang: "it" | "en" = "it"): string {
+  const alt = lang === "en" ? image.altEn : image.alt;
+  if (!image.placeholder) return alt;
+  return lang === "en" ? `Placeholder image. Planned photo: ${alt.toLowerCase()}` : `Immagine segnaposto. Foto prevista: ${alt.toLowerCase()}`;
 }
 
 /** Stile per il punto focale del ritaglio. */

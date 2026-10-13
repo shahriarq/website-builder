@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CaretLeftIcon, CaretRightIcon, PlusIcon } from "@phosphor-icons/react";
 import { altFor, focus, galleryImages, images } from "@/content/images";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 /**
  * Capitolo III, galleria editoriale: impaginazione asimmetrica da rivista,
@@ -27,7 +29,8 @@ function stepIndex(current: number | null, delta: number): number | null {
   return current === null ? current : (current + delta + COUNT) % COUNT;
 }
 
-export function Gallery() {
+export function Gallery({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
   const items = galleryImages.map((key) => images[key]);
   const [index, setIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -60,16 +63,15 @@ export function Gallery() {
     <section id="galleria" aria-labelledby="galleria-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <p className="eyebrow">Galleria</p>
+          <p className="eyebrow">{t.gallery.eyebrow}</p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-12 md:items-end md:gap-6">
           <h2 id="galleria-title" className="display display-l md:col-span-8" data-split>
-            Stile da portare <em>in poltrona.</em>
+            {t.gallery.title[0]} <em>{t.gallery.title[1]}</em>
           </h2>
           <p className="lede md:col-span-4" data-reveal>
-            Riferimenti di taglio, barba e portamento. Sono foto di repertorio, non lavori del salone: mostrale al barbiere e costruite
-            insieme il tuo.
+            {t.gallery.lede}
           </p>
         </div>
 
@@ -108,13 +110,15 @@ export function Gallery() {
                     >
                       <PlusIcon size={18} />
                     </span>
-                    <span className="sr-only">Ingrandisci: {altFor(img)}</span>
+                    <span className="sr-only">
+                      {t.gallery.enlarge}: {altFor(img, lang)}
+                    </span>
                   </button>
                   <figcaption className="caption mt-3 flex justify-between gap-4">
                     <span className="tabular-nums">
                       {pad(i + 1)} / {pad(items.length)}
                     </span>
-                    <span>Foto di repertorio</span>
+                    <span>{t.common.stockPhoto}</span>
                   </figcaption>
                 </figure>
               </li>
@@ -125,7 +129,7 @@ export function Gallery() {
 
       <dialog
         ref={dialogRef}
-        aria-label="Ispirazioni ingrandite"
+        aria-label={t.gallery.dialog}
         data-scroll-lock
         onClose={() => {
           setIndex(null);
@@ -142,14 +146,14 @@ export function Gallery() {
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between px-4 py-3 sm:px-6">
               <p className="kicker tabular-nums" aria-live="polite">
-                Immagine {index + 1} di {items.length}
+                {t.gallery.counter(index + 1, items.length)}
               </p>
               <button
                 type="button"
                 onClick={close}
                 className="inline-flex h-11 items-center gap-3 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium"
               >
-                Chiudi
+                {t.common.close}
               </button>
             </div>
             <figure className="relative mx-auto flex w-full max-w-[1200px] flex-1 flex-col px-4 pb-4 sm:px-20">
@@ -157,14 +161,14 @@ export function Gallery() {
                 <Image
                   key={index}
                   src={current.src}
-                  alt={altFor(current)}
+                  alt={altFor(current, lang)}
                   fill
                   sizes="(min-width: 1280px) 1200px, 100vw"
                   className="lightbox-image photo object-contain"
                 />
               </div>
               <figcaption className="mx-auto max-w-[60ch] pt-4 text-center text-sm text-muted">
-                {altFor(current)}. Foto di repertorio.
+                {altFor(current, lang)}. {t.common.stockPhoto}.
               </figcaption>
             </figure>
             <div className="flex justify-center gap-3 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pointer-events-none sm:absolute sm:inset-x-4 sm:top-1/2 sm:-translate-y-1/2 sm:justify-between sm:pb-0">
@@ -174,7 +178,7 @@ export function Gallery() {
                 className="pointer-events-auto inline-flex size-12 items-center justify-center rounded-full border border-line-strong bg-paper transition-colors hover:bg-ink hover:text-paper"
               >
                 <CaretLeftIcon size={22} aria-hidden="true" />
-                <span className="sr-only">Immagine precedente</span>
+                <span className="sr-only">{t.gallery.previous}</span>
               </button>
               <button
                 type="button"
@@ -182,7 +186,7 @@ export function Gallery() {
                 className="pointer-events-auto inline-flex size-12 items-center justify-center rounded-full border border-line-strong bg-paper transition-colors hover:bg-ink hover:text-paper"
               >
                 <CaretRightIcon size={22} aria-hidden="true" />
-                <span className="sr-only">Immagine successiva</span>
+                <span className="sr-only">{t.gallery.next}</span>
               </button>
             </div>
           </div>

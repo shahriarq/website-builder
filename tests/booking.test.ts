@@ -36,13 +36,29 @@ test("una richiesta completa è valida", () => {
 
 test("i campi obbligatori vuoti producono errori in italiano", () => {
   const errors = validateBooking(normalizeBooking({}), ctx);
-  assert.equal(errors.service, "Scegli un servizio.");
-  assert.equal(errors.date, "Scegli una data preferita.");
-  assert.equal(errors.time, "Scegli una fascia oraria preferita.");
-  assert.equal(errors.name, "Inserisci nome e cognome.");
+  assert.equal(errors.service, "Scegli almeno un servizio.");
+  assert.equal(errors.date, "Scegli un giorno.");
+  assert.equal(errors.time, "Scegli una fascia oraria.");
+  assert.equal(errors.name, "Inserisci il tuo nome.");
   assert.equal(errors.phone, "Inserisci un numero di telefono.");
-  assert.match(errors.consent ?? "", /acconsentire/);
+  assert.match(errors.consent ?? "", /informativa privacy/);
   assert.equal(errors.notes, undefined);
+});
+
+test("con lang: \"en\" gli errori sono in inglese", () => {
+  const errors = validateBooking(normalizeBooking({}), { ...ctx, lang: "en" });
+  assert.equal(errors.service, "Choose at least one service.");
+  assert.equal(errors.date, "Choose a day.");
+  assert.equal(errors.phone, "Enter a phone number.");
+  assert.match(errors.consent ?? "", /privacy notice/);
+});
+
+test("piu' servizi insieme sono validi, senza duplicati; un servizio estraneo li invalida", () => {
+  const combo = normalizeBooking({ ...valid, service: "taglio+barba+taglio" });
+  assert.equal(combo.service, "taglio+barba");
+  assert.deepEqual(validateBooking(combo, ctx), {});
+  assert.ok(validateBooking(normalizeBooking({ ...valid, service: "taglio+massaggio" }), ctx).service);
+  assert.ok(validateBooking(normalizeBooking({ ...valid, service: "+" }), ctx).service);
 });
 
 test("servizi e fasce fuori elenco vengono rifiutati", () => {

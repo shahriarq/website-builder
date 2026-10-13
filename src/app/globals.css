@@ -369,7 +369,7 @@
     opacity: 0;
     cursor: pointer;
   }
-  .chip span {
+  .chip > span {
     display: inline-flex;
     min-height: 2.75rem;
     align-items: center;
@@ -384,7 +384,7 @@
       border-color 0.3s var(--ease-out-quart);
   }
   @media (hover: hover) {
-    .chip:hover span {
+    .chip:hover > span {
       border-color: var(--color-ink);
     }
   }
@@ -396,6 +396,34 @@
   .chip input:focus-visible + span {
     outline: 1px solid var(--color-ink);
     outline-offset: 4px;
+  }
+  /* Giorno: tessera a due righe (giorno della settimana, data). */
+  .chip-day {
+    flex: none;
+    scroll-snap-align: start;
+  }
+  .chip-day > span {
+    min-width: 4.75rem;
+    min-height: 3.5rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 0.9rem;
+    line-height: 1.1;
+    text-align: center;
+  }
+  .chip-day-top {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .chip-day-bottom {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+  .chip input:checked + span .chip-day-bottom {
+    color: inherit;
+    opacity: 0.75;
   }
   [data-invalid] .chip input:not(:checked) + span {
     border-color: var(--color-error);
@@ -571,11 +599,17 @@
  * Il sipario d'apertura e le righe del titolo sono puro CSS: finiscono anche
  * se il JavaScript non arriva. Le comparse allo scorrimento le aggiunge GSAP.
  */
+/* Valgono sempre: il sipario e' nascosto e le righe del titolo vanno a capo,
+   anche con movimento ridotto. */
+.curtain {
+  display: none;
+}
+.line {
+  display: block;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   /* Sipario d'apertura (classe .intro impostata prima del primo disegno). */
-  .curtain {
-    display: none;
-  }
   .intro .curtain {
     position: fixed;
     inset: 0;
@@ -616,7 +650,6 @@
 
   /* Righe del titolo che salgono da una maschera. */
   .line {
-    display: block;
     overflow: hidden;
     padding-bottom: 0.08em;
     margin-bottom: -0.08em;

@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { ArrowRightIcon, PhoneIcon } from "@phosphor-icons/react";
 import { site, telHref } from "@/config/site";
 import { bookingAnchor } from "@/config/navigation";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 /**
  * Barra di prenotazione sui telefoni (da 640 px il bottone e' nell'header): compare dopo l'hero e si nasconde quando
  * il modulo o il footer sono visibili, per non coprire contenuti utili.
  */
-export function MobileBookingBar() {
+export function MobileBookingBar({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
   const [heroVisible, setHeroVisible] = useState(true);
   const [targetVisible, setTargetVisible] = useState(false);
 
@@ -47,10 +50,10 @@ export function MobileBookingBar() {
     >
       <div className="mx-auto flex max-w-lg gap-3">
         <a href={bookingAnchor} className="btn btn-primary flex-1">
-          Prenota
+          {t.common.book}
           <ArrowRightIcon size={18} className="btn-icon" aria-hidden="true" />
         </a>
-        <a href={telHref()} className="btn btn-secondary w-[3.25rem] shrink-0 px-0" aria-label={`Chiama ${site.contact.phoneDisplay}`}>
+        <a href={telHref()} className="btn btn-secondary w-[3.25rem] shrink-0 px-0" aria-label={t.nav.callLabel(site.contact.phoneDisplay)}>
           <PhoneIcon size={20} aria-hidden="true" />
         </a>
       </div>

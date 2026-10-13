@@ -10,6 +10,8 @@ export interface BookingSummary {
   name: string;
   phone: string;
   notes: string;
+  /** Lingua del cliente, se diversa dall'italiano (es. "inglese"). */
+  language?: string;
 }
 
 /** "2026-10-17" -> "sabato 17 ottobre 2026". */
@@ -35,6 +37,7 @@ function lines(b: BookingSummary): string[] {
     `Telefono: ${b.phone}`,
   ];
   if (b.notes) out.push(`Note: ${b.notes}`);
+  if (b.language) out.push(`Lingua del cliente: ${b.language}`);
   return out;
 }
 

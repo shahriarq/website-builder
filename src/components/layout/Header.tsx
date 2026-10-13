@@ -6,13 +6,17 @@ import { navItems, bookingAnchor } from "@/config/navigation";
 import { site, telHref, whatsappChatHref } from "@/config/site";
 import { goToAnchor } from "@/lib/scroll";
 import { BrandMark } from "@/components/brand/BrandMark";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
+import { LanguageSwitch } from "./LanguageSwitch";
 
 /**
  * Header: trasparente sull'hero, pieno dopo. Si ritira scorrendo verso il
  * basso e ritorna appena si risale, cosi' le foto restano a tutto schermo.
  * Su schermi stretti il menu e' un sipario a tutta pagina.
  */
-export function Header() {
+export function Header({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
   const [solid, setSolid] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [active, setActive] = useState<string | null>(null);
@@ -87,11 +91,11 @@ export function Header() {
         } ${solid ? "border-b border-line bg-paper/95 backdrop-blur-sm" : "border-b border-transparent bg-transparent"}`}
       >
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-8 lg:h-20 lg:px-12">
-          <a href="#top" className="text-[1.6rem] lg:text-[1.8rem]" aria-label={`${site.shortName}, torna all'inizio`}>
+          <a href="#top" className="text-[1.6rem] lg:text-[1.8rem]" aria-label={t.nav.homeLabel}>
             <BrandMark />
           </a>
 
-          <nav aria-label="Principale" className="hidden lg:block">
+          <nav aria-label={t.nav.main} className="hidden lg:block">
             <ul className="flex items-center gap-9">
               {navItems.map((item) => {
                 const isActive = active === item.href;
@@ -104,7 +108,7 @@ export function Header() {
                         isActive ? "text-ink" : "text-muted hover:text-ink"
                       }`}
                     >
-                      {item.label}
+                      {t.nav[item.key]}
                       <span
                         aria-hidden="true"
                         className={`absolute inset-x-0 -bottom-px h-px origin-left bg-bronze transition-transform duration-700 ease-[var(--ease-out-expo)] ${
@@ -119,18 +123,19 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-5">
+            <LanguageSwitch lang={lang} className="hidden lg:flex" />
             <a href={telHref()} className="link-quiet hidden text-[0.875rem] tracking-[-0.01em] tabular-nums xl:inline">
               {site.contact.phoneDisplay}
             </a>
             <a
               href={telHref()}
               className="inline-flex size-11 items-center justify-center rounded-full border border-line-strong lg:hidden"
-              aria-label={`Chiama ${site.contact.phoneDisplay}`}
+              aria-label={t.nav.callLabel(site.contact.phoneDisplay)}
             >
               <PhoneIcon size={19} aria-hidden="true" />
             </a>
             <a href={bookingAnchor} className="btn btn-primary hidden min-h-11 px-6 sm:inline-flex">
-              Prenota
+              {t.common.book}
             </a>
             <button
               ref={toggleRef}
@@ -141,7 +146,7 @@ export function Header() {
               aria-controls="menu-mobile"
               className="group inline-flex h-11 items-center gap-3 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium lg:hidden"
             >
-              Menu
+              {t.nav.menu}
               <span aria-hidden="true" className="grid gap-[5px]">
                 <span className="block h-px w-5 bg-current" />
                 <span className="block h-px w-3.5 bg-current transition-[width] duration-500 group-hover:w-5" />
@@ -154,7 +159,7 @@ export function Header() {
       <dialog
         ref={dialogRef}
         id="menu-mobile"
-        aria-label="Menu"
+        aria-label={t.nav.menu}
         data-scroll-lock
         onClose={() => {
           setMenuOpen(false);
@@ -172,7 +177,7 @@ export function Header() {
               onClick={closeMenu}
               className="inline-flex h-11 items-center gap-3 rounded-full border border-line-strong px-5 text-[0.9375rem] font-medium"
             >
-              Chiudi
+              {t.common.close}
               <span aria-hidden="true" className="relative block size-3.5">
                 <span className="absolute top-1/2 left-0 block h-px w-full rotate-45 bg-current" />
                 <span className="absolute top-1/2 left-0 block h-px w-full -rotate-45 bg-current" />
@@ -180,7 +185,7 @@ export function Header() {
             </button>
           </div>
 
-          <nav aria-label="Menu" className="flex flex-1 items-center">
+          <nav aria-label={t.nav.menu} className="flex flex-1 items-center">
             <ul className="w-full">
               {navItems.map((item, i) => (
                 <li key={item.href} className="overflow-hidden">
@@ -190,7 +195,7 @@ export function Header() {
                     className="menu-item display flex items-baseline gap-4 py-2 text-[clamp(2.75rem,12vw,4.5rem)]"
                     style={{ "--i": i } as React.CSSProperties}
                   >
-                    {item.label}
+                    {t.nav[item.key]}
                   </a>
                 </li>
               ))}
@@ -199,13 +204,13 @@ export function Header() {
 
           <div className="menu-fade grid gap-3 border-t border-line pt-5">
             <a href={bookingAnchor} onClick={(e) => navigateFromMenu(e, bookingAnchor)} className="btn btn-primary w-full">
-              Prenota
+              {t.common.book}
               <ArrowRightIcon size={16} className="btn-icon" aria-hidden="true" />
             </a>
             <div className="grid grid-cols-2 gap-3">
               <a href={telHref()} className="btn btn-secondary px-3">
                 <PhoneIcon size={16} aria-hidden="true" />
-                Chiama
+                {t.common.call}
               </a>
               {whatsapp && (
                 <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="btn btn-secondary px-3">
@@ -214,7 +219,10 @@ export function Header() {
                 </a>
               )}
             </div>
-            <p className="caption pt-1">{site.address.full}</p>
+            <div className="flex items-center justify-between gap-4 pt-1">
+              <p className="caption">{site.address.full}</p>
+              <LanguageSwitch lang={lang} />
+            </div>
           </div>
         </div>
       </dialog>

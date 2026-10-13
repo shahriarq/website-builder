@@ -7,6 +7,8 @@ import { site } from "@/config/site";
 import { bookingAnchor } from "@/config/navigation";
 import { altFor, focus, images } from "@/content/images";
 import { MOTION, gsap, useGSAP, type MotionConditions } from "@/lib/motion";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 /**
  * Hero a tutto schermo. Sullo sfondo gli strumenti del barbiere (su
@@ -15,7 +17,8 @@ import { MOTION, gsap, useGSAP, type MotionConditions } from "@/lib/motion";
  * maschera (CSS, nessuna attesa del JavaScript); allo scorrimento i piani
  * si separano in parallasse.
  */
-export function Hero() {
+export function Hero({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
   const ref = useRef<HTMLElement>(null);
   const bg = images.heroTools;
   const shave = images.heroShave;
@@ -88,7 +91,7 @@ export function Hero() {
           <div className="relative aspect-[2/3] max-h-[48svh] overflow-hidden bg-raised lg:h-[48svh] lg:max-h-none">
             <Image
               src={shave.src}
-              alt={altFor(shave)}
+              alt={altFor(shave, lang)}
               fill
               sizes="(min-width: 1024px) 24vw, 33vw"
               placeholder="blur"
@@ -97,8 +100,8 @@ export function Hero() {
             />
           </div>
           <figcaption className="caption mt-3 flex justify-between gap-4">
-            <span className="hidden lg:inline">Rasatura a mano libera</span>
-            <span>Foto di repertorio</span>
+            <span className="hidden lg:inline">{t.hero.portraitCaption}</span>
+            <span>{t.common.stockPhoto}</span>
           </figcaption>
         </figure>
 
@@ -107,16 +110,16 @@ export function Hero() {
           data-hero-title
         >
           <p className="kicker fade-in mb-6 md:mb-8" style={{ "--d": 100 } as React.CSSProperties}>
-            <span className="text-bronze-text">Barbiere</span> &nbsp;/&nbsp; {site.address.street}, {site.address.city}
+            <span className="text-bronze-text">{t.hero.kicker}</span> &nbsp;/&nbsp; {site.address.street}, {site.address.city}
           </p>
           <h1 id="hero-title" className="display display-xl">
-            <span className="sr-only">Style86, barbiere a Milano: </span>
+            <span className="sr-only">{t.hero.srTitle}</span>
             <span className="line">
-              <span style={{ "--d": 150 } as React.CSSProperties}>Il rito</span>
+              <span style={{ "--d": 150 } as React.CSSProperties}>{t.hero.title[0]}</span>
             </span>
             <span className="line">
               <span style={{ "--d": 260 } as React.CSSProperties}>
-                del <em>taglio.</em>
+                {t.hero.title[1]} <em>{t.hero.title[2]}</em>
               </span>
             </span>
           </h1>
@@ -129,20 +132,19 @@ export function Hero() {
           style={{ "--d": 600 } as React.CSSProperties}
         >
           <p className="max-w-[36rem] text-[1.0625rem] text-ink/85 md:col-span-6">
-            Taglio, barba e cura del viso in Via Ornato, a Milano. Scegli il servizio e il momento che preferisci: il salone ti conferma
-            l&apos;orario.
+            {t.hero.lede}
           </p>
           <div className="flex flex-wrap items-center gap-3 md:col-span-4 md:col-start-7">
             <a href={bookingAnchor} className="btn btn-primary">
-              Prenota
+              {t.common.book}
               <ArrowRightIcon size={16} className="btn-icon" aria-hidden="true" />
             </a>
             <a href="#servizi" className="btn btn-secondary">
-              I servizi
+              {t.hero.services}
             </a>
           </div>
           <a href="#filosofia" className="kicker hidden items-center gap-3 justify-self-end md:col-span-2 md:inline-flex">
-            Scorri
+            {t.hero.scroll}
             <span aria-hidden="true" className="relative block h-10 w-px overflow-hidden bg-line">
               <span className="scroll-cue absolute inset-x-0 top-0 block h-1/2 bg-ink" />
             </span>

@@ -2,15 +2,17 @@
 
 import { useRef } from "react";
 import { MOTION, gsap, ScrollTrigger, useGSAP, type MotionConditions } from "@/lib/motion";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
-const DEFAULT_WORDS = ["Taglio", "Barba", "Styling", "Viso", "Via Ornato, Milano"];
 
 /**
  * Nastro di parole in grande corpo semibold. Scorre lentamente da solo; lo
  * scorrimento della pagina lo accelera e ne inverte il verso.
  * Decorativo: le stesse voci sono nei servizi, quindi e' nascosto ai lettori di schermo.
  */
-export function Marquee({ words = DEFAULT_WORDS, className = "" }: { words?: string[]; className?: string }) {
+export function Marquee({ lang, className = "" }: { lang: Locale; className?: string }) {
+  const words = getDictionary(lang).marquee;
   const ref = useRef<HTMLDivElement>(null);
 
   useGSAP(

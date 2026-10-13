@@ -7,8 +7,7 @@ import { bookingAnchor } from "@/config/navigation";
  * nome accessibile del link e' il testo stesso dell'anello, cosi' coincide con
  * cio' che si legge.
  */
-export function BookingBadge() {
-  const ring = "Prenota la poltrona · Style86 · Milano · ";
+export function BookingBadge({ ring }: { ring: string }) {
   return (
     <a
       href={bookingAnchor}

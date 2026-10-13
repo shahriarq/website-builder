@@ -3,13 +3,17 @@
 import { useRef, useState } from "react";
 import { XIcon } from "@phosphor-icons/react";
 import { readMapConsent, writeMapConsent } from "@/lib/consent";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 /**
  * Preferenze sui contenuti di terze parti. Il sito non usa cookie di
  * profilazione ne' strumenti di analisi: l'unico contenuto esterno
  * facoltativo e' la mappa Google.
  */
-export function CookiePreferences() {
+export function CookiePreferences({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang).cookies;
+  const close = getDictionary(lang).common.close;
   const ref = useRef<HTMLDialogElement>(null);
   const [maps, setMaps] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -28,7 +32,7 @@ export function CookiePreferences() {
   return (
     <>
       <button type="button" onClick={open} className="link inline-flex min-h-11 items-center text-left">
-        Preferenze cookie
+        {t.title}
       </button>
       <dialog
         ref={ref}
@@ -39,7 +43,7 @@ export function CookiePreferences() {
         <div className="p-6 sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <h2 id="cookie-title" className="display display-s">
-              Preferenze cookie
+              {t.title}
             </h2>
             <button
               type="button"
@@ -47,19 +51,17 @@ export function CookiePreferences() {
               className="-mt-2 -mr-2 inline-flex size-11 shrink-0 items-center justify-center hover:bg-ink hover:text-paper"
             >
               <XIcon size={22} aria-hidden="true" />
-              <span className="sr-only">Chiudi</span>
+              <span className="sr-only">{close}</span>
             </button>
           </div>
           <p className="mt-4 text-[0.9375rem] text-muted">
-            Questo sito non usa cookie di profilazione né strumenti di analisi. Puoi scegliere se caricare i contenuti
-            esterni qui sotto.
+            {t.intro}
           </p>
           <div className="mt-6 grid gap-4 border-t border-line pt-6">
             <div className="flex items-start gap-3">
               <input id="pref-tecnici" type="checkbox" checked disabled className="mt-0.5 size-5 accent-ink" />
               <label htmlFor="pref-tecnici" className="text-[0.9375rem] leading-relaxed">
-                <span className="font-semibold">Funzionamento del sito.</span> Necessario, sempre attivo. Non salva dati
-                personali.
+                <span className="font-semibold">{t.essentialTitle}</span> {t.essential}
               </label>
             </div>
             <div className="flex items-start gap-3">
@@ -74,17 +76,16 @@ export function CookiePreferences() {
                 className="mt-0.5 size-5 cursor-pointer accent-ink"
               />
               <label htmlFor="pref-mappe" className="cursor-pointer text-[0.9375rem] leading-relaxed">
-                <span className="font-semibold">Google Maps.</span> Carica automaticamente la mappa nella sezione
-                Contatti. Google può impostare cookie propri.
+                <span className="font-semibold">{t.mapsTitle}</span> {t.maps}
               </label>
             </div>
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <button type="button" onClick={save} className="btn btn-secondary">
-              Salva le preferenze
+              {t.save}
             </button>
             <p className="text-[0.9375rem] text-muted" aria-live="polite">
-              {saved ? "Preferenze salvate." : ""}
+              {saved ? t.saved : ""}
             </p>
           </div>
         </div>
