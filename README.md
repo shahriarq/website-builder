@@ -1,7 +1,8 @@
 # Style86 Parrucchieri & Estetica
 
 Website for Style86, a hair and beauty salon at Via Luigi Ornato 59, 20162 Milano.
-Italian-language, single-page site with a working booking-request flow.
+Bilingual single-page site, Italian first (`/`) with English at `/en`, and a working
+booking-request flow.
 
 **Stack:** Next.js 16 (App Router, TypeScript), Tailwind CSS v4, GSAP (ScrollTrigger,
 SplitText) for scroll storytelling, Lenis for smooth inertial scrolling, React
@@ -31,19 +32,26 @@ TypeScript stripping).
 | Name, address, phone, WhatsApp, email, opening hours, social links, Treatwell link | `src/config/site.ts` |
 | Google and Treatwell review figures, verified review quotes | `src/config/site.ts` (`reviews`) |
 | Booking channel, time preferences, closed weekdays, max days ahead | `src/config/site.ts` (`booking`) |
-| Privacy controller details | `src/config/site.ts` (`privacy`) and `src/app/privacy/page.tsx` |
-| Services (names, descriptions, duration, price) | `src/content/services.ts` |
-| Images, alt text, crop focal points, credits | `src/content/images.ts`, `src/assets/images/` |
+| All interface text, Italian and English (nav, hero, form, footer, 404, SEO title and description) | `src/i18n/dictionaries.ts` |
+| Privacy controller details | `src/config/site.ts` (`privacy`) |
+| Privacy text, Italian and English | `src/i18n/privacy.tsx` |
+| Services (names, descriptions, duration, price; English in `en`) | `src/content/services.ts` |
+| Images, alt text (English in `ALT_EN`), crop focal points, credits | `src/content/images.ts`, `src/assets/images/` |
 | Team members (real people only, with consent) | `src/config/site.ts` (`team`) |
-| Navigation labels | `src/config/navigation.ts` |
-| SEO title and description | `src/lib/seo.ts` |
+| Navigation anchors | `src/config/navigation.ts` (labels are in the dictionaries) |
 
+Every text has an Italian and an English version: add both when you change one.
 Fields that are unknown stay `null` and are hidden on the page. Nothing unverified is
 rendered as fact: no prices, durations, opening hours or testimonials were invented.
 
 ## Booking requests
 
-The form validates in the browser (Italian messages, error summary, inline errors) and
+The form is short: one or more services as chips (e.g. Taglio + Barba), a day picked
+with one tap from the next open days (or "Altra data" for any other day), three time
+slots (Mattina, Pomeriggio, Nessuna preferenza), name and phone side by side, an optional
+note behind "Aggiungi una nota", and one consent line.
+
+It validates in the browser (messages in the visitor's language, error summary, inline errors) and
 then delivers the request through one of two channels, chosen with
 `NEXT_PUBLIC_BOOKING_DELIVERY`.
 
@@ -53,8 +61,9 @@ appointment still has to be confirmed by the salon.
 ### Option A: WhatsApp (default, no server needed)
 
 On submit the site opens the official click-to-chat link
-`https://wa.me/<number>?text=<message>` with a readable Italian message (service, date,
-time slot, name, phone, notes). The customer must press **Invia** in WhatsApp; the page
+`https://wa.me/<number>?text=<message>` with a readable Italian message (services, date,
+time slot, name, phone, notes). The message to the salon is always in Italian; requests
+from the English site add the line "Lingua del cliente: inglese". The customer must press **Invia** in WhatsApp; the page
 says so and never claims the salon has received anything.
 
 - Number: `site.contact.whatsapp` in `src/config/site.ts`, international format, digits
@@ -122,6 +131,18 @@ To use real salon photos:
 `npm run images:placeholders` regenerates neutral placeholder plates for missing files
 only. It never overwrites existing photos unless you pass `-- --force`.
 
+## Languages
+
+- Italian is the main language and lives at the root: `/`, `/privacy`. English lives
+  under `/en`: `/en`, `/en/privacy`.
+- `src/proxy.ts` rewrites Italian addresses to the internal `[lang]` segment, so they keep
+  no prefix. `/it/...` redirects to the unprefixed address.
+- The `IT / EN` switch in the header, mobile menu and footer links to the same page in the
+  other language. Each page declares `hreflang` alternates and the sitemap lists both
+  languages once `NEXT_PUBLIC_SITE_URL` is set.
+- Unknown addresses get a bilingual 404 (`src/app/global-not-found.tsx`, enabled by
+  `experimental.globalNotFound` in `next.config.ts`).
+
 ## Privacy and cookies
 
 - No analytics, no tracking, no profiling cookies.
@@ -162,16 +183,22 @@ only. It never overwrites existing photos unless you pass `-- --force`.
       without names or faces.
 - [ ] **Positioning:** the site now speaks as a men's barbershop ("Barbiere"). The salon
       also offers women's hair and beauty: confirm this positioning, or adjust the hero,
-      SEO title (`src/lib/seo.ts`) and services copy.
+      SEO title (`meta` in `src/i18n/dictionaries.ts`) and services copy.
+- [ ] **English:** have the English texts (`src/i18n/dictionaries.ts`, `privacy.tsx`,
+      services `en`) read by someone fluent.
 - [ ] **Performance:** run PageSpeed Insights on the deployed URL.
 
 ## Project structure
 
 ```
 src/
-  app/                 layout, page, privacy, API route, sitemap, robots, OG image
+  app/[lang]/          layout, page, privacy, OG image (one copy per language)
+  app/                 API route, sitemap, robots, global 404
+  i18n/                languages, dictionaries (IT/EN), privacy text
+  proxy.ts             Italian at the root, English under /en
   components/
-    layout/            Header (mobile menu), Footer, cookie preferences, mobile booking bar
+    layout/            Header (mobile menu), Footer, language switch, back-to-top,
+                       cookie preferences, mobile booking bar
     brand/             BrandMark ("Style" + italic bronze "86")
     motion/            SmoothScroll (Lenis), ScrollEffects, Marquee, BookingBadge, CountUp,
                        RevealController
@@ -222,7 +249,7 @@ Apple's licence, so it is only used where the operating system provides it.
 
 | Where | What happens | Code |
 | --- | --- | --- |
-| First visit | Charcoal curtain with the wordmark lifts (CSS, about 1.4 s, once per session) | `app/layout.tsx`, `globals.css` |
+| First visit | Charcoal curtain with the wordmark lifts (CSS, about 1.4 s, once per session) | `app/[lang]/layout.tsx`, `globals.css` |
 | Hero | Photo opens from the centre, headline lines rise from masks; on scroll the layers separate in parallax | `sections/Hero.tsx` |
 | Marquee | Large semibold band; scroll speeds it up and flips its direction | `motion/Marquee.tsx` |
 | Filosofia | Manifesto words light up as you read; photos open from clipping masks | `sections/Philosophy.tsx` |
@@ -231,7 +258,8 @@ Apple's licence, so it is only used where the operating system provides it.
 | Headings | Lines rise from masks as they enter (`data-split`) | `motion/ScrollEffects.tsx` |
 | Header | Transparent over the hero, hides scrolling down, returns scrolling up; full-screen menu on small screens | `layout/Header.tsx` |
 | Footer | Rotating booking seal, wordmark rising letter by letter | `layout/Footer.tsx` |
-| Pages | Home, privacy and 404 cross-fade with a vertical drift (React `<ViewTransition>`) | `app/page.tsx` and siblings |
+| Back to top | Round button that appears after the hero; a thin bronze ring fills as you read; it steps aside over the booking form | `layout/BackToTop.tsx` |
+| Pages | Home and privacy cross-fade with a vertical drift (React `<ViewTransition>`) | `app/[lang]/page.tsx` and siblings |
 
 Rules: scroll effects only touch content below the fold and are prepared when the browser is
 idle; nothing is pinned, so booking never waits on an animation. With

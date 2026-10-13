@@ -17,6 +17,8 @@ export interface BookingInput {
 export type BookingField = keyof BookingInput;
 export type BookingErrors = Partial<Record<BookingField, string>>;
 
+export type MessageLang = "it" | "en";
+
 export interface ValidationContext {
   serviceIds: readonly string[];
   timeOptions: readonly string[];
@@ -25,7 +27,54 @@ export interface ValidationContext {
   maxDaysAhead: number;
   /** 0 = domenica ... 6 = sabato. */
   closedWeekdays: readonly number[];
+  /** Lingua dei messaggi d'errore (predefinita: italiano). */
+  lang?: MessageLang;
 }
+
+/** Separatore tra piu' servizi scelti insieme, es. "taglio+barba". */
+export const SERVICE_SEPARATOR = "+";
+
+/** Servizi scelti, senza duplicati e nell'ordine indicato. */
+export function splitServices(value: string): string[] {
+  return [...new Set(value.split(SERVICE_SEPARATOR).map((s) => s.trim()).filter(Boolean))];
+}
+
+const MESSAGES = {
+  it: {
+    serviceRequired: "Scegli almeno un servizio.",
+    serviceInvalid: "Scegli un servizio dall'elenco.",
+    dateRequired: "Scegli un giorno.",
+    dateInvalid: "Inserisci una data valida.",
+    datePast: "La data non può essere nel passato.",
+    dateTooFar: (days: number) => `Puoi indicare una data entro i prossimi ${days} giorni.`,
+    dateClosed: "In questo giorno il salone è chiuso. Scegli un'altra data.",
+    timeRequired: "Scegli una fascia oraria.",
+    timeInvalid: "Scegli una fascia oraria dall'elenco.",
+    nameRequired: "Inserisci il tuo nome.",
+    nameInvalid: "Inserisci un nome valido.",
+    phoneRequired: "Inserisci un numero di telefono.",
+    phoneInvalid: "Inserisci un numero di telefono valido, ad esempio 333 123 4567.",
+    notesTooLong: (max: number) => `La nota può contenere al massimo ${max} caratteri.`,
+    consentRequired: "Per inviare la richiesta conferma di aver letto l'informativa privacy.",
+  },
+  en: {
+    serviceRequired: "Choose at least one service.",
+    serviceInvalid: "Choose a service from the list.",
+    dateRequired: "Choose a day.",
+    dateInvalid: "Enter a valid date.",
+    datePast: "The date can't be in the past.",
+    dateTooFar: (days: number) => `You can choose a date within the next ${days} days.`,
+    dateClosed: "The salon is closed on this day. Please choose another date.",
+    timeRequired: "Choose a time of day.",
+    timeInvalid: "Choose a time of day from the list.",
+    nameRequired: "Enter your name.",
+    nameInvalid: "Enter a valid name.",
+    phoneRequired: "Enter a phone number.",
+    phoneInvalid: "Enter a valid phone number, for example +39 333 123 4567.",
+    notesTooLong: (max: number) => `The note can be at most ${max} characters.`,
+    consentRequired: "To send the request, confirm you have read the privacy notice.",
+  },
+} as const;
 
 export const LIMITS = {
   name: 80,
@@ -53,7 +102,7 @@ export function sanitizeText(value: unknown, max: number, multiline = false): st
 export function normalizeBooking(raw: unknown): BookingInput {
   const r = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   return {
-    service: sanitizeText(r.service, LIMITS.short),
+    service: splitServices(sanitizeText(r.service, LIMITS.short)).join(SERVICE_SEPARATOR),
     date: sanitizeText(r.date, 10),
     time: sanitizeText(r.time, LIMITS.short),
     name: sanitizeText(r.name, LIMITS.name),
@@ -98,47 +147,44 @@ export function phoneDigits(phone: string): string | null {
 }
 
 export function validateField(field: BookingField, input: BookingInput, ctx: ValidationContext): string | undefined {
+  const m = MESSAGES[ctx.lang ?? "it"];
   switch (field) {
-    case "service":
-      if (!input.service) return "Scegli un servizio.";
-      if (!ctx.serviceIds.includes(input.service)) return "Scegli un servizio dall'elenco.";
+    case "service": {
+      const chosen = splitServices(input.service);
+      if (chosen.length === 0) return m.serviceRequired;
+      if (!chosen.every((id) => ctx.serviceIds.includes(id))) return m.serviceInvalid;
       return;
+    }
     case "date": {
-      if (!input.date) return "Scegli una data preferita.";
+      if (!input.date) return m.dateRequired;
       const d = parseIsoDate(input.date);
-      if (!d) return "Inserisci una data valida.";
-      if (input.date < ctx.today) return "La data non può essere nel passato.";
-      if (input.date > addDays(ctx.today, ctx.maxDaysAhead)) {
-        return `Puoi indicare una data entro i prossimi ${ctx.maxDaysAhead} giorni.`;
-      }
-      if (ctx.closedWeekdays.includes(d.getUTCDay())) {
-        return "In questo giorno il salone è chiuso. Scegli un'altra data.";
-      }
+      if (!d) return m.dateInvalid;
+      if (input.date < ctx.today) return m.datePast;
+      if (input.date > addDays(ctx.today, ctx.maxDaysAhead)) return m.dateTooFar(ctx.maxDaysAhead);
+      if (ctx.closedWeekdays.includes(d.getUTCDay())) return m.dateClosed;
       return;
     }
     case "time":
-      if (!input.time) return "Scegli una fascia oraria preferita.";
-      if (!ctx.timeOptions.includes(input.time)) return "Scegli una fascia oraria dall'elenco.";
+      if (!input.time) return m.timeRequired;
+      if (!ctx.timeOptions.includes(input.time)) return m.timeInvalid;
       return;
     case "name": {
-      if (!input.name) return "Inserisci nome e cognome.";
+      if (!input.name) return m.nameRequired;
       const letters = input.name.match(/\p{L}/gu)?.length ?? 0;
-      if (letters < 2) return "Inserisci un nome valido.";
+      if (letters < 2) return m.nameInvalid;
       return;
     }
     case "phone": {
-      if (!input.phone) return "Inserisci un numero di telefono.";
+      if (!input.phone) return m.phoneRequired;
       const digits = phoneDigits(input.phone);
-      if (!digits || digits.length < 6 || digits.length > 15) {
-        return "Inserisci un numero di telefono valido, ad esempio 333 123 4567.";
-      }
+      if (!digits || digits.length < 6 || digits.length > 15) return m.phoneInvalid;
       return;
     }
     case "notes":
-      if (input.notes.length > LIMITS.notes) return `Le note possono contenere al massimo ${LIMITS.notes} caratteri.`;
+      if (input.notes.length > LIMITS.notes) return m.notesTooLong(LIMITS.notes);
       return;
     case "consent":
-      if (!input.consent) return "Per inviare la richiesta devi acconsentire al trattamento dei dati.";
+      if (!input.consent) return m.consentRequired;
       return;
   }
 }

@@ -7,10 +7,20 @@ import { useEffect, useRef } from "react";
  * Il valore finale e' gia' nel markup (server e senza JavaScript) ed e'
  * l'unico letto dalle tecnologie assistive.
  */
-export function CountUp({ value, decimals = 1, className = "" }: { value: number; decimals?: number; className?: string }) {
+export function CountUp({
+  value,
+  decimals = 1,
+  locale = "it-IT",
+  className = "",
+}: {
+  value: number;
+  decimals?: number;
+  locale?: string;
+  className?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
   const format = (n: number) =>
-    n.toLocaleString("it-IT", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    n.toLocaleString(locale, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
 
   useEffect(() => {
     const el = ref.current;
@@ -38,7 +48,7 @@ export function CountUp({ value, decimals = 1, className = "" }: { value: number
       cancelAnimationFrame(raf);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, decimals]);
+  }, [value, decimals, locale]);
 
   return (
     <span ref={ref} className={className}>

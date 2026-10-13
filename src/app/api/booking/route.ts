@@ -79,7 +79,9 @@ export async function POST(req: NextRequest) {
   }
 
   const input = normalizeBooking(payload);
-  const errors = validateBooking(input, bookingContext());
+  // Lingua della pagina da cui arriva la richiesta: solo per i messaggi d'errore e la nota al salone.
+  const lang = payload.lang === "en" ? "en" : "it";
+  const errors = validateBooking(input, bookingContext(new Date(), lang));
   if (Object.keys(errors).length > 0) return fail("invalid", 422, { fields: errors });
 
   try {
@@ -88,7 +90,7 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chat_id: chatId,
-        text: telegramMessage(toSummary(input)),
+        text: telegramMessage(toSummary(input, lang)),
         disable_web_page_preview: true,
       }),
       signal: AbortSignal.timeout(8000),

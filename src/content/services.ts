@@ -25,6 +25,8 @@ export interface Service {
   image: ImageKey;
   /** true dopo che il titolare ha confermato nome e descrizione. */
   confirmed: boolean;
+  /** Traduzione inglese di nome, descrizione e (se presenti) durata e prezzo. */
+  en: { name: string; description: string; duration?: string | null; price?: string | null };
 }
 
 export const services: Service[] = [
@@ -37,6 +39,7 @@ export const services: Service[] = [
     price: null,
     image: "serviceCut",
     confirmed: false,
+    en: { name: "Haircut", description: "Scissors, clippers and fades shaped around your head, how your hair grows and how you wear it every day." },
   },
   {
     id: "barba",
@@ -47,6 +50,7 @@ export const services: Service[] = [
     price: null,
     image: "serviceBeard",
     confirmed: false,
+    en: { name: "Beard", description: "Shaping, trimming and beard care: clean lines on the neck and cheekbones, proportions designed together with the cut." },
   },
   {
     id: "styling",
@@ -57,6 +61,7 @@ export const services: Service[] = [
     price: null,
     image: "serviceStyling",
     confirmed: false,
+    en: { name: "Styling", description: "Blow-dry and finish with products chosen for your hair type, for the day or for an occasion." },
   },
   {
     id: "estetica",
@@ -67,6 +72,7 @@ export const services: Service[] = [
     price: null,
     image: "serviceFace",
     confirmed: false,
+    en: { name: "Face and grooming", description: "Grooming and personal care treatments to round off your time in the chair." },
   },
 ];
 
@@ -74,9 +80,22 @@ export const services: Service[] = [
 export const otherServiceOption = {
   id: "altro",
   name: "Altro o da definire insieme",
+  en: { name: "Other, or decide together" },
 } as const;
 
+/** Nome del servizio in italiano (usato nel messaggio al salone). */
 export function serviceLabel(id: string): string | null {
   if (id === otherServiceOption.id) return otherServiceOption.name;
   return services.find((s) => s.id === id)?.name ?? null;
+}
+
+/** Nome e testi del servizio nella lingua della pagina. */
+export function localizedService(service: Service, lang: "it" | "en") {
+  if (lang === "it") return { name: service.name, description: service.description, duration: service.duration, price: service.price };
+  return {
+    name: service.en.name,
+    description: service.en.description,
+    duration: service.en.duration ?? service.duration,
+    price: service.en.price ?? service.price,
+  };
 }

@@ -1,10 +1,11 @@
+/** Voci di navigazione: l'etichetta arriva dal dizionario della lingua (t.nav[key]). */
 export const navItems = [
-  { label: "Filosofia", href: "#filosofia" },
-  { label: "Servizi", href: "#servizi" },
-  { label: "Galleria", href: "#galleria" },
-  { label: "Team", href: "#team" },
-  { label: "Recensioni", href: "#recensioni" },
-  { label: "Contatti", href: "#contatti" },
+  { key: "philosophy", href: "#filosofia" },
+  { key: "services", href: "#servizi" },
+  { key: "gallery", href: "#galleria" },
+  { key: "team", href: "#team" },
+  { key: "reviews", href: "#recensioni" },
+  { key: "contacts", href: "#contatti" },
 ] as const;
 
 export const bookingAnchor = "#prenota";

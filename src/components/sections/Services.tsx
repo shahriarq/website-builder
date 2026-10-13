@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowRightIcon } from "@phosphor-icons/react";
-import { services } from "@/content/services";
+import { localizedService, services } from "@/content/services";
 import { focus, images } from "@/content/images";
 import { bookingAnchor } from "@/config/navigation";
 import { requestService } from "@/lib/booking/events";
 import { gsap } from "@/lib/motion";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 /**
  * Capitolo II, i servizi: un indice editoriale. Su desktop con mouse, la
@@ -15,7 +17,8 @@ import { gsap } from "@/lib/motion";
  * scorrendo tra le righe; con la tastiera compare accanto alla riga a fuoco.
  * Su touch ogni riga mostra la sua foto. Durata e prezzo solo se reali.
  */
-export function Services() {
+export function Services({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
   const listRef = useRef<HTMLUListElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<number | null>(null);
@@ -79,23 +82,23 @@ export function Services() {
     <section id="servizi" aria-labelledby="servizi-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <p className="eyebrow">Servizi</p>
+          <p className="eyebrow">{t.services.eyebrow}</p>
         </div>
 
         <div className="grid gap-8 md:grid-cols-12 md:items-end md:gap-6">
           <h2 id="servizi-title" className="display display-l md:col-span-7" data-split>
-            Fatti su <em>misura,</em> uno alla volta.
+            {t.services.title[0]} <em>{t.services.title[1]}</em> {t.services.title[2]}
           </h2>
           <p className="lede md:col-span-4 md:col-start-9" data-reveal>
-            {hasMeta
-              ? "Durate e prezzi indicativi: il salone li conferma con l'appuntamento."
-              : "Durata e prezzo dipendono da capelli e richiesta: il salone te li conferma quando risponde alla prenotazione."}
+            {hasMeta ? t.services.ledeWithMeta : t.services.lede}
           </p>
         </div>
 
         <ul ref={listRef} className="services-list mt-16 md:mt-24" onPointerLeave={() => setActive(null)}>
           {services.map((service, i) => {
             const img = images[service.image];
+            const text = localizedService(service, lang);
+            const meta = [text.price, text.duration].filter(Boolean);
             return (
               <li
                 key={service.id}
@@ -111,7 +114,7 @@ export function Services() {
                   <span className="kicker kicker-bronze hidden lg:block" aria-hidden="true">
                     0{i + 1}
                   </span>
-                  <h3 className="service-name display text-[clamp(2.6rem,6.5vw,5.75rem)]">{service.name}</h3>
+                  <h3 className="service-name display text-[clamp(2.6rem,6.5vw,5.75rem)]">{text.name}</h3>
 
                   {/* Foto in riga su touch e schermi stretti */}
                   <div className="relative row-span-2 aspect-[3/4] w-[clamp(5.5rem,22vw,9rem)] overflow-hidden bg-raised lg:hidden">
@@ -119,18 +122,17 @@ export function Services() {
                   </div>
 
                   <div className="col-start-1 lg:col-start-auto">
-                    <p className="max-w-[32rem] text-[0.9875rem] leading-relaxed text-muted">{service.description}</p>
-                    {(service.duration || service.price) && (
-                      <p className="mt-2 text-[0.9375rem] tabular-nums">{[service.duration, service.price].filter(Boolean).join(" / ")}</p>
-                    )}
+                    {/* Prezzo e durata in evidenza, solo se reali (src/content/services.ts). */}
+                    {meta.length > 0 && <p className="mb-2 text-[1.0625rem] font-semibold text-bronze-text tabular-nums">{meta.join(" · ")}</p>}
+                    <p className="max-w-[32rem] text-[0.9875rem] leading-relaxed text-muted">{text.description}</p>
                   </div>
                   <a
                     href={bookingAnchor}
                     onClick={() => requestService(service.id, true)}
                     className="col-span-2 inline-flex min-h-11 items-center gap-2 justify-self-start text-[1.0625rem] font-medium lg:col-span-1 lg:justify-self-end"
                   >
-                    <span className="link-quiet group-hover:bg-[length:100%_1px]">Prenota</span>
-                    <span className="sr-only"> {service.name.toLowerCase()}</span>
+                    <span className="link-quiet group-hover:bg-[length:100%_1px]">{t.common.book}</span>
+                    <span className="sr-only"> {text.name.toLowerCase()}</span>
                     <ArrowRightIcon size={16} aria-hidden="true" className="transition-transform duration-500 group-hover:translate-x-1" />
                   </a>
                 </div>
@@ -139,9 +141,10 @@ export function Services() {
           })}
         </ul>
 
-        <p className="caption mt-8">
-          Non trovi quello che cerchi? Nel modulo scegli “Altro” e raccontaci cosa desideri. Foto di repertorio.
-        </p>
+        <div className="mt-8 grid gap-1 sm:flex sm:justify-between sm:gap-6">
+          <p className="caption">{t.services.combo}</p>
+          <p className="caption">{t.services.note}</p>
+        </div>
       </div>
 
       {/* Anteprima che segue il cursore (decorativa: le righe hanno gia' nome e descrizione). */}

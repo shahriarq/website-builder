@@ -196,13 +196,7 @@ export const site = {
      * Fasce orarie proposte nel modulo. Sono preferenze, non disponibilita'
      * reali: il salone conferma sempre l'orario effettivo.
      */
-    timePreferences: [
-      "Mattina",
-      "Ora di pranzo",
-      "Primo pomeriggio",
-      "Tardo pomeriggio",
-      "Nessuna preferenza",
-    ],
+    timePreferences: ["Mattina", "Pomeriggio", "Nessuna preferenza"],
   },
 
   /** Dati per l'informativa privacy. DA CONFERMARE con il titolare. */
@@ -213,7 +207,7 @@ export const site = {
     vatNumber: null as string | null,
     /** Email per le richieste privacy. Se null si usa il telefono. */
     contactEmail: null as string | null,
-    lastUpdated: "2026-10-10",
+    lastUpdated: "2026-10-13",
   },
 } as const;
 

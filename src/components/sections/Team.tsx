@@ -3,13 +3,16 @@ import { ArrowRightIcon } from "@phosphor-icons/react/dist/ssr";
 import { site } from "@/config/site";
 import { bookingAnchor } from "@/config/navigation";
 import { altFor, focus, images } from "@/content/images";
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionaries";
 
 /**
  * Capitolo IV, il team. Mostra solo persone reali inserite in
  * site.team (nome, ruolo, foto con consenso). Finche' l'elenco e' vuoto
  * racconta il lavoro in poltrona senza nomi e senza volti inventati.
  */
-export function Team() {
+export function Team({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
   const team = site.team;
   const hands = images.teamHands;
 
@@ -17,13 +20,13 @@ export function Team() {
     <section id="team" aria-labelledby="team-title" className="relative">
       <div className="mx-auto max-w-[1440px] px-5 py-24 sm:px-8 md:py-36 lg:px-12">
         <div className="chapter mb-14 md:mb-20">
-          <p className="eyebrow">Il team</p>
+          <p className="eyebrow">{t.team.eyebrow}</p>
         </div>
 
         {team.length > 0 ? (
           <>
             <h2 id="team-title" className="display display-l max-w-[14ch]" data-split>
-              Le mani dietro <em>il taglio.</em>
+              {t.team.title[0]} <em>{t.team.title[1]}</em>
             </h2>
             <ul className="mt-16 grid gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-24 lg:grid-cols-3">
               {team.map((member, i) => (
@@ -53,7 +56,7 @@ export function Team() {
                 <div className="absolute inset-x-0 -top-[10%] h-[120%]" data-parallax="0.16">
                   <Image
                     src={hands.src}
-                    alt={altFor(hands)}
+                    alt={altFor(hands, lang)}
                     fill
                     placeholder="blur"
                     sizes="(min-width: 768px) 40vw, 80vw"
@@ -62,22 +65,21 @@ export function Team() {
                   />
                 </div>
               </div>
-              <figcaption className="caption mt-3">Foto di repertorio</figcaption>
+              <figcaption className="caption mt-3">{t.common.stockPhoto}</figcaption>
             </figure>
 
             <div className="col-span-12 flex flex-col justify-end md:col-span-6 md:col-start-7">
               <h2 id="team-title" className="display display-l" data-split>
-                Le mani dietro <em>il taglio.</em>
+                {t.team.title[0]} <em>{t.team.title[1]}</em>
               </h2>
               <p className="lede mt-8 max-w-[34rem]" data-reveal>
-                In Via Ornato ti accoglie il team di Style86: chi ti taglia i capelli ti segue anche nella barba, così ogni dettaglio resta
-                coerente.
+                {t.team.lede}
               </p>
               <p className="mt-5 max-w-[34rem] text-[1.0625rem]" data-reveal>
-                Hai già un barbiere di fiducia in salone? Scrivi il suo nome nelle note della prenotazione.
+                {t.team.body}
               </p>
               <a href={bookingAnchor} className="btn btn-secondary mt-10 self-start" data-reveal>
-                Prenota
+                {t.common.book}
                 <ArrowRightIcon size={16} className="btn-icon" aria-hidden="true" />
               </a>
             </div>
